@@ -1,0 +1,83 @@
+body{
+	font-family: Palatino;
+}
+table.CV{
+	border-spacing: 20px 5px;
+}
+td.CV{
+	vertical-align: top;
+	text-align: left;
+	padding-left: 20px;
+	text-indent: -20px;
+}
+td.year{
+	vertical-align: top;
+	text-align: left;
+	white-space: nowrap;
+	width: 50px;
+}
+h1{
+	font-size: 120%;
+	font-variant: small-caps;
+	font-weight: bold;
+}
+h2{
+	font-size: 100%;
+}
+a{
+	text-decoration: none;
+	color: rgb(153,153,153);
+}
+ul.navbar{
+	list-style-type: none;
+	padding-left: 1em;
+	padding-top: 0em;
+	font-size: 14px;
+	overflow: hidden;
+}
+li.navbar{
+	float:left;
+	padding-right: 2em;
+	text-align: center;
+	height: 45px;
+	font-variant: small-caps;
+}
+div.footer{
+	font-size: 85%;
+}
+td.main{
+	vertical-align: top;
+	padding-left: 10px;
+	text-indent: 0px;
+	line-height: 130%;
+}
+td.twitter-timeline{
+	vertical-align: top;
+	width: 300px;
+}
+table.index{
+	width: 100%;
+}
+li.current{
+	text-align: left;
+	padding-left: 20px;
+	text-indent: -20px;
+	padding-bottom: 2em;
+}
+img.current{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+p.caption{
+	font-size: 80%;
+	text-align: center;
+}
+div.page_foot {
+/*	position: absolute;*/
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 1rem;
+	font-size: 75%;
+}
