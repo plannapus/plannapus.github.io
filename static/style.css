@@ -57,6 +57,7 @@ td.twitter-timeline{
 }
 table.index{
 	width: 100%;
+	overflow-x:auto;
 }
 li.current{
 	text-align: left;
