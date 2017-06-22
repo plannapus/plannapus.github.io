@@ -1,29 +1,6 @@
+/* Global settings */
 body{
 	font-family: Palatino;
-}
-table.CV{
-	border-spacing: 20px 5px;
-}
-td{
-	vertical-align: top;
-}
-td.CV{
-	text-align: left;
-	padding-left: 20px;
-	text-indent: -20px;
-}
-td.year{
-	text-align: left;
-	white-space: nowrap;
-	width: 50px;
-}
-h1{
-	font-size: 120%;
-	font-variant: small-caps;
-	font-weight: bold;
-}
-h2{
-	font-size: 100%;
 }
 a{
 	text-decoration: none;
@@ -43,8 +20,23 @@ li.navbar{
 	height: 45px;
 	font-variant: small-caps;
 }
+div.page_foot {
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 1rem;
+	font-size: 75%;
+}
 div.footer{
 	font-size: 85%;
+}
+td{
+	vertical-align: top;
+}
+/* Home page */
+table.index{
+	width: 100%;
+	overflow-x:auto;
 }
 td.main{
 	padding-left: 10px;
@@ -54,10 +46,29 @@ td.main{
 td.twitter-timeline{
 	width: 300px;
 }
-table.index{
-	width: 100%;
-	overflow-x:auto;
+/* CV page */
+table.CV{
+	border-spacing: 20px 5px;
 }
+td.CV{
+	text-align: left;
+	padding-left: 20px;
+	text-indent: -20px;
+}
+td.year{
+	text-align: left;
+	white-space: nowrap;
+	width: 50px;
+}
+h1{
+	font-size: 120%;
+	font-variant: small-caps;
+	font-weight: bold;
+}
+h2{
+	font-size: 100%;
+}
+/* Current project page */
 li.current{
 	text-align: left;
 	padding-left: 20px;
@@ -72,12 +83,4 @@ img.current{
 p.caption{
 	font-size: 80%;
 	text-align: center;
-}
-div.page_foot {
-/*	position: absolute;*/
-	right: 0;
-	bottom: 0;
-	left: 0;
-	padding: 1rem;
-	font-size: 75%;
 }
