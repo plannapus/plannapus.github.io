@@ -4,14 +4,15 @@ body{
 table.CV{
 	border-spacing: 20px 5px;
 }
-td.CV{
+td{
 	vertical-align: top;
+}
+td.CV{
 	text-align: left;
 	padding-left: 20px;
 	text-indent: -20px;
 }
 td.year{
-	vertical-align: top;
 	text-align: left;
 	white-space: nowrap;
 	width: 50px;
@@ -46,13 +47,11 @@ div.footer{
 	font-size: 85%;
 }
 td.main{
-	vertical-align: top;
 	padding-left: 10px;
 	text-indent: 0px;
 	line-height: 130%;
 }
 td.twitter-timeline{
-	vertical-align: top;
 	width: 300px;
 }
 table.index{
