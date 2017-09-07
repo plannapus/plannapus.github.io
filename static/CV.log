@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2017.5.12)  1 AUG 2017 16:29
+This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2017.5.12)  7 SEP 2017 10:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -709,26 +709,29 @@ File: se-ascii-print.def 2016/05/16 v1.11 stringenc: Printable ASCII characters
 [1
 
 ] [2]
+Overfull \vbox (2.89856pt too high) has occurred while \output is active []
+
+
+[3]
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <10.95> on input line 168.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 168.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 168.
- [3]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 174.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 173.
  [4]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 174.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 173.
  (./CV.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 174.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 174.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 174.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 173.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 173.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 173.
  ) 
 Here is how much of TeX's memory you used:
- 17485 strings out of 493068
- 330635 string characters out of 6135636
- 422906 words of memory out of 5000000
- 21337 multiletter control sequences out of 15000+600000
+ 17486 strings out of 493068
+ 330648 string characters out of 6135636
+ 423108 words of memory out of 5000000
+ 21338 multiletter control sequences out of 15000+600000
  6867 words of font info for 40 fonts, out of 8000000 for 9000
  1347 hyphenation exceptions out of 8191
  35i,10n,66p,10359b,421s stack positions out of 5000i,500n,10000p,200000b,80000s
