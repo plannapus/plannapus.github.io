@@ -6,6 +6,10 @@ a{
 	text-decoration: none;
 	color: rgb(153,153,153);
 }
+a:hover{
+    text-decoration: underline;
+	color: rgb(153,153,153);
+}
 ul.navbar{
 	list-style-type: none;
 	padding-left: 1em;
