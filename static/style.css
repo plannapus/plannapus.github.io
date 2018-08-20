@@ -49,6 +49,7 @@ td.main{
 }
 td.twitter-timeline{
 	width: 300px;
+	border: solid 1px rgb(153,153,153);
 }
 /* CV page */
 table.CV{
