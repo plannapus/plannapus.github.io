@@ -36,6 +36,12 @@
 \fancyhead{}
 \renewcommand{\headrulewidth}{0pt}
 
+\renewcommand{\footnoterule}{%
+  \kern -3pt
+  \hrule width \linewidth height 1pt
+  \kern 2pt
+}
+
 \begin{document}
 
 \begin{longtable}{p{0.45\linewidth} >{\raggedleft\arraybackslash}p{0.5\linewidth}}
@@ -216,5 +222,7 @@ The Micropalaeontological Society (TMS) & \\
 Fluent in French (native) and English, intermediate level in Latin and German. & \\
 Advanced programming skills in R, python (including Django and wxPython) and postgreSQL (and other SQL derivatives), intermediate level in \LaTeX. Familiar with Unix shell and Apache Webserver. & \\
 \end{longtable}
+
+{\let\thefootnote\relax\footnote{{Last updated on \today}}}
 
 \end{document}
