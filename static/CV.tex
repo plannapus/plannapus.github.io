@@ -7,6 +7,7 @@
 \usepackage{fancyhdr}
 \usepackage{hyperref}
 \usepackage{xcolor}
+
 \definecolor{grey}{RGB}{153,153,153}
 \hypersetup{
     colorlinks,
@@ -18,19 +19,15 @@
     bookmarksopenlevel=1,
     pdfstartview=Fit
 }
-
 \setmainfont{Trade Gothic LT Std}
-
 \titleformat{\section}{\large \bfseries}{\thesection}{1em}{}
 \titleformat*{\subsection}{\normalsize \bfseries}
 \setcounter{secnumdepth}{0}
 \titlespacing{\section}{0pt}{3.25ex plus 1ex minus .2ex}{0pt}
 \titlespacing{\subsection}{0pt}{0pt}{0pt}
-
 \setlength{\LTpre}{0pt}
-\newcommand{\dohang}{\hangindent1em\hangafter1 }
-\newcolumntype{P}[1]{>{\everypar{\dohang}\dohang\raggedright\arraybackslash} p{#1}}
-
+\newcommand{\dohang}{\hangindent1em\hangafter1 } %%Hanging indent
+\newcolumntype{P}[1]{>{\everypar{\dohang}\dohang\raggedright\arraybackslash} p{#1}} %%Hanging indent in table
 \pagestyle{fancy}
 \fancyfoot{}
 \fancyhead{}
@@ -58,7 +55,6 @@
 \begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
 2018--22 & PostDoc research project (\href{https://www.daad.de/medien/hochschulen/regional/europa/mopga/projektbeschreibungen_englisch_15-05-2018.pdf}{DAAD MOPGA-GRI}) at the Museum f\"{u}r Naturkunde (MfN) with G. Asatryan and D. B. Lazarus on `Polar Oceans, Phytoplankton and Oceanic Carbon Sequestration in a Warm, High $p_{CO_2}$ World'.\\
 2015--17 & PostDoc research project (\href{http://gepris.dfg.de/gepris/projekt/279867559}{DFG grant RE3470/3-1}) at MfN on `Diatoms, Radiolarians and the Cenozoic Silicon and Carbon cycles'.\\
-%2015--17 & PostDoc research project (\href{http://gepris.dfg.de/gepris/projekt/279867559}{DFG grant RE3470/3-1}) at the Museum f\"{u}r Naturkunde (MfN) on `Diatoms, Radiolarians and the Cenozoic Silicon and Carbon cycles'.\\
 2014--15 & PostDoc research project at MfN with D. B. Lazarus and H. P\"{a}like on `\href{http://earthtime-eu.eu/earthtime/?page_id=686}{Earthtime-EU}: Integrated deep-sea microfossil chronostratigraphic database, website and analytic tools'.\\
 2008--12 & PhD research project (\href{http://gepris.dfg.de/gepris/projekt/84744046}{DFG grant LA1191/8-1,2}) at MfN with D. B. Lazarus and B. Mohr on a `Synthesis on Antarctic Neogene radiolarians: taxonomy, macroevolution and biostratigraphy'.\\
 2007 & MSc research project at UPMC with T. Danelian and S. Saint-Martin on `Siliceous plankton paleoecology in the tropical Atlantic in relation with Middle Eocene climatic changes'.\\
@@ -166,15 +162,6 @@ since 2013 & Maintainer and developer of the \href{http://nsb-mfn-berlin.de/}{NS
 2014 & `Tiefenzeit Geschichten der Zukunft: von Plankton, Muscheln und Klimawandel' booth at the MfN during the \href{http://www.langenachtderwissenschaften.de/}{Lange Nacht der Wissenschaften}.\\
 2011 & Guided tour of the MfN Micropaleontology Collection during the \href{http://www.lange-nacht-der-museen.de/}{Lange Nacht der Museen}.\\
 \end{longtable}
-
-% \section{TEACHING EXPERIENCE}
-% \subsection{Mentoring}
-% \begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
-% 2017 & Robert Seeger (Student helper) \\
-% 2016 & Effi-Laura Drews (BSc Praktikum) and Simon B\"{o}hne (BSc Praktikum) \\
-% 2015 & Mandy Schmohl (Student helper) \\
-% 2014 & Robert Wiese (BSc Praktikum) \\
-% \end{longtable}
 
 \section{GRANTS \& AWARDS}
 \subsection{Grants}
