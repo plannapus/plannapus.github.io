@@ -1,6 +1,6 @@
 /* Global settings */
 body{
-	font-family: Palatino;
+	font-family: 'BloggerSansLight';
 }
 a{
 	text-decoration: none;
@@ -16,13 +16,22 @@ ul.navbar{
 	padding-top: 0em;
 	font-size: 14px;
 	overflow: hidden;
+	display: inline-block;
 }
 li.navbar{
 	float:left;
-	padding-right: 2em;
+	padding-right: 4em;
 	text-align: center;
 	height: 45px;
 	font-variant: small-caps;
+	font-size: 120%;
+}
+/* li.hr{
+	padding-right: 1em;
+} */
+div.navbar {
+	margin: auto;
+	text-align: center;
 }
 div.page_foot {
 	right: 0;
