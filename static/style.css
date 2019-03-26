@@ -32,7 +32,18 @@ li.navbar{
 div.navbar {
 	margin: auto;
 	text-align: center;
+	width: 100%;
+	height:75px;
+	position: fixed;
+	z-index: 1;
+	top:0;
+	background-color: white;
 }
+
+div.main{
+	margin-top: 75px;
+}
+
 div.page_foot {
 	right: 0;
 	bottom: 0;
@@ -105,4 +116,13 @@ img.current{
 p.caption{
 	font-size: 80%;
 	text-align: center;
+}
+
+@media screen and (max-width: 500px) {
+	div.sidenav{
+		height:125px;
+	}
+	div.main{
+		margin-top:125px;
+	}
 }
