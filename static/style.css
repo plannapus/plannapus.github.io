@@ -37,11 +37,13 @@ div.navbar {
 	position: fixed;
 	z-index: 1;
 	top:0;
+	left:0;
 	background-color: white;
+	border-bottom:1px solid rgb(100,100,100);
 }
 
 div.main{
-	margin-top: 75px;
+	margin-top: 90px;
 }
 
 div.page_foot {
@@ -58,19 +60,23 @@ td{
 	vertical-align: top;
 }
 /* Home page */
-table.index{
-	width: 100%;
-	overflow-x:auto;
+
+div.flex{
+	display: flex;
+	align-items: flex-start;
 }
-td.main{
-	padding-left: 10px;
-	text-indent: 0px;
-	line-height: 130%;
+
+div.index_text{
+	flex:1 1 300px;
+	padding-right: 2em;
 }
-td.twitter-timeline{
-	width: 300px;
+
+div.twitter-timeline{
 	border: solid 1px rgb(153,153,153);
+	flex:0 0 300px;
+	right: 0;
 }
+
 /* CV page */
 table.CV{
 	border-spacing: 20px 5px;
@@ -119,7 +125,7 @@ p.caption{
 }
 
 @media screen and (max-width: 600px) {
-	div.sidenav{
+	div.navbar{
 		height:125px;
 	}
 	div.main{
