@@ -50,7 +50,7 @@ div.page_foot {
 	right: 0;
 	bottom: 0;
 	left: 0;
-	padding: 1rem;
+	padding-top: 1rem;
 	font-size: 75%;
 }
 div.footer{
@@ -111,6 +111,12 @@ img.current{
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+	max-width:100%;
+}
+
+img.index{
+	display: block;
+	margin-right:auto;
 	max-width:100%;
 }
 
