@@ -148,6 +148,7 @@ span.tooltip .tooltiptext{
 	top: 100%;
 	left: 50%;
 	margin-left: -100px;
+	text-indent: 0em;
 }
 
 span.tooltip:hover .tooltiptext{
