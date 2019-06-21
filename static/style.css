@@ -78,28 +78,6 @@ div.twitter-timeline{
 	right: 0;
 }
 
-/* CV page */
-table.CV{
-	border-spacing: 20px 5px;
-}
-td.CV{
-	text-align: left;
-	padding-left: 20px;
-	text-indent: -20px;
-}
-td.year{
-	text-align: left;
-	white-space: nowrap;
-	width: 50px;
-}
-h1{
-	font-size: 120%;
-	font-variant: small-caps;
-	font-weight: bold;
-}
-h2{
-	font-size: 100%;
-}
 /* Current project page */
 li.current{
 	text-align: left;
@@ -129,30 +107,6 @@ img.index{
 p.caption{
 	font-size: 80%;
 	text-align: center;
-}
-
-span.tooltip{
-	position: relative;
-	border-bottom: 1px dotted rgb(153,153,153);
-}
-
-span.tooltip .tooltiptext{
-	visibility: hidden;
-	width: 300px;
-	background-color: white;
-	border: 1px solid rgb(153,153,153);
-	padding: 5px;
-	border-radius: 6px;
-	position: absolute;
-	z-index: 1;
-	top: 100%;
-	left: 50%;
-	margin-left: -100px;
-	text-indent: 0em;
-}
-
-span.tooltip:hover .tooltiptext{
-	visibility: visible;
 }
 
 
