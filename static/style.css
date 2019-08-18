@@ -111,9 +111,6 @@ p.caption{
 
 
 @media screen and (max-width: 600px) {
-	div.navbar{
-		height:125px;
-	}
 	div.main{
 		margin-top:125px;
 	}
