@@ -111,9 +111,6 @@ p.caption{
 
 
 @media screen and (max-width: 600px) {
-	div.main{
-		margin-top:125px;
-	}
 	div.flex{
 		display:block;
 	}
@@ -129,5 +126,8 @@ p.caption{
 	}
 	li.navbar{
 		padding-right: 1em;
+	}
+	ul.navbar{
+		padding-left: 0em;
 	}
 }
