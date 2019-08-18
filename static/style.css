@@ -117,4 +117,20 @@ p.caption{
 	div.main{
 		margin-top:125px;
 	}
+	div.flex{
+		display:block;
+	}
+	div.index_text{
+		width: 100%;
+		padding-right: 2em;
+	}
+
+	div.twitter-timeline{
+		border: solid 1px rgb(153,153,153);
+		margin-top: 2em;
+		width: 300px;
+	}
+	li.navbar{
+		padding-right: 1em;
+	}
 }
