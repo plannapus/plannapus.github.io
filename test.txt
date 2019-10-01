@@ -1,6 +1,0 @@
-then
-```
-git init
-git remote add origin https://github.com/ozenvolkan/ozenvolkan.github.io.git
-git pull origin master
-```
