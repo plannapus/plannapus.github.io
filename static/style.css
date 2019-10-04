@@ -81,12 +81,14 @@ div.twitter-timeline{
 	right: 0;
 }
 
+b.unbold{
+	font-weight:normal;
+}
+
 /* Current project page */
-li.current{
+p.current{
 	text-align: left;
 	padding-left: 20px;
-	text-indent: -20px;
-	padding-bottom: 2em;
 }
 img.current{
 	display: block;
