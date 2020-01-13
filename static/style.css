@@ -128,8 +128,8 @@ p.caption{
 		overflow-x: hidden;
 		padding-top: 10px;
 		padding-left: 20px;
-		display: flex;
-		flex-direction: row;
+		/*display: flex;
+		flex-direction: row;*/
 		border-right: 1px solid rgb(100,100,100);
 		background-color: white;
 	}
@@ -138,11 +138,10 @@ p.caption{
 		margin-top: 250px; /* Same as the width of the sidebar */
 		padding: 10px 10px;
 		font-size: 18px;
-		text-align: center;
 	}
 
 	div.navbar li{
-		font-size: 15px;
+		font-size: 18px;
 		margin: 0px 10px;
 		float:left;
 		text-align:center;
@@ -150,7 +149,7 @@ p.caption{
 	}
 
 	div.navbar div.page_foot{
-		margin-right: 40px;
+		/*margin-right: 40px;*/
 		font-size: 75%;
 	}
 
