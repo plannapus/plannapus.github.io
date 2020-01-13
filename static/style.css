@@ -4,57 +4,55 @@ body{
 }
 a{
 	text-decoration: none;
-/*	color: rgb(153,153,153);*/
 	color: rgb(222,122,0);
 }
 a:hover{
     text-decoration: underline;
-/*	color: rgb(153,153,153);*/
 	color: rgb(222,122,0);
+}
+div.navbar div.list{
+	flex:1;
 }
 ul.navbar{
 	list-style-type: none;
-	padding-left: 1em;
-	padding-top: 0em;
-	font-size: 14px;
+	padding: 0;
+	padding-right: 3em;
+	margin:0;
 	overflow: hidden;
 	display: inline-block;
 }
 li.navbar{
-	float:left;
-	padding-right: 4em;
-	text-align: center;
-	height: 45px;
-	font-variant: small-caps;
-	font-size: 120%;
+	font-size: 25px;
+	margin: 20px 0;
 }
 /* li.hr{
 	padding-right: 1em;
 } */
 div.navbar {
-	margin: auto;
-	text-align: center;
-	width: 100%;
-	height:75px;
+	height: 100%;
+	width: 175px;
 	position: fixed;
 	z-index: 1;
-	top:0;
-	left:0;
-	background-color: white;
-	border-bottom:1px solid rgb(100,100,100);
+	top: 0; /* Stay at the top */
+	left: 0;
+	overflow-x: hidden;
+	padding-top: 10px;
+	padding-left: 10px;
+	display: flex;
+	flex-direction: column;
+	border-right: 1px solid rgb(100,100,100);
 }
 
 div.main{
-	margin-top: 90px;
+	margin-left: 175px;
+	padding: 0px 10px 30px 10px;
 }
 
-div.page_foot {
-	right: 0;
-	bottom: 0;
-	left: 0;
-	padding-top: 1rem;
+div.navbar div.page_foot{
+	margin-bottom: 40px;
 	font-size: 75%;
 }
+
 div.footer{
 	font-size: 85%;
 }
@@ -115,9 +113,45 @@ p.caption{
 }
 
 
-@media screen and (max-width: 600px) {
-	div.flex{
-		display:block;
+@media screen and (max-width: 500px) {
+	div.navbar{
+		height: 250px;
+		width: 100%;
+		position: fixed;
+		z-index: 1;
+		top: 0; /* Stay at the top */
+		left: 0;
+		overflow-x: hidden;
+		padding-top: 10px;
+		padding-left: 20px;
+		display: flex;
+		flex-direction: row;
+		border-right: 1px solid rgb(100,100,100);
+		background-color: white;
+	}
+	div.main{
+		margin-left: 0px;
+		margin-top: 250px; /* Same as the width of the sidebar */
+		padding: 10px 10px;
+		font-size: 18px;
+		text-align: center;
+	}
+
+	div.navbar li{
+		font-size: 15px;
+		margin: 0px 10px;
+		float:left;
+		text-align:center;
+		height: 45px;
+	}
+
+	div.navbar div.page_foot{
+		margin-right: 40px;
+		font-size: 75%;
+	}
+
+	h1,h2{
+		font-size: 25px;
 	}
 	div.index_text{
 		width: 100%;
@@ -129,11 +163,5 @@ p.caption{
 		border: solid 1px rgb(254,174,53);
 		margin-top: 2em;
 		width: 300px;
-	}
-	li.navbar{
-		padding-right: 1em;
-	}
-	ul.navbar{
-		padding-left: 0em;
 	}
 }
