@@ -43,6 +43,10 @@ div.navbar {
 	border-right: 1px solid rgb(100,100,100);
 }
 
+h2{
+	font-size: 35px;
+}
+
 div.main{
 	margin-left: 175px;
 	padding: 0px 10px 30px 10px;
