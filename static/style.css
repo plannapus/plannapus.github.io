@@ -119,25 +119,26 @@ p.caption{
 
 @media screen and (max-width: 500px) {
 	div.navbar{
-		height: 250px;
+		height: 175px;
 		width: 100%;
 		position: fixed;
 		z-index: 1;
 		top: 0; /* Stay at the top */
 		left: 0;
 		overflow-x: hidden;
-		padding-top: 10px;
+		padding-top: 0px;
 		padding-left: 20px;
-		/*display: flex;
-		flex-direction: row;*/
-		border-right: 1px solid rgb(100,100,100);
+		border-bottom: 1px solid rgb(100,100,100);
 		background-color: white;
 	}
 	div.main{
 		margin-left: 0px;
-		margin-top: 250px; /* Same as the width of the sidebar */
+		margin-top: 175px; /* Same as the width of the sidebar */
 		padding: 10px 10px;
 		font-size: 18px;
+	}
+	div.navbar ul{
+		width: 100%
 	}
 
 	div.navbar li{
@@ -166,5 +167,8 @@ p.caption{
 		border: solid 1px rgb(254,174,53);
 		margin-top: 2em;
 		width: 300px;
+	}
+	div.page_foot a img{
+		width: 50px;
 	}
 }
