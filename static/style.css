@@ -66,21 +66,24 @@ td{
 /* Home page */
 
 div.flex{
-	display: flex;
-	align-items: flex-start;
+	padding-top: 10px;
+	/*display: flex;
+	align-items: flex-start;*/
 }
 
 div.index_text{
-	flex-grow:1;
-	flex-shrink:1;
+	/*flex-grow:1;
+	flex-shrink:1;*/
 	padding-right: 2em;
 }
 
 div.twitter-timeline{
 /*	border: solid 1px rgb(153,153,153);*/
 	border: solid 1px rgb(222,122,0);
-	flex:0 0 300px;
+	margin-top: 2em;
+	/*flex:0 0 300px;*/
 	right: 0;
+	width: 500px;
 }
 
 b.unbold{
