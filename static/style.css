@@ -29,6 +29,7 @@ li.navbar{
 	padding-right: 1em;
 } */
 div.navbar {
+	background-color: white;
 	height: 100%;
 	width: 175px;
 	position: fixed;
