@@ -51,6 +51,7 @@ h2{
 div.main{
 	margin-left: 175px;
 	padding: 0px 10px 30px 10px;
+	font-size:18px;
 }
 
 div.navbar div.page_foot{
@@ -142,6 +143,18 @@ span.tooltip .tooltiptext{
 
 span.tooltip:hover .tooltiptext{
 	visibility: visible;
+}
+
+p.blog-title{
+	font-weight: bold;
+	font-size: 150%;
+}
+
+p.blog-date{
+	font-size:75%;
+}
+
+p.blog-content{
 }
 
 @media screen and (max-width: 500px) {
