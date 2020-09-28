@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/atom-one-dark.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Scraping rendered HTML</p>
+			<p class="blog-date">2020-09-28</p>
+			<p class="blog-content">
+				Once in a while (or you know every day), when you're doing 'big' data analysis you need to do some web scraping – grab directly data from public websites – particularly if they do not have an API to deliver the data you are interested in. Most of the time, all it takes it to read in the HTML page in R (thanks to <a href="https://cran.r-project.org/web/packages/XML/index.html">package XML</a>), and pick up the data, which in the best case scenario already lies there as a table. 
+
+				<p>But thanks to web 2.0, most of the time nowadays it does not work. Why? Because the data is actually not contained in the HTML itself but put there by a script (usually Javascript) that is run by your browser when you go on the page itself. Meaning that if you try to get it from R, which is not a browser, you'll see squat. Luckily, enter headless browsers. What they are, are command-line tools that mimic browsers by executing this kind of scripts. Personally I use <a href="https://phantomjs.org/">phantomJS</a> because it is the easiest for me to use given i don't really know Javascript that much. So, once you installed phantomJS, all you need to do is write a little script that just reads in the page, processes it and outputs the result as a pure HTML page. Here, as an example, a script I wrote a year or two ago, for a colleague, that grabs data from the website of the IUCN red list:</p>
+
+				<pre><code class="R"># The page you want to process
+url &lt;- "https://www.iucnredlist.org/species/1301/511335"
+# Name of the intermediary file
+out &lt;- "species.html"
+# A little bit of metaprogramming here:
+j &lt;- sprintf("var url ='%s';
+var page = new WebPage() 
+var fs = require('fs'); 
+
+page.open(url, function (status) { 
+  just_wait(); 
+}); 
+
+function just_wait() { 
+  setTimeout(function() { 
+    fs.write('%s', page.content, 'w'); 
+    phantom.exit(); 
+  }, 2500); 
+}", url, out)
+# Save that to a file
+cat(j, file="scrape.js")
+# Asks your shell to run phantomJS on that script
+system("phantomjs scrape.js")
+# Read in the resulting file
+h &lt;- htmlParse("species.html")
+# and pick whatever info you wanted in the first place (here using xpath)
+xpathSApply(h, "//div[@id='threats-details']//div[@class='text-body']", xmlValue)</code></pre>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-09-27.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>

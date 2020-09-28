@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Scraping rendered HTML</title><link>http://plannapus.github.io/blog/2020-09-28.html</link><pubDate>2020-09-28</pubDate><description>Once in a while (or you know every day), when you're doing 'big' data analysis you need to do some web scraping, i</description></item>
 <item><title>A little bit of everything</title><link>http://plannapus.github.io/blog/2020-09-27.html</link><pubDate>2020-09-27</pubDate><description>Since a few months, I felt the need to create a blog</description></item>
 </channel>
 </rss>

@@ -104,6 +104,13 @@ img.current{
 	max-width:100%;
 }
 
+div.main pre{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	max-width:100%;
+}
+
 img.index{
 	display: block;
 	margin-right:auto;
@@ -156,6 +163,13 @@ p.blog-date{
 
 p.blog-content{
 }
+
+p.publications{
+	text-indent: -1em;
+	padding-left: 1em;
+	font-size: 90%;
+	margin-left: 5px;
+	}
 
 @media screen and (max-width: 500px) {
 	div.navbar{
