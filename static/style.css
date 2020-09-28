@@ -25,9 +25,11 @@ li.navbar{
 	font-size: 25px;
 	margin: 20px 0;
 }
-/* li.hr{
-	padding-right: 1em;
-} */
+
+.MathJax{
+	font-size: 200% !important;
+}
+
 div.navbar {
 	background-color: white;
 	height: 100%;
@@ -69,21 +71,15 @@ td{
 
 div.flex{
 	padding-top: 10px;
-	/*display: flex;
-	align-items: flex-start;*/
 }
 
 div.index_text{
-	/*flex-grow:1;
-	flex-shrink:1;*/
 	padding-right: 2em;
 }
 
 div.twitter-timeline{
-/*	border: solid 1px rgb(153,153,153);*/
 	border: solid 1px rgb(222,122,0);
 	margin-top: 2em;
-	/*flex:0 0 300px;*/
 	right: 0;
 	width: 500px;
 }
@@ -204,7 +200,6 @@ p.publications{
 	}
 
 	div.navbar div.page_foot{
-		/*margin-right: 40px;*/
 		font-size: 60%;
 	}
 
@@ -217,7 +212,6 @@ p.publications{
 	}
 
 	div.twitter-timeline{
-/*	border: solid 1px rgb(153,153,153);*/
 		border: solid 1px rgb(254,174,53);
 		margin-top: 2em;
 		width: 300px;
