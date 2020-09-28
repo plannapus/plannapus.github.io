@@ -12,7 +12,7 @@ all <- do.call(rbind,lapply(entries,process))
 all <- all[order(all$date,decreasing=TRUE),]
 index <- readLines("index.html")
 rss <- readLines("rss.xml")
-index[grepl("Latest entry",index)] <- sprintf("\t\t\t<h3><a href=\"%s\">Latest entry</a></h3> <br/>",all$url[1])
+#index[grepl("Latest entry",index)] <- sprintf("\t\t\t<h3><a href=\"%s\">Latest entry</a></h3> <br/>",all$url[1])
 j <- sprintf("\t\t\t<tr><td class=\"date\">%s</td><td class=\"title\"><a href=\"%s\">%s</a></td></tr>",all$date, all$url, all$title)
 index <- c(index[1:grep("<table",index)],j,index[grep("</table",index):length(index)])
 cat(index,file="index.html",sep="\n")
@@ -21,4 +21,3 @@ rss_header <- "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<rss version=\"2.0\">
 rss_footer <- "</channel>\n</rss>"
 k <- sprintf("<item><title>%s</title><link>%s</link><pubDate>%s</pubDate><description>%s</description></item>",all$title,paste0("http://plannapus.github.io/blog/",all$url),all$date,gsub("^[[:space:]]+|\\..+$","",all$content))
 cat(rss_header,k,rss_footer,file="rss.xml",sep="\n")
-
