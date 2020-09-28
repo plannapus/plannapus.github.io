@@ -19,4 +19,4 @@ cat(index,file="index.html",sep="\n")
 rss_header <- "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<rss version=\"2.0\">\n<channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>"
 rss_footer <- "</channel>\n</rss>"
 k <- sprintf("<item><title>%s</title><link>%s</link><pubDate>%s</pubDate><description>%s</description></item>",all$title,paste0("http://plannapus.github.io/blog/",all$url),all$date,gsub("^[[:space:]]+|\\..+$","",all$content))
-cat(rss_header,k,rss_footer,file="rss.xml",sep="\n",encoding="utf-8")
+cat(rss_header,k,rss_footer,file="rss.xml",sep="\n")
