@@ -11,12 +11,27 @@ process <- function(html_file){
 all <- do.call(rbind,lapply(entries,process))
 all <- all[order(all$date,decreasing=TRUE),]
 index <- readLines("index.html",encoding="utf-8")
-#index[grepl("Latest entry",index)] <- sprintf("\t\t\t<h3><a href=\"%s\">Latest entry</a></h3> <br/>",all$url[1])
 j <- sprintf("\t\t\t<tr><td class=\"date\">%s</td><td class=\"title\"><a href=\"%s\">%s</a></td></tr>",all$date, all$url, all$title)
 index <- c(index[1:grep("<table",index)],j,index[grep("</table",index):length(index)])
 cat(index,file="index.html",sep="\n")
 
 rss_header <- "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<rss version=\"2.0\">\n<channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>"
 rss_footer <- "</channel>\n</rss>"
-k <- sprintf("<item><title>%s</title><link>%s</link><pubDate>%s</pubDate><description>%s</description></item>",all$title,paste0("http://plannapus.github.io/blog/",all$url),all$date,gsub("^[[:space:]]+|\\..+$","",all$content))
+k <- sprintf("<item><title>%s</title><link>%s</link><pubDate>%s</pubDate><description>%s</description></item>",
+             all$title,
+             paste0("http://plannapus.github.io/blog/",all$url),
+             all$date,
+             gsub("^[[:space:]]+([^.!?]+[.!?]).+$","\\1",all$content))
 cat(rss_header,k,rss_footer,file="rss.xml",sep="\n")
+
+template <- readLines("template.html")
+template <- gsub(as.character(all$date[2]),as.character(all$date[1]),template)
+cat(template,file="template.html",sep="\n")
+
+last_html <- entries[grepl(as.character(all$date[2]),entries)]
+last <- readLines(last_html)
+w <- grep("Back to Index",last)
+last[w] <- gsub("<!--\\| <a href=\"\">Next entry &gt;</a>-->",
+                sprintf("| <a href=\"%s\">Next entry &gt;</a>",all$date[1]),
+                last[w])
+cat(last,sep="\n",file=last_html)
