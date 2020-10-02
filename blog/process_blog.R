@@ -21,7 +21,7 @@ k <- sprintf("<item><title>%s</title><link>%s</link><pubDate>%s</pubDate><descri
              all$title,
              paste0("http://plannapus.github.io/blog/",all$url),
              all$date,
-             gsub("^[[:space:]]+([^.!?]+[.!?]).+$","\\1",all$content))
+             gsub("^[[:space:]]+([^.!?]+[.!?]).+$","\\1",all$content)) #Regex to isolate first sentence
 cat(rss_header,k,rss_footer,file="rss.xml",sep="\n")
 
 template <- readLines("template.html")
@@ -32,6 +32,6 @@ last_html <- entries[grepl(as.character(all$date[2]),entries)]
 last <- readLines(last_html)
 w <- grep("Back to Index",last)
 last[w] <- gsub("<!--\\| <a href=\"\">Next entry &gt;</a>-->",
-                sprintf("| <a href=\"%s\">Next entry &gt;</a>",all$date[1]),
+                sprintf("| <a href=\"%s.html\">Next entry &gt;</a>",all$date[1]),
                 last[w])
 cat(last,sep="\n",file=last_html)
