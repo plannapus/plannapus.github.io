@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">A backbone for radiolarian phylogeny</p>
+			<p class="blog-date">2020-10-02</p>
+			<p class="blog-content">
+			It's been a couple of good years for radiolarian research! After almost 200 years of studying them, and failing to understand their classification fully (in part thanks to Haeckel honestly), three papers came out in the last 2 years that present molecular data to establish a proper backbone to living radiolarian phylogeny. The first one from last year by <a href="
+			https://doi.org/10.1016/j.protis.2019.02.002">Sandin et al.</a> presented a morpho-molecular classification of Nassellarians, then this year a paper by <a href="
+			https://doi.org/10.1016/j.protis.2019.125712">Nakemura et al.</a> sorted out the various groups considered by some to be modern Entactinarians (Entactinaria being an order of polycystines radiolarians known in the Paleozoic and the Mesozoic, primarily), and a preprint by <a href="https://doi.org/10.1101/2020.06.29.176917">Sandin et al.</a>, again, offered a morpho-molecular classification of Spumellarians. Patching them together and adding to that the work from a few years ago by <a href="https://doi.org/10.1016/j.revmic.2004.06.002">Osamu Takahashi et al. in 2004</a> which showed that the haeckelian order of Collodaria was in fact highly derived Nassellarians, and you get that combined tree (as long as i didn t make any mistakes): <br/>
+			<pre><code>((Eucyrtidoida, ((Acropyramioidea,((Carpocaniidae, Artostrobioidea),(Acanthodesmoidea,(Orosphaeridae,(Sphaerozoidae,(Collophidiidae,Collosphaeridae))Collodaria)))), (((Archipiloidea,Theopilidae),Plagiacanthoidea), (Cycladophoridae, (Lychnocanoidea,Pterocorythoidea)))))Nassellaria, ((Hexastyloidea, (Spongosphaeroidea,(Lithocyclioidea, Spongodiscoidea))), (Liosphaeroidea,((Rhizosphaeroidea,(Centrocubidae,Excentroconchidae)Centrocuboidea), ((Stylodictyoidea,(Actinommoidea,Spongopyloidea)), (Tholoniidae,Pyloniidae)Pylonioidea))))Spumellaria);
+			</code></pre>
+
+			<img class="current" src="img/radtree.png" title="Tree of polycystine radiolarians" width="600">
+			<p class="caption">Tree of living polycystine radiolarians; after Takahashi et al. 2004, Sandin et al. 2019, 2020, Nakemura et al. 2020.</p>
+
+			The biggest surprises for me in these studies and this tree are:
+			<ul><li> the fact that Orosphaeridae are the sister group of collodarians, and in fact belong to Nassellaria: though honestly, after the fact, it makes so much sense, as an intermediary step! </li>
+			<li> the placement of Cannobotryidae inside Plagicanthoidea: again, make sense, but how is it we never thought about it before? Maria Petrushevskaya did consider them sister taxa though.</li>
+			</ul>
+
+			Anyway, now that we have that, we can actually start testing skeletal homology hypothesis and start filling the blanks (given naturally the molecular studies used a very limited number of species/specimens for each group). Very exciting!
+
+			<h4>References </h4>
+			<p class="publications">Nakamura, Y., Sandin, M. M., Suzuki, N., Tuji, A., and Not, F. (2020). Phylogenetic revision of the order entactinaria—paleozoic relict radiolaria (rhizaria, sar). Protist, 171(1):125712.</p>
+			<p class="publications">Sandin, M. M., Pillet, L., Biard, T., Poirier, C., Bigeard, E., Romac, S., Suzuki, N., and Not, F. (2019). Time calibrated morpho-molecular classification of nassellaria (radiolaria). Protist, 170(2):187–208.</p>
+			<p class="publications">Sandin, M. M., Biard, T., Romac, S., O’Dogherty, L., Suzuki, N., and Not, F. (2020). Morpho-molecular diversity and evolutionary analyses suggest hidden life styles in spumellaria (radiolaria). bioRxiv.</p>
+			<p class="publications">Takahashi, O., Yuasa, T., Honda, D., and Mayama, S. (2004). Molecular phylogeny of solitary shell-bearing Polycystinea (Radiolaria). Revue de Micropaléontologie, 47(3):111-118.</p>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-09-28.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
