@@ -67,6 +67,9 @@ div.footer{
 td{
 	vertical-align: top;
 }
+td.date{
+	width: 90px;
+}
 /* Home page */
 
 div.flex{
