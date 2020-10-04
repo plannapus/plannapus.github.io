@@ -25,11 +25,9 @@ li.navbar{
 	font-size: 25px;
 	margin: 20px 0;
 }
-
 .MathJax{
 	font-size: 200% !important;
 }
-
 div.navbar {
 	background-color: white;
 	height: 100%;
@@ -45,22 +43,18 @@ div.navbar {
 	flex-direction: column;
 	border-right: 1px solid rgb(100,100,100);
 }
-
 h2{
 	font-size: 35px;
 }
-
 div.main{
 	margin-left: 175px;
 	padding: 0px 10px 30px 10px;
 	font-size:18px;
 }
-
 div.navbar div.page_foot{
 	margin-bottom: 40px;
 	font-size: 75%;
 }
-
 div.footer{
 	font-size: 85%;
 }
@@ -71,26 +65,21 @@ td.date{
 	width: 70pt;
 }
 /* Home page */
-
 div.flex{
 	padding-top: 10px;
 }
-
 div.index_text{
 	padding-right: 2em;
 }
-
 div.twitter-timeline{
 	border: solid 1px rgb(222,122,0);
 	margin-top: 2em;
 	right: 0;
 	width: 500px;
 }
-
 b.unbold{
 	font-weight:normal;
 }
-
 /* Current project page */
 p.current{
 	text-align: left;
@@ -102,7 +91,6 @@ img.current{
 	margin-right: auto;
 	max-width:100%;
 }
-
 div.main pre{
 	display: block;
 	margin-left: auto;
@@ -110,29 +98,24 @@ div.main pre{
 	max-width:100%;
 	font-size: 14px;
 }
-
 img.index{
 	display: block;
 	margin-right:auto;
 	max-width:100%;
 }
-
 .img_current{
 	margin-left: auto;
 	margin-right: auto;
 	max-width:100%;
 }
-
 p.caption{
 	font-size: 80%;
 	text-align: center;
 }
-
 span.tooltip{
 	position: relative;
 	border: 1px dotted rgb(222,122,0);
 }
-
 span.tooltip .tooltiptext{
 	visibility: hidden;
 	width: 120px;
@@ -147,23 +130,17 @@ span.tooltip .tooltiptext{
 	margin-left: -50px;
 	text-indent: 0em;
 }
-
 span.tooltip:hover .tooltiptext{
 	visibility: visible;
 }
-
 p.blog-title{
 	font-weight: bold;
 	font-size: 150%;
 }
-
 p.blog-date{
 	font-size:75%;
 }
-
-p.blog-content{
-}
-
+p.blog-content{}
 p.publications{
 	text-indent: -1em;
 	padding-left: 1em;
@@ -194,7 +171,6 @@ p.publications{
 	div.navbar ul{
 		width: 100%
 	}
-
 	div.navbar li{
 		font-size: 16px;
 		margin: 0px 10px;
@@ -202,11 +178,9 @@ p.publications{
 		text-align:center;
 		height: 45px;
 	}
-
 	div.navbar div.page_foot{
 		font-size: 60%;
 	}
-
 	h1,h2{
 		font-size: 25px;
 	}
@@ -214,7 +188,6 @@ p.publications{
 		width: 100%;
 		padding-right: 2em;
 	}
-
 	div.twitter-timeline{
 		border: solid 1px rgb(254,174,53);
 		margin-top: 2em;
