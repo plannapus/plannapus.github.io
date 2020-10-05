@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="A walk through my beamer theme" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">A walk through my beamer theme</p>
+			<p class="blog-date">2020-10-05</p>
+			<p class="blog-content">A few years ago I started converting to LaTeX: first for proposals, manuscripts and then eventually for presentations. I am not going to lie: the first one took me way longer than usual but since then, now that I have a basic template, it became really worth it. I didn't go for a flashy, fancy theme but made a very simple one based on <a href="https://www.museumfuernaturkunde.berlin/">my institution</a> official template. And since it is simple, it makes for a nice introduction to people willing to learn how to make their own beamer template. First: your theme will reside in a separate file, called by your main presentation file in a way similar to a package. A weird quirk of beamer is that your fill name has to be of the form "<b>beamertheme</b><i>themename</i>.sty", i.e. <code>beamerthemeexample.sty</code> for a theme called "example". In my case the file is called <code>beamerthememfn_green.sty</code>, and reside in the same folder as the presentation file, it is thus imported in it as follows:
+
+				<pre><code class="Latex">\usetheme{mfn_green}</code></pre>
+
+			The theme file (downloadable <a href="../data/beamer_template.zip">here</a>) itself starts like this:
+
+				<pre><code class="Latex">\mode&lt;presentation&gt;
+\usepackage{pgfcomp-version-0-65} %Used only to make presenter notes
+\usepackage{color}                %Used to define colors
+\usepackage{fontspec}             %Used to import a new font</code></pre>
+
+			After importing a few packages, it starts defines colors and the main font (here the one used in all official documentation by my institution: <span class="tooltip">Trade Gothic LT Std<span class="tooltiptext">Beware however that the presentation file thus needs to be compiled with xelatex or lualatex, not standard pdflatex/latex!</span></span>):
+
+<pre><code class="Latex">\definecolor{black}{RGB}{0, 0, 0}
+\definecolor{mfngreen}{RGB}{161, 191, 36}
+\usefonttheme{professionalfonts}
+\setmainfont{Trade Gothic LT Std}</code></pre>
+
+			Then set the apparence of normal slides:
+
+<pre><code class="Latex">\useinnertheme{rounded} %Base minimalist template
+\setbeamercolor{frametitle}{fg = mfngreen} %Titles are green...
+\setbeamerfont{frametitle}{size = \large}  %... large ...
+\setbeamertemplate{frametitle}[default][center] %... and centered
+\setbeamercolor{normal text}{fg = black}   %Rest of text is black
+\setbeamertemplate{navigation symbols}{}   %And i don't want any navigation symbols</code></pre>
+
+			Then the title slide:
+
+<pre><code class="Latex">\setbeamertemplate{title page}{
+	\begin{center}
+	\huge{\textcolor{mfngreen}\inserttitle}  %The title of the talk, called in the file with \title{}
+
+	\vspace{1cm}
+	\Large{\insertauthor}                    %The author(s) of the talk, called in the file with \author{}
+
+	\small{\insertinstitute}                 %Their institute, called in the file with \institute{}
+
+	\small{\insertdate}						 %And the date (called with \date{})
+
+	\end{center}
+}</code></pre>
+
+			The "outline" slide:
+
+<pre><code class="Latex">\setbeamercolor{section in toc}{fg= black}
+\setbeamertemplate{itemize item}{\color{mfngreen}$\textbullet$} %All lists have a green bullet for each item
+\setbeamertemplate{itemize subitem}{\color{mfngreen}$\textbullet$} %...and subitem
+\setbeamertemplate{section in toc}{\color{mfngreen}$\textbullet$~\color{black}\inserttocsection} %Needs to be specified separately for the TOC</code></pre>
+
+			And then I created a new environment for the "thank you" frame:
+
+<pre><code class="Latex">\newenvironment{thankframe}{
+	\setbeamercolor{frametitle}{fg = black}
+	\setbeamercolor{background canvas}{bg=mfngreen} %Here the background is green and the title black
+	\begin{frame}
+}
+{\end{frame}}</code></pre>
+
+			The file then terminates with this statement:
+			
+			<pre><code class="Latex">\mode
+&lt;all&gt;</code></pre>
+
+			And it's basically it! In the real file I also upload a couple of logos to add to the first and last slide footers but it could be as well done in the presentation file itself with the usual <code>\includegraphics</code> bit.
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-10-02.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
