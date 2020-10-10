@@ -21,7 +21,7 @@ k <- sprintf("<item><title>%s</title><link>%s</link><pubDate>%s</pubDate><descri
              all$title,
              paste0("http://plannapus.github.io/blog/",all$url),
              all$date,
-             gsub("^[[:space:]]*([^.!?]+[.!?]).+$","\\1",all$content)) #Regex to isolate first sentence
+             gsub("^[[:space:]]*([^\n]+)\n.+$","\\1",all$content)) #Regex to isolate first sentence
 cat(rss_header,k,rss_footer,file="rss.xml",sep="\n")
 
 template <- readLines("template.html")
