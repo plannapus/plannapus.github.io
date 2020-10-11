@@ -8,6 +8,12 @@ process <- function(html_file){
   desc <- xpathSApply(h,"//p[@class='blog-content']",xmlValue)
   data.frame(url=html_file,title=tit,date=as.Date(dat),content=desc)
 }
+code <- function(html_file){
+  h <-htmlParse(html_file,encoding="utf-8")
+  x <- xpathSApply(h,"//pre/code",xmlAttrs)[['class']]
+  ifelse(is.null(x),NA,x)
+}
+lang <- sapply(entries,code)
 all <- do.call(rbind,lapply(entries,process))
 all <- all[order(all$date,decreasing=TRUE),]
 index <- readLines("index.html",encoding="utf-8")
@@ -17,11 +23,12 @@ cat(index,file="index.html",sep="\n")
 
 rss_header <- "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<rss version=\"2.0\">\n<channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>"
 rss_footer <- "</channel>\n</rss>"
-k <- sprintf("<item><title>%s</title><link>%s</link><pubDate>%s</pubDate><description>%s</description></item>",
+k <- sprintf("<item><title>%s</title><link>%s</link><pubDate>%s</pubDate><description>%s</description>%s</item>",
              all$title,
              paste0("http://plannapus.github.io/blog/",all$url),
              all$date,
-             gsub("^[[:space:]]*([^\n]+)\n.+$","\\1",all$content)) #Regex to isolate first sentence
+             gsub("^[[:space:]]*([^\n]+)\n.+$","\\1",all$content), #Regex to isolate first sentence
+             ifelse(is.na(lang),"",sprintf("<category>%s</category>",lang)))
 cat(rss_header,k,rss_footer,file="rss.xml",sep="\n")
 
 template <- readLines("template.html")
