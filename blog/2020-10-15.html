@@ -16,8 +16,8 @@
 			});
 		});
 		</script>
-		<meta property="og:title" content="" />
-		<meta property="og:image" content="" />
+		<meta property="og:title" content="First step in mixing gplates and R to make paleogeographic maps" />
+		<meta property="og:image" content="2020-10-15" />
 		<meta property="og:type" content="website" />
 		<title>Johan Renaudie - Blog</title>
 	</head>
@@ -34,7 +34,7 @@
 					<li class="navbar"><a href="../links.html">Links</a></li>
 		        </ul>
 			</div>
-			<div class="page_foot">
+			<div class="page_foot">2020-10-15
 				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
 				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
 				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
@@ -47,7 +47,9 @@
 		
 OK as the idea here is really just to give a first glance of the tools I will start straight ahead with converting a standard coastline map to a late Eocene base map using <a href="https://linkinghub.elsevier.com/retrieve/pii/S0012825212000311">Seton et al. 2012 rotation model</a>. Why? Because all you need is given with Gplates, and this is the one we have been using in <a href="http://nsb-mfn-berlin.de">Neptune</a>.
 <pre><code class="R">library(rgdal)
-system("gplates reconstruct -l /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Coastlines/Shapefile/Seton_etal_ESR2012_Coastlines_2012.1_Polygon.shp -r /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Rotations/Seton_etal_ESR2012_2012.1.rot -e shapefile -t 33.5 -o ~/Desktop/reconstructed")
+system("gplates reconstruct -l /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Coastlines/Shapefile/Seton_etal_ESR2012_Coastlines_2012.1_Polygon.shp \\
+-r /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Rotations/Seton_etal_ESR2012_2012.1.rot \\
+-e shapefile -t 33.5 -o ~/Desktop/reconstructed")
 #A lot to unpack: here I use the "feature collections" given with Gplates. 
 # '-l'  argument is the feature to modify
 # '-r' the rotation model
@@ -90,7 +92,7 @@ plot(polar_113,col="red",pch=19,add=TRUE,cex=0.5)
 box(lwd=3)
 dev.off()</code></pre>
 
-<p>The resulting pdf:</p>
+<p>The resulting picture: a map of the Southern Ocean at the Eocene-Oligocene boundary, highlighting the varous sites from ODP expedition 113 to the Weddell Sea.</p>
 <img class="current" src="img/eocene.png" width="400">
 			</p>
 			<hr/>
