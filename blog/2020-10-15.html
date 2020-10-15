@@ -73,8 +73,8 @@ dbDisconnect(nsb) #Disconnect
 <pre><code class="R">orig_projection &lt;- CRS("+proj=longlat")
 dest_projection &lt;- CRS("+proj=laea +lat_0=-90 +lon_0=0") #This is the proj4 string for said projection
 #It is fairly straight-forward: +proj=laea means Lambert Azimuthal Equal Area Projection
-# +lat_0=-90 we takes latitude -90 as the center of the projection
-# +lon_0=0 and the Greenwhich meridian is kept at the center top.
+# +lat_0=-90 : we take latitude -90 as the center of the projection
+# +lon_0=0 : and the Greenwhich meridian is kept at the center (top).
 exp113pts &lt;- SpatialPointsDataFrame(exp113[,c("paleo_longitude","paleo_latitude")],data=exp113, proj4string=orig_projection) #Make the sites coordinates into a "Spatial-" object, that can be transformed.
 polar &lt;- spTransform(coast,dest_projection) #Transform the base map
 polar_113 &lt;- spTransform(exp113pts,dest_projection) #Transform the data points</code></pre>
