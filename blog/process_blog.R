@@ -15,6 +15,7 @@ code <- function(html_file){
 }
 lang <- sapply(entries,code)
 all <- do.call(rbind,lapply(entries,process))
+lang <- lang[order(all$date,decreasing=TRUE)]
 all <- all[order(all$date,decreasing=TRUE),]
 index <- readLines("index.html",encoding="utf-8")
 j <- sprintf("\t\t\t<tr><td class=\"date\">%s</td><td class=\"title\"><a href=\"%s\">%s</a></td></tr>",all$date, all$url, all$title)

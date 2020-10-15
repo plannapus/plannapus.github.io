@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="" />
+		<meta property="og:image" content="" />
+		<meta property="og:type" content="website" />
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">First step in mixing gplates and R to make paleogeographic maps</p>
+			<p class="blog-date">2020-10-15</p>
+			<p class="blog-content">I make <a href="http://www.biogeosciences.net/13/6003/2016/">a lot of paleogeographic maps</a>, and I always do so in R. Whichever way you do, <a href="https://www.gplates.org/">Gplates</a> is an invaluable tool to do so. What follows is a <span class="tooltip">short example<span class="tooltiptext">as mentioned in the previous post I am still processing some bad news so it's all I am capable of conjuring right now</span></span> of how to insert it in your workflow to map your paleodata.
+		
+OK as the idea here is really just to give a first glance of the tools I will start straight ahead with converting a standard coastline map to a late Eocene base map using <a href="https://linkinghub.elsevier.com/retrieve/pii/S0012825212000311">Seton et al. 2012 rotation model</a>. Why? Because all you need is given with Gplates, and this is the one we have been using in <a href="http://nsb-mfn-berlin.de">Neptune</a>.
+<pre><code class="R">library(rgdal)
+system("gplates reconstruct -l /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Coastlines/Shapefile/Seton_etal_ESR2012_Coastlines_2012.1_Polygon.shp -r /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Rotations/Seton_etal_ESR2012_2012.1.rot -e shapefile -t 33.5 -o ~/Desktop/reconstructed")
+#A lot to unpack: here I use the "feature collections" given with Gplates. 
+# '-l'  argument is the feature to modify
+# '-r' the rotation model
+# '-e' the format of the output
+# '-t' the desired time in Million years
+# '-o' the basename of the output
+# Here I have gplates on my sys.path, but you can just point at the binary file directly
+coast &lt;- readOGR("/Users/johan.renaudie/Desktop","reconstructed") #Read it in in R
+</code></pre>
+
+<p>Using <a href="https://github.com/plannapus/NSBcompanion">my package NSBcompanion</a>, grab in the <a href="http://nsb-mfn-berlin.de">NSB database</a> some data, here, to simplify, the paleocoordinates of the sites from ODP leg 113 (though I will show in a future post how to calculate them as well using gplates CLI tool).</p>
+
+<pre><code class="R">library(NSBcompanion)
+nsb &lt;- nsbConnect("guest","arm_aber_sexy") #Connect to Neptune
+exp113 &lt;- dbGetQuery(nsb,"SELECT hole_id, paleo_latitude, paleo_longitude,rotation_source FROM neptune_paleogeography WHERE hole_id LIKE '113_%' AND reconstructed_age_ma=33.5;") #Grabs the Leg 113 paleocoordinates
+dbDisconnect(nsb) #Disconnect
+</code></pre>
+
+<p>The next step is to transform from the standard longitude-latitude projection to something more suited to the Southern Ocean, here the Lambert Azimuthal Equal Area Projection.</p>
+
+<pre><code class="R">orig_projection &lt;- CRS("+proj=longlat")
+dest_projection &lt;- CRS("+proj=laea +lat_0=-90 +lon_0=0") #This is the proj4 string for said projection
+exp113pts &lt;- SpatialPointsDataFrame(exp113[,c("paleo_longitude","paleo_latitude")],data=exp113, proj4string=orig_projection)
+polar &lt;- spTransform(coast,dest_projection) #Transform the base map
+polar_113 &lt;- spTransform(exp113pts,dest_projection) #Transform the data points</code></pre>
+
+<p>To make the plot a bit cleaner, I use this dumb trick to zzom in: I create a fake parallel (here 45 degree South) and plot it first to force the plot to zoom in.</p>
+
+<pre><code class="R">limitANT &lt;- Lines(list(Line(cbind(seq(-180,180,by=1),rep(-45,361)))),ID="a") #Make the object
+limitANT &lt;- SpatialLines(list(limitANT),proj4string=orig_projection) #Make the object
+limitANT &lt;- spTransform(limitANT,dest_projection) #Transform</code></pre>
+
+<p>And then plot everything as wanted:</p>
+
+<pre><code class="R">png("eocene.png",h=400,w=400)
+par(mar=c(0,0,0,0))
+plot(limitANT,col="white")
+plot(polar,col="grey80",border=NA,add=TRUE)
+plot(polar_113,col="red",pch=19,add=TRUE,cex=0.5)
+box(lwd=3)
+dev.off()</code></pre>
+
+<p>The resulting pdf:</p>
+<img class="current" src="img/eocene.png" width="400">
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-10-10.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
