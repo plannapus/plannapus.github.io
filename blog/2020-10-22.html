@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<meta property="og:title" content="Sarah's paper in Nature Communications" />
+		<meta property="og:image" content="img/kozoi.png" />
+		<meta property="og:type" content="website" />
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Sarah's paper in <i>Nature Communications</i></p>
+			<p class="blog-date">2020-10-22</p>
+			<p class="blog-content">
+			At last, our paper, lead by <a href="https://www.researchgate.net/profile/Sarah_Trubovitz">Sarah Trubovitz</a>, came out today in <a href="http://doi.org/10.1038/s41467-020-18879-7"><i>Nature Communications</i></a> ! Sarah came to visit us in Berlin twice in 2017 to learn/figure out with us the taxonomy of Neogene radiolarians from the equatorial Pacific. We had an inkling that the actual amount of species in that region/timeframe would be way higher that what was published but I must admit we did't expect that much: she found 990 species just in the last 10 million years of a single site!
+			<p>Later, Dave, Paula and her got the idea to compare the species richness and the species content of her work with the Southern Ocean dataset that <a href="http://dx.doi.org/10.1666/12016">I counted during my thesis</a>, eons ago, and figure out if the extinction event I saw was global, regional or in fact just a migration out of the Antarctic circle, i. e. range shrinking due to the global cooling of the late Miocene (find out more about it by reading the <a href="">press release</a>... or naturally the paper itself). I didn't have that much time to spent contributing to the writing itself but as the concept was to directly compare the species ranges in both our datasets, I was naturally involved, in particular to match her species concepts with mine. It was quite the nice surprise to see some of the species I described in the Southern Ocean based on a few specimens popping up in the equatorial Pacific!</p>
+
+			<table class="img_current"><tr>
+				<td><img class="current" src="img/kozoi.png" title="Lithomelissa kozoi" width="240"></td>
+				<td><img class="current" src="img/sugiyamai.png" title="Clathrocorys sugyiamai" width="315"></td>
+			</tr></table>
+			<p class="caption"><i>Lithomelissa</i>? <i>kozoi</i> and <i>Clathrocorys sugyiamai</i> (both described in <a href="http://dx.doi.org/10.1144/jmpaleo2011-025">Renaudie &amp; Lazarus 2013</a>) were among the species also found in the Equatorial Pacific.</p>
+
+			<p>Despite the fact that radiolarians from these two regions are basically studied since close to 200 years, it might surprise some to know that <a href="https://doi.org/10.5281/zenodo.4014322">Sarah's dataset and mine</a> are, to date, the only two datasets that <i>tried</i> to actually record exhaustively the full diversity of those faunas! In part because radiolarian are so insanely diverse, but also simply because studying biodiversity was/is not a (fundable) goal of micropaleontology.</p>
+			<p>Later during reviews, I also contributed a little piece of statistical analysis that I am actually quite proud of – despite it being a very, very small part of the whole paper naturally :) It uses a nice trick I learned on <a href="https://stats.stackexchange.com/">CrossValidated</a> (sadly I can't seem to find the post itself back) to test the significance of an event in a time serie: building an AR model for the time serie, and adding as explaining variable to the model a categorical variable stating whether the data points belong to the interval before or after the event, and then test if that variable explains a significant proportion of the variance (using a Wald test). It's fairly simple but it nicely goes around the limitation a t-test would have (as the data in a timeseries would most likely not be independent).</p>
+			<p>Sarah also wrote a "Behind The Paper" story that you will find on the <a href="https://natureecoevocommunity.nature.com/">Nature Ecology &amp; Evolution Community blog</a>.</p>
+			<p class="publications">Trubovitz S., Lazarus D., Renaudie J., Noble P.J., 2020. <a href="http://doi.org/10.1038/s41467-020-18879-7">Marine plankton show threshold extinction response to Neogene climate change</a>. <i>Nature Communications</i>, 11:5069.</p>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-10-21.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
