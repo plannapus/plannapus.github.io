@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<meta property="og:title" content="A few thoughts on stratigraphy" />
+		<meta property="og:image" content="../static/nsb_adp.png" />
+		<meta property="og:type" content="website" />
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">A few thoughts on stratigraphy</p>
+			<p class="blog-date">2020-10-28</p>
+			<p class="blog-content">
+				This summer I wrote a <a href="https://nfdi4earth.de/images/nfdi4earth/documents/pilots/proposals/132-CHRONOSTRATIGRAPHIC_API_RDC_SERVICES.pdf">pre-proposal</a> for a pilote project (whose goal was to create a data standard for stratigraphy) in the context of the <a href="https://www.nfdi4earth.de/">NFDI4Earth</a>, a german-wide initiative to create a common infrastructure for geosciences-related research data. 
+				My preproposal was not selected, which, given its <span class="tooltip">niche<span class="tooltiptext">broader than it seems but maybe it wasn't made clear in my proposal</span></span> subject, was more or less expected.
+
+				<p>It was nonetheless a very good occasion to put in writings some thoughts I had about stratigraphy as a science, and I kept pondering about it since then. I do think there are a significant number of issues in stratigraphy that prevent it from going forward.</p>
+
+				<p>The first issue, that I wanted to address with that proposal, is the issue of reproducibility. Instead of re-explaining it, here's the main point I made in a preliminary version of the proposal:</p>
+
+				<pre class="quote">Current exchange standards reflect the fact that chronostratigraphic information in many databases is reduced to a single text or numerical age tag for an object. However this value is not raw data but interpreted data, which depends on how the age was inferred; what biostratigraphic, magnetostratigraphic or isotopic data were used, how these data were calibrated and to which standard timescale (e.g. a geomagnetic polarity time scale - GPTS) the calibrations were made. As calibrations and standard scales evolve with time, those static age assignments attached to samples are frequently out of date and incorrect. The relevant chronostratigraphic data needed to correct these ages, despite often being in existence, is typically stored in another system and is not linked to the sample records. The absence of linked chronostratigraphic metadata accompanying these age assignments, or a standard for creating the linkage, is a major hinderance to correct data synthesis.</pre>
+
+				<p>The second issue is that of error quantification. It's a fairly complex issue that I am not sure to be able to verbalize correctly here but to make it simple: age models (in deep-sea stratigraphy at least) are made based on biostratigraphic, magnetostratigraphic, isotopic data;  all those data come with a margin of error, first in depth as the cores are sampled discretely, and more importantly in time; that error, in the current state of affair, is not propagated to the age model. It should be, but we simply do not have the mathematical framework to do so correctly (as far as I can judge) currently. More generally, statistics in stratigraphy is widely underdeveloped as a discipline but is necessary for the field to go forward. I dream of seeing one day an IODP site being dated with an age model with a confidence interval!</p>
+
+				<p>Another, more minor issue, that may be unique to deep-sea stratigraphy, is the assumption of linearity in the sedimentation rate, i. e. what makes age models a series of connected segments rather than a smooth curve (see for instance my age-model making software <a href="http://github.com/plannapus/nsb_adp_wx">NSB_ADP_wx</a> as main culprit). There are plenty of evidence for a dynamically changing sedimentation rate. Of course implementing that to routinely create non-broken age models is frankly very complex, but it is most probably the way to go forward.</p>
+
+				<p>Unfortunately, apart from the first issue mentioned, for which I had a solution (creating a metadata standard), the other issues are more open-ended, and I, unfortunately, do not have a solution so far. But I am working on it!</p>
+
+				<img class="current" width="800" src="../static/nsb_adp.png">
+				<p class="caption">Quite a textbook scenario for everything I mentioned here!</p>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-10-22.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>

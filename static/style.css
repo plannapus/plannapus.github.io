@@ -153,6 +153,11 @@ p.publications{
 	font-size: 90%;
 	margin-left: 5px;
 	}
+pre.quote{
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	padding-left: 2em;
+}
 
 @media screen and (max-width: 500px) {
 	div.navbar{
