@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="Addendum to the previous post on paleogeographic maps" />
+		<meta property="og:image" content="img/" />
+		<meta property="og:type" content="website" />
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Addendum to the previous post on paleogeographic maps</p>
+			<p class="blog-date">2020-11-03</p>
+			<p class="blog-content">
+				As it turned out, I realized the way I have been making maps in R since 10 years is more or less deprecated! Package <code>sp</code> was superseded by package <code>sf</code>, and indeed the coordinate system transformation works so much better and do not need as much <a href="https://github.com/plannapus/Unsorted-functions/blob/master/myTransform.R">weird hacking</a> to work on complex projections.
+				The code from <a href="2020-10-15.html">last time</a> thus become as follows:
+				<pre><code class="r">library(sf)
+system("gplates reconstruct -l /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Coastlines/Shapefile/Seton_etal_ESR2012_Coastlines_2012.1_Polygon.shp \\
+-r /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Rotations/Seton_etal_ESR2012_2012.1.rot \\
+-e shapefile -t 33.5 -o ~/Desktop/reconstructed")
+coast &lt;- read_sf("~/Desktop/reconstructed.shp") #This, already, is an improvement on the previous cumbersome readOGR
+
+library(NSBcompanion)
+nsb &lt;- nsbConnect("guest","arm_aber_sexy",intern=TRUE)
+exp113 &lt;- dbGetQuery(nsb,"SELECT hole_id, paleo_latitude, paleo_longitude,rotation_source FROM neptune_paleogeography WHERE hole_id LIKE '113_%' AND reconstructed_age_ma=33.5;")
+dbDisconnect(nsb)
+
+dest_projection &lt;- CRS("+proj=laea +lat_0=-90 +lon_0=0")
+exp113pts &lt;- st_multipoint(cbind(exp113$paleo_longitude, exp113$paleo_latitude),dim="XY") #Two-step approach, similar to what we had in "sp"
+exp113sfc &lt;- st_sfc(exp113pts,crs="+proj=longlat")
+polar_113 &lt;- st_transform(exp113sfc,dest_projection)
+polar &lt;- st_transform(coast,dest_projection)
+
+limitANT &lt;- st_sfc(st_linestring(cbind(-180:180,-45)),crs="+proj=longlat") #Way simpler here.
+limitANT &lt;- st_transform(limitANT,dest_projection)
+
+png("eocene2.png",h=400,w=400)
+par(mar=c(0,0,0,0))
+plot(limitANT,col="white")
+plot(polar$geometry,col="grey80",border="grey80", add=TRUE)
+plot(polar_113,col="red",pch=19,cex=0.5,add=TRUE)
+box(lwd=3)
+dev.off()</code></pre>
+
+With the following result (identical to the one in the previous post obviously):
+<img class="current" src="img/eocene2.png" width="400">
+
+Trying more complex, better projections is clearly seamless (though not trivial) but still have a few glitches that will need to taken care of:
+
+<pre><code class="r">dest_projection2 &lt;- CRS("+proj=ortho +lat_0=-90 +lon_0=0") #Projection orthogonal, more natural
+polar2_113 &lt;- st_transform(exp113sfc,dest_projection2)
+polar2 &lt;- st_transform(coast,dest_projection2)
+
+valids &lt;- st_is_valid(polar2) # Some geometries fail with that projection unfortunately
+
+png("eocene3.png",h=400,w=400)
+par(mar=c(0,0,0,0))
+
+#Draw a circle around earth
+r &lt;- 6400000 #earth radius
+t &lt;- seq(0,2*pi,by=0.01)
+plot(r*cos(t),r*sin(t),col="black",lty=1,lwd=1.5,type="l")
+
+plot(polar2[valids,]$geometry,col="grey80",border="grey80",add=TRUE)
+plot(st_make_valid(polar2[!valids,]),col="grey80",border="grey80",add=T) #Yes, as simple as "make_valid" :)
+plot(polar2_113,col="red",pch=19,cex=0.5,add=TRUE)
+
+dev.off()</code></pre>
+
+As one can see South America and Africa suffer from the projection:
+<img class="current" src="img/eocene3.png" width="400">
+
+Hopefully I ll find a solution for that, at some point.
+
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-10-28.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
