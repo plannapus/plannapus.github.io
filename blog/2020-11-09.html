@@ -16,7 +16,7 @@
 			});
 		});
 		</script>
-		<meta property="og:title" content="" />
+		<meta property="og:title" content="Calculating paleocoordinates with gplates and R" />
 		<meta property="og:image" content="img/turonian.png" />
 		<meta property="og:type" content="website" />
 		<title>Johan Renaudie - Blog</title>
@@ -78,11 +78,11 @@ rm(e3)</code></pre>
 Then we use the same method as previously to reconstruct the coastlines and the sites at the given time (here 90Ma):
 
 <pre><code class="r">system("gplates reconstruct -t 90 -l exp379.shp\\
-       -r /Users/johan.renaudie/Desktop/Matthews_etal_2016_Global_Plate_Model_GPC/Global_EB_250-0Ma_GK07_Matthews_etal.rot\\
+       -r Matthews_etal_2016_Global_Plate_Model_GPC/Global_EB_250-0Ma_GK07_Matthews_etal.rot\\
        -o exp379_cretaceous -e shapefile")
 
-system("gplates reconstruct -t 90 -l /Users/johan.renaudie/Desktop/Matthews_etal_2016_Global_Plate_Model_GPC/StaticGeometries/Coastlines/Global_coastlines_2015_v1_low_res.shp \\
-       -r /Users/johan.renaudie/Desktop/Matthews_etal_2016_Global_Plate_Model_GPC/Global_EB_250-0Ma_GK07_Matthews_etal.rot\\
+system("gplates reconstruct -t 90 -l Matthews_etal_2016_Global_Plate_Model_GPC/StaticGeometries/Coastlines/Global_coastlines_2015_v1_low_res.shp \\
+       -r Matthews_etal_2016_Global_Plate_Model_GPC/Global_EB_250-0Ma_GK07_Matthews_etal.rot\\
        -o coast_cretaceous -e shapefile")</code></pre>
 
 And finally we plot them the exact same way as previously
