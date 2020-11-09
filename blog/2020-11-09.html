@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="" />
+		<meta property="og:image" content="img/turonian.png" />
+		<meta property="og:type" content="website" />
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Calculating paleocoordinates with gplates and R</p>
+			<p class="blog-date">2020-11-09</p>
+			<p class="blog-content">
+As promised in the <a href="2020-10-15.html">first post of this series</a>, I am going to show here how to use gplates to calculate the paleocoordinates of specific sites given a specific rotation model, using GPlates. To make it worth it, I'll use here the <a href="https://doi.org/10.1016/j.gloplacha.2016.10.002">Matthews et al. 2016</a> rotation model as it is an update on the one we are using in the Neptune database. Also, and just for fun, we are going to compute the paleocoordinates of the two sites we drilled during <a href="https://iodp.tamu.edu/scienceops/expeditions/amundsen_sea_ice_sheet_history.html">Expedition 379</a> to the Amundsen Sea, an expedition I was part of. We only drilled until the latest Miocene but here I am going to compute the coordinates in the Turonian (as a tribute to the <a href="https://www.nature.com/articles/s41586-020-2148-5">Klages et al. 2020 paper</a>).
+
+The first step, as usual, is to get the sites current coordinates from Neptune (using my <a href="https://github.com/plannapus/NSBcompanion">NSBcompanion</a> package). I know that I mentioned in <a href="2020-11-03.html">the previous post</a> that <code>rgdal/sp</code> packages were obsolete and needed to be replaced with package <code>sf</code>, but I am not yet familiar enough with <code>sf</code> so here it is with <code>rgdal/sp</code>:
+
+				<pre><code class="r">library(rgdal)
+setwd("~/Desktop") #For code simplicity I am explicitely setting a working directory in which every file will be.
+nsb &lt;- NSBcompanion::nsbConnect("guest","arm_aber_sexy")
+exp379 &lt;- dbGetQuery(nsb,"SELECT hole_id, longitude, latitude FROM neptune_hole_summary WHERE leg=379 and hole='A';")
+dbDisconnect(nsb)
+exp379sp &lt;- SpatialPointsDataFrame(exp379[,-1],data=exp379, proj4string=CRS("+proj=longlat"))
+writeOGR(exp379sp,".","exp379",driver="ESRI Shapefile") #"." because we save it in the current folder</code></pre>
+
+Then we'll download the data from the Matthews et al. 2016 paper from the EarthByte website (the makers of GPlates).
+
+<pre><code class="r">download.file("https://www.earthbyte.org/webdav/ftp/Data_Collections/Matthews_etal_2016_Global_Plate_Model_GPC.zip","Matthews_etal_2016.zip") #download
+unzip("Matthews_etal_2016.zip") #unzip</code></pre>
+
+Here we determine on which tectonic plates the sites we want to backtrack are:
+
+<pre><code class="r">system("gplates assign-plate-ids -p Matthews_etal_2016_Global_Plate_Model_GPC/Global_EarthByte_Mesozoic-Cenozoic_plate_boundaries_Matthews_etal.gpml\\
+       -l exp379.shp -t 0 -s shapefile")
+# -p is the plate boundary file that will be used to partition the sites
+# -l is the feature we want to partition
+# -t is the time at which the features are taken
+# -s is the format we want to save the result as
+
+# Just to check it worked, read in the file and check it has plate IDs
+e3 &lt;- readOGR(".","exp379")
+e3$PLATEID1 #Should show 802 for both sites.
+rm(e3)</code></pre>
+
+Then we use the same method as previously to reconstruct the coastlines and the sites at the given time (here 90Ma):
+
+<pre><code class="r">system("gplates reconstruct -t 90 -l exp379.shp\\
+       -r /Users/johan.renaudie/Desktop/Matthews_etal_2016_Global_Plate_Model_GPC/Global_EB_250-0Ma_GK07_Matthews_etal.rot\\
+       -o exp379_cretaceous -e shapefile")
+
+system("gplates reconstruct -t 90 -l /Users/johan.renaudie/Desktop/Matthews_etal_2016_Global_Plate_Model_GPC/StaticGeometries/Coastlines/Global_coastlines_2015_v1_low_res.shp \\
+       -r /Users/johan.renaudie/Desktop/Matthews_etal_2016_Global_Plate_Model_GPC/Global_EB_250-0Ma_GK07_Matthews_etal.rot\\
+       -o coast_cretaceous -e shapefile")</code></pre>
+
+And finally we plot them the exact same way as previously
+
+<pre><code class="r">exp379cret &lt;- readOGR(".","exp379_cretaceous")
+coast &lt;- readOGR(".","coast_cretaceous")
+
+dest_projection &lt;- CRS("+proj=laea +lat_0=-90 +lon_0=0")
+polar &lt;- spTransform(coast,dest_projection)
+polar_379 &lt;- spTransform(exp379cret,dest_projection)
+polar_poly &lt;- as(polar,"SpatialPolygons") #Here the coastlines are indeed lines, but we want them as polygons so that we can color-fill them.
+
+limitANT &lt;- Lines(list(Line(cbind(-180:180,-45))),ID="a")
+limitANT &lt;- SpatialLines(list(limitANT),proj4string=CRS("+proj=longlat")) 
+limitANT &lt;- spTransform(limitANT,dest_projection)
+
+png("turonian.png",h=400,w=400)
+par(mar=c(0,0,0,0))
+plot(limitANT,col="white")
+plot(polar_poly,col="grey80",border="grey80",add=TRUE)
+plot(polar_379,col="red",pch=19,add=TRUE,cex=0.5)
+box(lwd=3)
+dev.off()</code></pre>
+
+<img class="current" src="img/turonian.png" width="400">
+
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-11-03.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
