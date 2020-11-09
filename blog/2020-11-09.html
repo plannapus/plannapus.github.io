@@ -85,7 +85,7 @@ system("gplates reconstruct -t 90 -l Matthews_etal_2016_Global_Plate_Model_GPC/S
        -r Matthews_etal_2016_Global_Plate_Model_GPC/Global_EB_250-0Ma_GK07_Matthews_etal.rot\\
        -o coast_cretaceous -e shapefile")</code></pre>
 
-And finally we plot them the exact same way as previously
+And finally we plot them the exact same way as previously:
 
 <pre><code class="r">exp379cret &lt;- readOGR(".","exp379_cretaceous")
 coast &lt;- readOGR(".","coast_cretaceous")
