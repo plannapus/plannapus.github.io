@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="A look at the code behing the blog" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">A look at the code behing the blog</p>
+			<p class="blog-date">2020-11-20</p>
+			<p class="blog-content">
+				This is going to be very meta, I'm afraid. In the <a href="2020-09-27.html">first post of this blog</a> I said that I wasn't sure why I was doing this. Two months later, I am still not entirely sure of my motivation (though being fairly obsessive it allows me to put all my thoughts somewhere instead of rehashing them constantly in my mind, so it does help with that) but I know that one of the small reason was to see if I was able to write down a very simple code to write a functional blog.
+
+				<p>As you may have noticed reading this, this website is fairly minimalistic. The first reason is of course that I am not a designer, but the second and main reason is that my biggest issue with Web 2.0 is that it is bloated. If you are looking at the source code of most pages, it is way bigger than it should be, between all the unnecessary javascript calls, the opaque automatically built CSS (typical of blogingg environment such as wordpress) , the google analytics and whatnots... It does annoy me primarily because all that extraneous content as a carbon footprint, but also because it obfuscates the web. So I have been doing simple, easily maintainable, functional pages using pure HTML and CSS (and a very tiny bit of javascript, when MathJax or a syntax highlighter is needed). But blogs are a tad more complex to maintain (because of the index, the categories etc.).</p>
+
+				<p>So here is what I came up with.</p>
+
+				<p>First the template for a blog page (that you can see in full <a href="https://github.com/plannapus/plannapus.github.io/blob/master/blog/template.html">here</a>) has two parts: the first one is the navigation part common to the rest of the website (the thing you see on the left) and the rest is the blogpost itself:</p>
+
+				<pre><code class="html">&lt;div class="main"&gt;
+&lt;p class="blog-title"&gt;&lt;/p&gt;
+&lt;p class="blog-date"&gt;&lt;/p&gt;
+&lt;p class="blog-content"&gt;
+  &lt;!-- &lt;preglt;&lt;code class="r"&gt;
+  &lt;/code&gt;&lt;/pre&gt; --&gt;
+&lt;/p&gt;
+&lt;hr/&gt;
+  &lt;div class="footer"&gt;
+    &lt;a href="2020-11-13.html">&amp;lt; Previous entry&lt;/a&gt; | &lt;a href="index.html"&gt;Back to Index&lt;/a&gt; &lt;!--| &lt;a href=""&gt;Next entry &amp;gt;&lt;/a&gt;--&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+				<p>Basically the idea is just to fill in the title, date and content. I do not touch the rest at first. You will notice that the link to the previously published page is already entered (the script does that). Only in the <code>&lt;head&gt;</code> part of the html code I modify the following meta tags:</p>
+
+				<pre><code class="html">&lt;meta property="og:title" content="" /&gt;
+&lt;meta property="og:image" content="" /&gt;
+&lt;meta name="category" content=""&gt;</code></pre>
+
+				<p>The first three will define the "overview" of the webpage if shared on facebook, twitter, reddit etc. The fourth one will be used by my code to define in which category the page will be displayed.</p>
+
+				<p>And so, the <a href="http://github.com/plannapus/plannapus.github.io/blob/master/blog/process_blog.R">code itself</a> (in R, naturally), to process the blog:</p>
+
+				<pre><code class="R">library(XML) #Only uses package XML
+process &lt;- function(html_file){ 
+# This function will retrieve the content of each blogpost as a dataframe
+# containing the url, the date, the title and the actual content.
+  h &lt;-htmlParse(html_file,encoding="utf-8") #Parse the file
+  tit &lt;- xpathSApply(h,"//p[@class='blog-title']",xmlValue) #Extract the title
+  dat &lt;- xpathSApply(h,"//p[@class='blog-date']",xmlValue) #The date
+  desc &lt;- xpathSApply(h,"//p[@class='blog-content']",xmlValue) #the content
+  data.frame(url=html_file,title=tit,date=as.Date(dat),content=desc)
+}
+categories &lt;- function(html_file){
+#This one grabs the categories I blogpost were entered under
+  h &lt;-htmlParse(html_file,encoding="utf-8")
+  x &lt;- as.data.frame(do.call(rbind,xpathApply(h,"//meta[@name='category']",xmlAttrs)))[['content']]
+  `if`(length(x),x,NA) #If no category, returns NA
+}
+
+setwd("plannapus.github.io/blog") #The path to the blog folder
+entries &lt;- dir(pattern="[0-9].html") #takes all the blogpost files
+
+all &lt;- do.call(rbind,lapply(entries,process)) #Apply the process function to each file and turn into a single dataframe
+catg &lt;- sapply(entries,categories) #Grab categories
+catg &lt;- catg[order(all$date,decreasing=TRUE)] #Reorder both per date (in reverse chronological order)
+all &lt;- all[order(all$date,decreasing=TRUE),]
+cats &lt;- names(sort(table(unlist(catg)),decreasing=TRUE)) #Retrieve unique categories and sort by number of posts</pre></code>
+
+				<p>From that point on it's a lot of metaprogramming where I have html strings that I fill with the appropriate content. First the index page. This is really the most important part, that makes the blog readable. The only thing changing in that page is the table containing all the post titles+dates, and the list of categories:</p>
+
+				<pre><code class="R">index &lt;- readLines("index.html",encoding="utf-8") #Reads in the index page
+#The following line create each entries in the table
+j &lt;- sprintf("\t\t\t&lt;tr&gt;&lt;td class=\"date\"&gt;%s&lt;/td&gt;&lt;td class=\"title\"&gt;&lt;a href=\"%s\"&gt;%s&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;",all$date, all$url, all$title)
+#Then we replace the former table with the new one:
+index &lt;- c(index[1:grep("&lt;table",index)],j,index[grep("&lt;/table",index):length(index)])
+#And the same with the categories:
+index[grep("&gt;Categories:",index)] &lt;- sprintf("\t\t\t&lt;div class=\"footer\"&gt;Categories: %s&lt;br/&gt;",
+                                             paste(sprintf("&lt;a href=\"categories/%1$s.html\"&gt;%1$s&lt;/a&gt;",cats),collapse=" - "))
+#We then print it back to the file (overriding the previous content):
+cat(index,file="index.html",sep="\n")</pre></code>
+
+<p>Then for each category, a specific page:</p>
+
+<pre><code class="R">for(i in seq_along(cats)){
+  #Here each page will be built on the same template, which is similar to the index page, with an additional title
+  index &lt;- readLines("categories/template.html",encoding="utf-8") #Reads in the template
+  w &lt;-sapply(catg,function(x)cats[i]%in%x)
+  sub &lt;- all[w,] #Pick the subset having the category currently processed
+  #Makes the table, as previously:
+  j &lt;- sprintf("\t\t\t&lt;tr&gt;&lt;td class=\"date\"&gt;%s&lt;/td&gt;&lt;td class=\"title\"&gt;&lt;a href=\"../%s\"&gt;%s&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;",sub$date, sub$url, sub$title)
+  index &lt;- c(index[1:grep("&lt;table",index)],j,index[grep("&lt;/table",index):length(index)])
+  #Adds the category name as title:
+  index[grep("&lt;h3>",index)] &lt;- sprintf("&lt;div class=\"footer\"&gt;&lt;h3&gt;Category: %s&lt;/h3&gt;&lt;/div&gt;",cats[i])
+  #Save in an html page named as the category for simplicity:
+  cat(index,file=sprintf("categories/%s.html",cats[i]),sep="\n")
+}</pre></code>
+
+				<p>Then there is a section creating the RSS feed: it is very similar to the previous bit. You can <a href="http://github.com/plannapus/plannapus.github.io/blob/master/blog/process_blog.R">check it out in the repository</a> but I don't see the point of explaining it here. After that, there is a couple of lines of code to replace the link to the last blogpost in the template, followed by another few lines to put the link to the new post in the penultimate one:</p>
+
+				<pre><code class="R">template &lt;- readLines("template.html") #Reads in template
+template &lt;- gsub(as.character(all$date[2]),as.character(all$date[1]),template) #Replace the link to the second-to-last post by the last one
+cat(template,file="template.html",sep="\n") #Prints it back
+
+last_html &lt;- entries[grepl(as.character(all$date[2]),entries)] #Finds the second-to-last post
+last &lt;- readLines(last_html) #Reads it in
+w &lt;- grep("Back to Index",last) #Finds the line with the links
+last[w] &lt;- gsub("&lt;!--\\| &amp;lt;a href=\"\"&gt;Next entry &amp;gt;&lt;/a&gt;--&gt;",
+                sprintf("| &lt;a href=\"%s.html\"&gt;Next entry &amp;gt;&lt;/a&gt;",all$date[1]),
+                last[w]) #And add the new one.
+cat(last,sep="\n",file=last_html) #Prints it back</pre></code>
+
+				<p>And this is literaly all there is to it. I might add some new parts to it as I am figuring things out (such as the categories pages that I really just added in the last week) but I think the core will stay the same. I don't think I need anything fancier.</p>
+
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-11-13.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
