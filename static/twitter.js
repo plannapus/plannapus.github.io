@@ -10,6 +10,7 @@ jQuery('.twitter-feed').find('.twitter-timeline').contents().find('img.Avatar').
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('span.TweetAuthor-avatar.Identity-avatar').remove();
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('.timeline-Tweet-text').css('font-size', '16px');
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('.timeline-Header').css('display', 'none');
+jQuery('.twitter-feed').find('.twitter-timeline').contents().find('.timeline-LoadMore').css('display','none')
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('.timeline-Tweet-media').css('margin-left', '1px');
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('.timeline-Tweet-author').css('padding-left', '1px');
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('.timeline-Tweet-text').css('margin-left', '1px');
