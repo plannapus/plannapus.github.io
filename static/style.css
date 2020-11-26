@@ -71,11 +71,13 @@ div.flex{
 div.index_text{
 	padding-right: 2em;
 }
-div.twitter-timeline{
+div.twitter-feed{
 	border: solid 1px rgb(222,122,0);
 	margin-top: 2em;
 	right: 0;
+	max-width: 100%;
 	width: 500px;
+	display:block;
 }
 b.unbold{
 	font-weight:normal;
@@ -198,7 +200,7 @@ blockquote{
 		width: 100%;
 		padding-right: 2em;
 	}
-	div.twitter-timeline{
+	div.twitter-feed{
 		border: solid 1px rgb(254,174,53);
 		margin-top: 2em;
 		width: 300px;
