@@ -4,8 +4,6 @@ customizeTweetMedia();
 });
 
 var customizeTweetMedia = function() {
-
-//overrides font styles and removes the profile picture and media from twitter feed
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('img.Avatar').css('display', 'none');
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('span.TweetAuthor-avatar.Identity-avatar').remove();
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('.timeline-Tweet-text').css('font-size', '16px');
@@ -23,7 +21,4 @@ jQuery('.twitter-feed').find('.twitter-timeline').contents().find('.timeline-Twe
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('.timeline-TweetList-tweet:first-of-type').css('border-top','none')
 jQuery('.twitter-feed').find('.twitter-timeline').contents().find('.timeline-Body').css('border','1px solid rgb(222,122,0)')
   //also call the function on dynamic updates in addition to page load
-  jQuery('.twitter-block').find('.twitter-timeline').contents().find('.timeline-TweetList').bind('DOMSubtreeModified propertychange', function() {
-   customizeTweetMedia(this);
-});
 }
