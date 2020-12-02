@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="AoC2020 Days 1-2 and Buckwheat Pancakes" />
+		<meta property="og:image" content="img/buckwheat_pancake.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<meta name="category" content="Cooking">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">AoC2020 Days 1-2 and Buckwheat Pancakes</p>
+			<p class="blog-date">2020-12-02</p>
+			<p class="blog-content">
+			As mentioned in the <a href="2020-11-30.html">previous post</a>, the Advent of Code 2020 started yesterday. As expected the first two days were quite simple (the challenges tend to ramp up pretty quickly though). <a href="https://adventofcode.com/2020/day/1">Day 1</a> consisted on a bit of integer manipulation, while <a href="https://adventofcode.com/2020/day/2">day 2</a> was about string manipulation. You can find my solutions in R in <a href="http://github.com/plannapus/Advent_of_Code/tree/master/2020">my code repository</a>. 
+
+			<p>One interesting bit is that, as often, most of the code on those simple challenges is spent on input parsing. In this case, in day 2 challenge, the input had a form as follows: </p>
+
+				<pre><code>1-2 a: ahgtnkjz
+3-12 j: asjdladajsdsjdaslj</code></pre>
+
+			<p>Obviously, given the inconsistent column separator, the easiest here was to use a tailored regex. So I whipped up that ol' function from the help file of <code>?regex</code> that I remembered from an old <a href="https://stackoverflow.com/a/29669403/1451109">StackOverflow answer of mine</a>:</p>
+				<pre><code class="r">parse.one &lt;- function(res, result) {
+  m &lt;- do.call(rbind, lapply(seq_along(res), function(i) {
+    if(result[i] == -1) return("")
+    st &lt;- attr(result, "capture.start")[i, ]
+    substring(res[i], st, st + attr(result, "capture.length")[i, ] - 1)
+  }))
+  colnames(m) &lt;- attr(result, "capture.names")
+  m
+}
+parsed &lt;- regexpr("^(?&lt;lb&gt;[0-9]+)-(?&lt;ub&gt;[0-9]+) (?&lt;let&gt;[a-z]+): (?&lt;p&gt;[a-z]+)$", input, perl=TRUE)
+tab &lt;- parse.one(input,parsed)
+tab &lt;- as.data.frame(tab)</code></pre>
+
+			<p>What <code>parse.one</code> does is just a modification of <code>regmatches</code> that allows the capture of "named" group, PERL-style; i. e. it allows me to use that weird regex trick of <code>(?&lt;name&gt; group)</code>. Once done and transformed into a data.frame, the columns are already named correctly and are instantly usable.</p>
+
+			<img class="current" src="img/buckwheat_pancake.png" width="400">
+			<p class="caption">From my experience in the last 3 days, it tastes brilliant, either alone, or with some spicy sauce (sriracha) if in a savoury mood, or some Pflaumenmuss (if in a sweet mood).</p>
+
+			<p>In other news, I've been cooking buckwheat pancakes for breakfast/lunch recently, and I am quite happy with the result. To 100g of buckwheat flour, I added an egg, 20cL of milk, 10cL of water, salt, pepper and a bit of dill. Once whipped up to a flowing but thick mixture, a small laddleful of it is placed at the center of a very hot pan. When bubbles appeared on the surface, flip and let cook another 30s/1min. </p>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-11-30.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
