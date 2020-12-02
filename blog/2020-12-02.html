@@ -54,7 +54,7 @@
 				<pre><code>1-2 a: ahgtnkjz
 3-12 j: asjdladajsdsjdaslj</code></pre>
 
-			<p>Obviously, given the inconsistent column separator, the easiest here was to use a tailored regex. So I whipped up that ol' function from the help file of <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html"><code>?regex</code></a> that I remembered from an old <a href="https://stackoverflow.com/a/29669403/1451109">StackOverflow answer of mine</a>:</p>
+			<p>Obviously, given the inconsistent column separator, the easiest here was to use a tailored regex. So I whipped up that ol' function from the help file of <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/grep.html"><code>?regexpr</code></a> that I remembered from an old <a href="https://stackoverflow.com/a/29669403/1451109">StackOverflow answer of mine</a>:</p>
 				<pre><code class="r">input &lt;- readLines("input02.txt")
 parse.one &lt;- function(res, result) {
   m &lt;- do.call(rbind, lapply(seq_along(res), function(i) {
