@@ -152,8 +152,9 @@ p.publications{
 	text-indent: -1em;
 	padding-left: 1em;
 	font-size: 90%;
+	margin: 0;
 	margin-left: 5px;
-	}
+}
 blockquote{
 	background-color:#e5e5e5;
 	padding: .5em 2em .5em 2em;
