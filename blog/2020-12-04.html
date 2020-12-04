@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="AoC2020 Days 3-4 and Quinces" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<meta name="category" content="Cooking">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">AoC2020 Days 3-4 and Quinces</p>
+			<p class="blog-date">2020-12-04</p>
+			<p class="blog-content">
+				Days 3 and 4 of the Advent of Code were still relatively trivial to solve. Day 3 was just playing with coordinates on a 2D discrete map while day 4 entailed more adventures in input parsing :)
+
+				<p>This time the input was fairly randomly organised. Each set of data was on a random number of lines but separated from the next one by an empty line, and each set was composed of values in the form <code>key:value</code> and separated from the others by a space. I'm pretty sure it could have been entirely sparsed by regex but I was <span class="tooltip">feeling lazy<span class="tooltiptext">having woken up way earlier than usual</span></span>, so I used instead the standard tools (<code>scan, readLines, strsplit</code>) to create a list of named vectors. Named vectors are frankly rarely used nowadays in R but, maybe it is because I have been programming a lot in python in the last few years, I like to use them as they are R equivalent to python's dictionaries.</p>
+
+<pre><code class="r">input &lt;- readLines("input04.txt")
+input[input==""]&lt;-"\n" #First, replace the blank lines separating entries with a newline symbol
+passports &lt;- gsub("^ | $","",scan(text=paste(input,collapse=" "),what="",sep="\n")) #collapse all together so that the only newlines are the one separating entries, and reads it in again (plus clean the trailing whitespaces).
+pass &lt;- list() #Yes, I know, a loop, yawn.
+for(i in seq_along(passports)){
+  step &lt;- do.call(rbind,strsplit(scan(text=passports[i],what="",sep=" "),":")) #Separate by spaces, then by colons
+  pass[[i]]&lt;-step[,2] #keep the value
+  names(pass[[i]])&lt;-step[,1] #and use the key as name
+  }</code></pre>
+
+				<p>Once this is done, figuring out the rest of the challenge was fairly trivial. The first part for instance was a one-liner:</p>
+
+<pre><code class="R">#Count the number of passports having all the required fields:
+sum(sapply(pass,function(x)all(c("byr","iyr","eyr","hgt","hcl","ecl","pid")%in%names(x))))</code></pre>
+
+				<p>In culinary news, I made a quince pie the other day, "american-style". It wasn't that much of a success, so instead here's a recipe for my best quince-based dessert: my quince cheesecake. I have several variations on that theme but here is the one I made in October 2019 for <a href="https://volkanozen.github.io/">our student's</a> birthday.</p>
+				<p>For the crunchy base: broken down biscuits, with butter and a bit of sugar (the biscuits are usually too sweet to begin with), as usual. Then a layer of quince compote (i. e. quinces cooked in a water and a tiny bit of sugar until they are mashed), and then the 'cheese' matrix: 4 eggs, a pot of crême fraîche, some mascarpone and some Rahmjoghurt (in France I would have used Faisselles and/or Petits-Suisses), with sugar (including vanillin sugar). Cooked 45min at around 180&deg;.</p>
+
+				<img class="current" src="img/quince_cheesecake.png" width="800">
+				<p class="caption">What remained after my working group ate the cake. It's a great frustration of mine to have a lab big enough to make cooking a cake worthwhile but so small that I still have tons of leftovers :)</p>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-12-02.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
