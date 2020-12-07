@@ -47,20 +47,20 @@
 			<p class="blog-date">2020-12-07</p>
 			<p class="blog-content">
 				Days <a href="http://adventofcode.com/2020/day/5">5</a> and <a href="http://adventofcode.com/2020/day/6">6</a> were pretty uneventful, still relatively easy; the first one solvable trivially by transforming the input into a binary sequence and translating it into an integer, the second one needed to be carefully parsed but once done was solved just by applying <code>table</code> to it, so nothing unsurmontable. Day <a href="http://adventofcode.com/2020/day/7">7</a> however was a notch more complicated, in that it needed recursion, which is always an head-scratcher.
-				<p>Technically it was reminiscent from <a href="http://adventofcode.com/2019/day/14">day 14 of last year</a> but simpler: the input consisted of sentences like "light red bags contain 1 bright white bag, 2 muted yellow bags." and "faded blue bags contain no other bags." and one needed to figure out how many bags a "shiny gold" bag contained, which necessited to go through the whole "reaction" path (i. e. <code>a=2b+4c; c=3d+4b; etc.</code>). <a href="https://github.com/plannapus/Advent_of_Code/blob/master/2020/aoc07.R">For the parser</a> I used the same method as for <a href="2020-12-02.html">day 2</a> (i. e. <code>parse.one</code>) and then, lazily, use an operator that is normally a no-go in R: <code>repeat</code>. I am sure they would have been more elegant ways to do the job, but at least it worked and was fairly fast.</p>
+				<p>Technically it was reminiscent from <a href="http://adventofcode.com/2019/day/14">day 14 of last year</a> but simpler: the input consisted of sentences like "light red bags contain 1 bright white bag, 2 muted yellow bags." and "faded blue bags contain no other bags." and one needed to figure out how many bags a "shiny gold" bag contained, which necessited to go through the whole "reaction" path (i. e. <code>a=2b+4c; c=3d+4b; etc.</code>). <a href="https://github.com/plannapus/Advent_of_Code/blob/master/2020/aoc07.R">For the parser</a> I used the same method as for <a href="2020-12-02.html">day 2</a> (i. e. <code>parse.one</code>) and then, lazily, use an operator that is normally a no-go in R: <code>repeat</code>. I am sure there would have been more elegant ways to do the job, but at least it worked and was fairly fast.</p>
 				<pre><code class="r">input &lt;- readLines("input07.txt")
 res &lt;- lapply(input,parse_reac) #parse_reac is the parser I made, check out in the github repo to read it. It's fairly tedious though.
 # res is the parsed input, each element contains:
 # an element "a" that is the containing color, 
 # "b" a dataframe of what is contained in "a", where n is the number of bags and col their color. 
 # If the bag contains no other bags, b is NULL.
-step &lt;- res[sapply(res,function(x)x$a=="shiny gold")][[1]]$b #I know it's ugly
-step$n &lt;- as.integer(step$n) #Why didn't I made the parser converts that to integer directly, i'll never know
-step$end &lt;- FALSE #This vector is where we'll say if we reached the end of a path (i. e. "contains no bags")
-repeat{
-  replacement &lt;- data.frame(n=NULL,col=NULL, end=NULL)
+step &lt;- res[sapply(res,function(x)x$a=="shiny gold")][[1]]$b # I know it's ugly: go through all elements and return dataframe b if a is he color we need
+step$n &lt;- as.integer(step$n) # Why didn't I made the parser converts that to integer directly, i'll never know
+step$end &lt;- FALSE # This vector is where we'll say if we reached the end of a path (i. e. "contains no bags")
+repeat{ # The dreaded repeat
+  replacement &lt;- data.frame(n=NULL, col=NULL, end=NULL) # Empty dataframe in which we will put the result
   for(i in 1:nrow(step)){
-    if(!step$end[i]){ #If we didn't already reach the end of the path
+    if(!step$end[i]){ #If we didn't already reach the end of that particular path
       sub &lt;- res[sapply(res,function(x)x$a==step$col[i])][[1]]$b
       if(!is.null(sub)){
         sub$n &lt;- as.integer(sub$n)*step$n[i]
