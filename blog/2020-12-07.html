@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="AoC2020 Days 5 to 7" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">AoC2020 Days 5 to 7</p>
+			<p class="blog-date">2020-12-07</p>
+			<p class="blog-content">
+				Days <a href="http://adventofcode.com/2020/day/5">5</a> and <a href="http://adventofcode.com/2020/day/6">6</a> were pretty uneventful, still relatively easy; the first one solvable trivially by transforming the input into a binary sequence and translating it into an integer, the second one needed to be carefully parsed but once done was solved just by applying <code>table</code> to it, so nothing unsurmontable. Day <a href="http://adventofcode.com/2020/day/7">7</a> however was a notch more complicated, in that it needed recursion, which is always an head-scratcher.
+				<p>Technically it was reminiscent from <a href="http://adventofcode.com/2019/day/14">day 14 of last year</a> but simpler: the input consisted of sentences like "light red bags contain 1 bright white bag, 2 muted yellow bags." and "faded blue bags contain no other bags." and one needed to figure out how many bags a "shiny gold" bag contained, which necessited to go through the whole "reaction" path (i. e. <code>a=2b+4c; c=3d+4b; etc.</code>). <a href="https://github.com/plannapus/Advent_of_Code/blob/master/2020/aoc07.R">For the parser</a> I used the same method as for <a href="2020-12-04.html">day 4</a> (i. e. <code>parse.one</code>) and then, lazily, use an operator that is normally a no-go in R: <code>repeat</code>. I am sure they would have been more elegant ways to do the job, but at least it worked and was fairly fast.</p>
+				<pre><code class="r">input &lt;- readLines("input07.txt")
+res &lt;- lapply(input,parse_reac) #parse_reac is the parser I made, check out in the github repo to read it. It's fairly tedious though.
+# res is the parsed input, each element contains:
+# an element "a" that is the containing color, 
+# "b" a dataframe of what is contained in "a", where n is the number of bags and col their color. 
+# If the bag contains no other bags, b is NULL.
+step &lt;- res[sapply(res,function(x)x$a=="shiny gold")][[1]]$b #I know it's ugly
+step$n &lt;- as.integer(step$n) #Why didn't I made the parser converts that to integer directly, i'll never know
+step$end &lt;- FALSE #This vector is where we'll say if we reached the end of a path (i. e. "contains no bags")
+repeat{
+  replacement &lt;- data.frame(n=NULL,col=NULL, end=NULL)
+  for(i in 1:nrow(step)){
+    if(!step$end[i]){ #If we didn't already reach the end of the path
+      sub &lt;- res[sapply(res,function(x)x$a==step$col[i])][[1]]$b
+      if(!is.null(sub)){
+        sub$n &lt;- as.integer(sub$n)*step$n[i]
+        sub$end &lt;- FALSE
+        step$end[i] &lt;- TRUE
+        #One needs to keep the step that is done because we need to count those bags too.
+        replacement &lt;- rbind(replacement, sub, step[i,])
+      }else{
+        step$end[i]&lt;-TRUE
+        replacement &lt;- rbind(replacement, step[i,])
+      }
+    }else{
+      replacement &lt;- rbind(replacement, step[i,])
+    }
+  }
+  step &lt;- replacement
+  if(all(step$end)){break} #If every path reached its end, we can stop
+}
+sum(step$n)</code></pre>
+			</p>
+			<p>I probably could have used <code>while</code> instead or even made a function that calls itself recursively, like we do usually for Fibonacci, but it was easier to wrap my brain around <code>repeat</code>.</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-12-04.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
