@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="AoC2020 Days 8 to 12" />
+		<meta property="og:image" content="" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">AoC2020 Days 8 to 1</p>
+			<p class="blog-date">2020-12-12</p>
+			<p class="blog-content">
+				Unfortunately I did not have much time to report on the last batch of puzzles. In part, because they became somewhat harder and thus needed more of my free time to be resovled :) 
+				<p>Day <a href="http://adventofcode.com/2020/day/8">8</a> required building an interpreter for a simple, 3-operations code (and finding the one instruction that needed to be modified for it not to loop indefinitely: interesting!); day <a href="http://adventofcode.com/2020/day/9">9</a> was fairly simple, as it was purely integer manipulation, though I did need to use package <code>bit64</code> as the integers were too large for base R which thus relied on floating-point integer (which is not precise enough naturally).</p>
+				<p>Day <a href="http://adventofcode.com/2020/day/10">10</a> was the first one I wasn't able to "brute-force" and thus was a bit more interesting! Basically we had a chain of integer were each integer could only be separated by 1, 2 or 3; and we needed to figure out the number of possible paths between the smaller and the bigger one. At first i tried to solve that using <code>igraph</code> by turning the problem into a graph and calculating the number of possible paths but it crashed my laptop! As it turned out, it was solvable algebraically. None of the integer were separated by 2 meaning we had a serie of numbers separated by 1 or 3. The ones separated by 3 are not skippable given we can't connect to number separated by more than 3, so the problem in the hand was subsettable into figuring out the number of paths that was possible in each serie of numbers separated by only a single unit. There were no series longer than 5, as it turned out. So the number of possibilities were 7 for a series of 5 consecutive integers:</p>
+				<pre><code>0 - 3 - 4 - 5 - 6 - 7 - 10
+0 - 3 - 4 - 5 - 7 - 10
+0 - 3 - 4 - 6 - 7 - 10
+0 - 3 - 5 - 6 - 7 - 10
+0 - 3 - 4 - 7 - 10
+0 - 3 - 5 - 7 - 10
+0 - 3 - 6 - 7 - 10</code></pre>
+
+<p>4 for a series of 4 integers:</p>
+
+				<pre><code>0 - 3 - 4 - 5 - 6 - 9
+0 - 3 - 4 - 6 - 9
+0 - 3 - 5 - 6 - 9
+0 - 3 - 6 - 9</code></pre>
+
+<p>2 for a series of 3:</p>
+
+				<pre><code>0 - 3 - 4 - 5 - 8
+0 - 3 - 5 - 8</code></pre>
+
+<p>And that's all! Meaning the number of paths was 7^(# of series of 5)*4^(# of series of 4)*2^(# of series of 3). Or in R:</p>
+				<pre><code class="r">options(digits=22) #Prevents R from displaying integers in scientific notation.
+input &lt;- scan("input10.txt")
+chain &lt;- c(0,sort(input),max(input)+3) #Minimum was 0 and Max was the max of the list plus 3
+r &lt;- rle(diff(chain)) #Run Length Encoding: returns a list of lengths and values, i. e. 1 1 1 1 becomes l=4, v=1
+7^sum(r$l==4&r$v==1)*4^sum(r$l==3&r$v==1)*2^sum(r$l==2&r$v==1) #r$l==4 as we are working on differences, so 4 means 5 consecutive numbers</code></pre>
+
+<p>The option to display a large amount of digits was necessary as the result (in my case) was a staggerring 193&nbsp;434&nbsp;623&nbsp;148&nbsp;032. No wonder the graph solution crashed!</p>
+<p>Day <a href="http://adventofcode.com/2020/day/11">11</a> was frankly the hardest: a form of <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">game of life</a> mixed with "line-of-sight" computations on a 2D map. It took me quite a while (I had to refactor entirely the code of part 1 to be able to process part 2), but transforming the "line-of-sight" (a row, a column or a matrix diagonal in that case) into a character string and then using regex to analyse it turned out to be the easiest solution. The solution is a bit too tedious to share here however, but feel free to have a look in <a href="https://github.com/plannapus/Advent_of_Code/blob/master/2020/aoc11.R#L25">my repository</a>. Day <a href="http://adventofcode.com/2020/day/12">12</a> (i. e. today) finally was simpler: just take a series of instructions and translates that into coordinates. Not especially hard though the instructions on part 2 were not super clear (the rotation was ill defined I think).</p>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-12-07.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>

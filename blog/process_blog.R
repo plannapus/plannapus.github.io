@@ -61,3 +61,4 @@ last[w] <- gsub("<!--\\| <a href=\"\">Next entry &gt;</a>-->",
                 sprintf("| <a href=\"%s.html\">Next entry &gt;</a>",all$date[1]),
                 last[w])
 cat(last,sep="\n",file=last_html)
+
