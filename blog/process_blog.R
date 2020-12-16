@@ -1,5 +1,5 @@
 library(XML)
-setwd("/Users/johan.renaudie/Documents/Programming/#GitHub/plannapus.github.io/blog")
+setwd("~/Git/plannapus.github.io/blog")
 entries <- dir(pattern="[0-9].html")
 process <- function(html_file){
   h <-htmlParse(html_file,encoding="utf-8")

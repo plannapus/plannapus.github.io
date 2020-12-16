@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="AoC Days 13 to 16" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">AoC2020 Days 13 to 16</p>
+			<p class="blog-date">2020-12-16</p>
+			<p class="blog-content">Here we are in lockdown again. Luckily the advent of code does brighten the day somewhat. And some challenges were noticeably harder this week (though still not remotely as hard as last year I must say). It started with day <a href="http://adventofcode.com/2020/day/13">13</a>: the given input was a list of buses (whose names correspond to their periodicities), and find out a time t from which each bus arrives at t+n where n is their place in the list. As someone pointed out on <a href="http://reddit.com/r/adventofcode">reddit</a>, this problem is known as the Chinese Remainder Problem. Though one (like me) didn't need to know that to solve it thankfully. Brute-focing it (by trying all integers until we find one) was clearly not the best idea (as you will see with the solution) so one had to find a way to solve it faster. And the solution ended up fairly trivial: finding an integer i at which the first bus arrive, and then incrementing only by the periodicity of that bus until we end up on a time at which the second one arrive, then incrementing by the product of both, etc.
+				<pre><code class="r">options(digits=22)
+input &lt;- readLines("input13.txt")
+bus &lt;- as.integer(el(strsplit(input[2],",")))
+spot &lt;- which(!is.na(bus))-1 # -1 one as R vectors are 1-based but we need 0-based spots
+bus &lt;- bus[!is.na(bus)]
+t &lt;-0
+pace &lt;- 1
+for(i in seq_along(bus)){
+  while((t+spot[i])%%bus[i]) t &lt;- t+pace
+  pace &lt;- pace*bus[i]
+}
+t
+#471793476184394</code></pre>
+
+<p>Note that <code>options(digits=22)</code> again that I end up using on every odd challenge those days. Day <a href="http://adventofcode.com/2020/day/14">14</a> was again fairly difficult. The first part required reading a series of integers, transforming to a 36 bit length binary number, then using masks to force some positions into 1s or 0s, reconverting it to a base-10 integer and placing it in a specific place in "memory" (i. e. a master vector). Easy enough, but the second part required that operation to be done on the memory index rather than the value, and the mask rule changes to forcing 1s and Xs with Xs being both 1 and 0 (i. e. sending the value to several place in the master vector). As those numbers are fairly high it prohibits actually using a proper vector: the maximum length of a vector in R is 2^31 while here we can have indices as high as 2^35.</p>
+
+<pre><code class="r">options(digits=22) #If it wasn't for reproducibility sake I would put it in my Rprofile at that point
+input &lt;- readLines("input14.txt")
+mem &lt;- c()
+intTo36Bits &lt;- function(x){ #Homemade binary transformation
+  res &lt;- c()
+  for(i in 35:0){
+    res &lt;- c(res,x%/%(2^i))
+    x &lt;- x%%(2^i)
+  }
+  res
+}
+
+bitsToInt&lt;- function(x)sum(x*2^(35:0)) #And the reverse
+
+for(i in seq_along(input)){
+  if(grepl("^mask",input[i])){
+    mask &lt;- el(strsplit(gsub("mask = ","",input[i]),"")) #Parsing the input
+    w1 &lt;- which(mask%in%"1")
+    wx &lt;- which(mask%in%"X")
+  }else{
+    dig &lt;- as.integer(el(regmatches(input[i],gregexpr("\\d+",input[i])))) #Parsing the input
+    index &lt;- dig[1]
+    value &lt;- dig[2]
+    b &lt;- as.matrix(intTo36Bits(index))
+    for(k in w1) b[k,]&lt;-1
+    for(k in wx){ #Duplicate the binary number and make one side 0s and the other 1s
+      b &lt;- cbind(b,b)
+      b[k,] &lt;- c(rep(0,ncol(b)/2),rep(1,ncol(b)/2)) #Put 0s in half of them and 1s in the other half
+    }
+    #Instead of a mostly-empty vector, a key-value matrix:
+    mem &lt;- rbind(mem,cbind(apply(b,2,bitsToInt),value))
+    #We "overwrite" values by getting rid of older duplicates
+    mem &lt;- mem[!duplicated(mem[,1],fromLast=TRUE),]
+  }
+}
+sum(mem[,2])
+#3705162613854</code></pre>
+
+<p>Funnily, day <a href="http://adventofcode.com/2020/day/15">15</a> required to do an opposite trick. We have a sequence of number where the u(n+1) is 0 if u(n) appears for the first time in the list or its age if it appeared before (i. e. n-m where m was the previous time it appeared). The standard one starting with 0, 0 is referred to as the <a href="https://oeis.org/A181391">Van Eck's sequence</a>, but here we each got a unique starter. The problem was to figure out which will be the 30&nbsp;000&nbsp;000nth integer in that sequence. Actually creating a sequence that long would take forever (increasing a vector's length in R is time consuming). What I ended up doing though was having a 30&nbsp;000&nbsp;000-long vector of "ages", that I updated each iteration with the most recent age for a given integer (given by the index).</p>
+<pre><code class="r">input &lt;- c(13,16,0,12,15,1)
+last &lt;- 0
+current &lt;- 7
+maxn &lt;- 30000000
+age &lt;- rep(NA,maxn)
+age[1+input]&lt;-seq_along(input) #The additional 1 is because we need a space for O
+while(current&lt;=maxn){
+  x &lt;- age[1+last]
+  age[1+last] &lt;- current
+  if(is.na(x)){
+    last &lt;- 0
+  }else{
+    last &lt;- current-x
+  }
+  current &lt;- current + 1
+}
+which(age%in%maxn)-1
+#2424</code></pre>
+
+<p>Day <a href="http://adventofcode.com/2020/day/16">16</a> finally was way simpler and thus not really worth explaining here (all operations involved were trivial in R: checking whether numbers belongs to a list, checking which row only has a single TRUE value, etc.).</p>
+
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-12-12.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
