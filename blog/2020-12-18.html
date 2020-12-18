@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="AoC2020 Days 17 and 18" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">AoC2020 Days 17 and 18</p>
+			<p class="blog-date">2020-12-18</p>
+			<p class="blog-content">
+				OK this time, the difficulity level went up a notch! To summarize briefly, day <a href="http://adventofcode.com/2020/day/17">17</a> was a 3 and 4D extension on <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a> while day <a href="http://adventofcode.com/2020/day/18">18</a> consisted in performing basic arithmetic... but with different precedence order: in part 1 there was no precedence order, i. e. 1+2*3 resolves to 3*3=9; and in part 2 addition took precedence over multiplication so 3*2+1 would also resolve to 9; but in both cases parentheses still enforce precedence, meaning 2 + (3 * 4 +5) * 6 would resolve to 2 + (3 * 9) *6 =  2 + 27 * 6 = 29 * 6 = 174. The way I proceeded for day 18 was to use regex to identify sections of the input equations that needed to be solved first and then evaluate them separately and replacing the original bit by its local solution.
+
+				<p>The workhouses of that solution are two functions, one to evaluate and the second to replace the original bits:</p>
+				<pre><code class="r">input &lt;- readLines("input18.txt") #Read in the equations
+input &lt;- paste0("(",input,")") #Add parentheses around the full equations (probably not necessary but I prefer)
+evaluate_unit &lt;- function(x){ 
+# x is the list of unit blocks for a given equations
+# where the "precedence" is just the order of operation, 
+# i. e. 3 * 5 * 2 or 4 + 3 + 6 + 7, etc. in part 2 
+# or 2 + 3 * 4 etc. in part 1.
+  if(length(x)){ #In some rounds of the loop there won t be any new units
+    y &lt;- strsplit(x," ") #Split by spaces
+    for(i in seq_along(y)){ #For each units
+      while(length(y[[i]])&gt;1){ #while there is still elements left
+        z &lt;- eval(parse(text=paste(y[[i]][1:3],collapse=""))) #Collapse by groups of 3 (nb, op, nb) and evaluate
+        y[[i]] &lt;- c(z,y[[i]][-(1:3)]) #replace the evaluated bits by their solution
+      }
+    }
+    return(y)
+  }else{
+    return(NA)
+  }
+}
+replace_unit &lt;- function(j, input, innermost, w){
+# j is the index
+# input the list of equations in their current state
+# innermost is the list of solved unit blocks
+# w is the result of gregexpr i. e. the position in the equation string of the blocks
+    inp &lt;- input[j]
+    inn &lt;- innermost[[j]]
+    W &lt;- w[[j]] #Positions of the first character of the blocks
+    l &lt;- attr(W,"match.length") # Length of the blocks
+    L &lt;- W+l # Positions of the last character of the blocks
+    for(i in seq_along(inn)){ #For each block
+      if(!is.na(inn[i])){ #If non empty
+        inp &lt;- paste0(substr(inp,1,W[i]-1),inn[i],substr(inp,L[i],nchar(inp))) #Replace
+        W &lt;- W - l[i] + nchar(inn[i]) #Change the position of next block accordingly
+        L &lt;- L - l[i] + nchar(inn[i])
+      }
+    }
+    inp&lt;-gsub("\\((\\d+)\\)","\\1",inp) #Rare case in which it results in things like "(549)"
+    inp
+}
+while(!all(grepl("^\\d+$",input))){ #The actual loop (for part 2), run until all equations are replaced by a single integer
+  p &lt;- gregexpr("[0-9][0-9 +]+[0-9]",input) #Grabs addition blocks
+  additions &lt;- regmatches(input,p)
+  additions &lt;- lapply(additions,evaluate_unit) #Evaluate them
+  input &lt;- sapply(seq_along(input),function(j)replace_unit(j,input,additions,p)) #Replace them
+  input &lt;- gsub("\\(([0-9]+)\\)","\\1",input) #Make sure you dont have single integers stuck between parentheses
+  w&lt;-gregexpr("\\(([^()+]+)\\)",input) #Grab parenthese blocks
+  innermost &lt;- regmatches(input,w)
+  innermost &lt;- lapply(innermost,function(x)gsub("[()]","",x)) #Get rid of parentheses
+  innermost &lt;- lapply(innermost,evaluate_unit) #Evaluate
+  input &lt;- sapply(seq_along(input),function(j)replace_unit(j,input,innermost,w)) #Replace
+}</code></pre>
+
+As for day 17, i decided, instead of making a N-dimensional array actually representing the problem, to just stores the "visited" coordinates and their state. The advantage was that the code didn t need a lot of changes to go from 3d to 4d, however my code is SUPER slow (it resolved part 2 in a staggering two hours!). I'm sure there is a better solution but I couldn't figure it out. So here is my suboptimal solution (for the 4d part):
+
+<pre><code class="r">library(reshape)
+input &lt;- readLines("input17.txt")
+map &lt;- do.call(rbind,strsplit(input,""))
+m &lt;- melt(map)
+m &lt;- data.frame(x=m$X1,y=m$X2,z=0,w=0,value=m$value) #Contains coordinates of points visited and their state
+neighbours &lt;- function(m){ #Returns a list of neighbours for a given point or a full region
+  mask &lt;- expand.grid(-1:1,-1:1,-1:1,-1:1)
+  M &lt;- as.matrix(m[,1:4])
+  l &lt;- do.call(rbind,lapply(seq_len(nrow(m)),function(i)t(M[i,]+t(mask))))
+  l &lt;- l[!duplicated(l),]
+  data.frame(x=l[,1],y=l[,2],z=l[,3],w=l[,4])
+}
+for(i in 1:6){
+  p &lt;- neighbours(m) #Grabs list of neighbours of the currently visited region
+  p$value &lt;- NA #No value at start
+  coords &lt;- apply(m[,1:4],1,paste,collapse=",") #Coordinates as string for each points that already have a value
+  for(j in 1:nrow(p)){
+    #For each new coordinates check content of known neighbours
+    content &lt;- table(sapply(apply(neighbours(p[j,]),1,paste,collapse=","),function(x)factor(ifelse(x%in%coords,m$value[coords==x],"."),levels=c(".","#"))))
+    #Coords of point of interest
+    this_cube &lt;- paste(p[j,1:4],collapse=",")
+    #Current value (if known check, if not blank)
+    here &lt;- ifelse(this_cube%in%coords,m$value[coords==this_cube],".")
+    if(here=="#"&amp;content["#"]%in%3:4){ #Apply rules, i. e. if ON and 2 or 3 neighbours are ON, keep ON
+      p$value[j] &lt;- "#"
+    }else if(here=="."&amp;content["#"]==3){ # If OFF and exactly 3 neighbours are ON, turn ON 
+      p$value[j] &lt;- "#"
+    }else{ # Else turn OFF
+      p$value[j] &lt;- "."
+    }
+  }
+  m&lt;-p #Replace old map with new one
+}</code></pre>
+
+<p>As usual you can check the full code <a href="http://github.com/plannapus/Advent_of_Code/2020">in my repository</a>.</p>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-12-16.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
