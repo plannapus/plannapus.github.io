@@ -1,0 +1,434 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="Wrap-up on AoC2020 and my conky setup" />
+		<meta property="og:image" content="https://github.com/plannapus/Advent_of_Code/raw/master/2020/screenshot.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Wrap-up on AoC2020 and my conky setup</p>
+			<p class="blog-date">2021-01-03</p>
+			<p class="blog-content">
+				First thing first: the final day of AoC2020. <a href="http://adventofcode.com/2020/day/25">The puzzle for the 25th</a>, as usual, was only a one-parter (the second part is awarded if and only if all of the other 49 puzzles were successfully completed). It was a fairly simple cryptography problem. Two numbers have gone through a mathematically operation (multiplication/modulo) an indeterminate amount of times, i.e. number x is the result of a number going through n iterations and y the result of the same number going through m iterations, and the problem is to find n and m such as when x goes through m iterations and y through n iterations it results in an identical number (which becomes the solution of the puzzle). My simple solution:
+				<pre><code class="r">input &lt;- scan("input25.txt")
+cardpk &lt;- input[1]
+doorpk &lt;- input[2]
+n_loops &lt;- function(n,to){ #Find the number of loop, knowing the operation, the key number (here 7) and the resulting number
+  start &lt;- 1
+  i &lt;- 0
+  while(start!=to){
+   i &lt;- i+1
+   start &lt;- (start*n)%%20201227
+  }
+  i
+}
+cardloop &lt;- n_loops(7,cardpk) #Number n of loops for first input
+doorloop &lt;- n_loops(7,doorpk) #Number m of loops for second input
+
+transform &lt;- function(n,n_loop){ #Reverse operations: knowing the number of loops, the key number (the first and second input), find the resulting number
+  start &lt;- 1
+  for(i in 1:n_loop){
+    start &lt;- (start*n)%%20201227
+  }
+  start
+}
+ek1 &lt;- transform(cardpk,doorloop)
+ek2 &lt;- transform(doorpk,cardloop)
+ek1==ek2 #Check that they are indeed identical
+#TRUE
+ek1
+#9177528</code></pre>
+
+<p>As mentioned before, the puzzles this year where significantly easier than last year (though some, like day 20, were still insanely hard); I am nonetheless very happy to have been able this year to complete all puzzles!</p>
+
+<img class="current" src="https://github.com/plannapus/Advent_of_Code/raw/master/2020/screenshot.png" width="800" title="Screenshot of final stats for year 2020" />
+
+<p>In other programming news, I have been fiddling with a <a href="https://github.com/brndnmtthws/conky">conky theme</a> in the past few days. For those who do not know conky, it is, similarly to Mac's <a href="https://www.reddit.com/r/GeekTool/">Geektools</a> and <a href="https://tracesof.net/uebersicht/">Übersicht</a>, a scripting tool allowing you to integrate self-updating elements to your desktop background. I have been using Geektools, and then later Übersicht, on my work Mac since years to integrate date/time, weather updates, calendar updates, and various climatological/geological realtime data (quakes, current state of the arctic/antarctic icesheets, etc.). Now that I work at home on my own Ubuntu laptop, I started craving for something similar, hence my journey into conky. While Geektools used a fancy GUI and bash scripts, and Übserichet uses a mixture of bash and coffeescript, conky is pure bash which is actually not a bad thing.</p>
+
+<p>My setup is a mixture of simple, standard conky things (in fact part of it is kept from the default configuration file) and more complex data representations computed asynchronically by R scripts and just read by the conky setup. Let's have a look at the config file. The first part is the not the content but the options configuring the overall aspect and behaviour of the whole setup:</p>
+
+<pre><code class="bash">conky.config = {
+    alignment = 'top_left',
+    background = true,
+    border_width = 0,
+    cpu_avg_samples = 2,
+	default_color = 'white',
+    default_outline_color = 'white',
+    default_shade_color = 'white',
+    draw_borders = false,
+    draw_graph_borders = false,
+    draw_outline = false,
+    draw_shades = false,
+    use_xft = true,
+    font = 'DejaVu Sans Mono:size=12',
+    gap_x = 70,
+    gap_y = 30,
+    minimum_height = 5,
+	minimum_width = 385,
+    net_avg_samples = 2,
+    no_buffers = true,
+    out_to_console = false,
+    out_to_stderr = false,
+    extra_newline = false,
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_argb_visual = true,
+    own_window_colour = '#435366',
+    own_window_transparent = false,
+    stippled_borders = 0,
+    update_interval = 1.0,
+    uppercase = false,
+    use_spacer = 'none',
+    show_graph_scale = false,
+    show_graph_range = false
+}</code></pre>
+
+<p>As said before, most of it is from the default setup, except from a few things: the <code>own_window_colour</code> which I set to the color of the rest of the background, <code>gap_x, gap_y, minimu_width</code> which I set up so that the "window" is just glued to the dash column. The second and most important part is what actually set the content of the "window/widget":</p>
+
+<pre><code class="bash">conky.text = [[
+${font DejaVu Sans Mono:size=18}${exec date +"%A %d %B, %H:%M"}$font
+$hr
+${color grey}Uptime:$color $uptime_short
+${color grey}RAM Usage:$color $mem/$memmax - $memperc% ${membar 4}
+${color grey}CPU Usage:$color $cpu% ${cpubar 4}
+${color grey}Processes:$color $processes  ${color grey}Running:$color $running_processes
+$hr
+${color grey}File systems:
+ / $color${fs_used /}/${fs_size /} ${fs_bar 6 /}
+$hr
+${color grey}Core 0:$color ${exec sensors | awk '/Core 0/ {print $3}'} ${execbar sensors | awk '/Core 0/ {print $3}'}
+${color grey}Core 1:$color ${exec sensors | awk '/Core 1/ {print $3}'} ${execbar sensors | awk '/Core 1/ {print $3}'}
+${color grey}Core 2:$color ${exec sensors | awk '/Core 2/ {print $3}'} ${execbar sensors | awk '/Core 2/ {print $3}'}
+${color grey}Core 3:$color ${exec sensors | awk '/Core 3/ {print $3}'} ${execbar sensors | awk '/Core 3/ {print $3}'}
+$hr
+${color grey}Name              PID   CPU%   MEM%
+${color lightgrey} ${top name 1} ${top pid 1} ${top cpu 1} ${top mem 1}
+${color lightgrey} ${top name 2} ${top pid 2} ${top cpu 2} ${top mem 2}
+${color lightgrey} ${top name 3} ${top pid 3} ${top cpu 3} ${top mem 3}
+${color lightgrey} ${top name 4} ${top pid 4} ${top cpu 4} ${top mem 4}$color
+$hr
+${color grey}Coronavirus in Berlin
+${image ~/.config/conky/corona_berlin.png -p 0,435 -s 380x150}
+
+
+
+
+
+
+
+
+${color grey}Total cases:$color ${exec cut -d ',' -f1 ~/.config/conky/coronaberlin.txt} (${exec cut -d ',' -f2 ~/.config/conky/coronaberlin.txt} active)
+${color grey}New:$color ${exec cut -d ',' -f3 ~/.config/conky/coronaberlin.txt} ${color grey}- R:$color ${exec cut -d ',' -f4 ~/.config/conky/coronaberlin.txt} ${color grey}- ICU beds:$color ${exec cut -d ',' -f5 ~/.config/conky/coronaberlin.txt}%
+$hr
+${color grey}Current pCO2:$color ${exec cut -d ',' -f1 ~/.config/conky/pco2.txt | head -n 1} ${color grey}ppm on$color ${exec cut -d ',' -f2 ~/.config/conky/pco2.txt | head -n 1}
+${color grey}Max pCO2    :$color ${exec cut -d ',' -f1 ~/.config/conky/pco2.txt | tail -n 1} ${color grey}ppm on$color ${exec cut -d ',' -f2 ~/.config/conky/pco2.txt | tail -n 1}
+$hr
+Calendar events for the week:
+${font DejaVu Sans Mono:size=10}${color lightgrey}${exec head -n 7 ~/.config/conky/events.txt}
+${if_updatenr 1}${image ~/.config/conky/plots/01-535.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 2}${image ~/.config/conky/plots/02-525.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 3}${image ~/.config/conky/plots/03-515.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 4}${image ~/.config/conky/plots/04-510.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 5}${image ~/.config/conky/plots/05-505.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 6}${image ~/.config/conky/plots/06-500.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 7}${image ~/.config/conky/plots/07-495.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 8}${image ~/.config/conky/plots/08-490.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 9}${image ~/.config/conky/plots/09-485.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 10}${image ~/.config/conky/plots/10-480.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 11}${image ~/.config/conky/plots/11-475.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 12}${image ~/.config/conky/plots/12-470.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 13}${image ~/.config/conky/plots/13-465.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 14}${image ~/.config/conky/plots/14-455.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 15}${image ~/.config/conky/plots/15-450.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 16}${image ~/.config/conky/plots/16-445.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 17}${image ~/.config/conky/plots/17-440.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 18}${image ~/.config/conky/plots/18-435.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 19}${image ~/.config/conky/plots/19-430.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 20}${image ~/.config/conky/plots/20-425.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 21}${image ~/.config/conky/plots/21-420.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 22}${image ~/.config/conky/plots/22-415.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 23}${image ~/.config/conky/plots/23-410.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 24}${image ~/.config/conky/plots/24-400.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 25}${image ~/.config/conky/plots/25-390.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 26}${image ~/.config/conky/plots/26-385.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 27}${image ~/.config/conky/plots/27-375.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 28}${image ~/.config/conky/plots/28-365.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 29}${image ~/.config/conky/plots/29-355.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 30}${image ~/.config/conky/plots/30-340.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 31}${image ~/.config/conky/plots/31-325.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 32}${image ~/.config/conky/plots/32-320.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 33}${image ~/.config/conky/plots/33-310.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 34}${image ~/.config/conky/plots/34-305.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 35}${image ~/.config/conky/plots/35-300.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 36}${image ~/.config/conky/plots/36-295.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 37}${image ~/.config/conky/plots/37-285.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 38}${image ~/.config/conky/plots/38-275.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 39}${image ~/.config/conky/plots/39-270.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 40}${image ~/.config/conky/plots/40-265.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 41}${image ~/.config/conky/plots/41-260.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 42}${image ~/.config/conky/plots/42-255.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 43}${image ~/.config/conky/plots/43-250.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 44}${image ~/.config/conky/plots/44-245.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 45}${image ~/.config/conky/plots/45-240.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 46}${image ~/.config/conky/plots/46-230.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 47}${image ~/.config/conky/plots/47-220.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 48}${image ~/.config/conky/plots/48-205.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 49}${image ~/.config/conky/plots/49-200.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 50}${image ~/.config/conky/plots/50-195.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 51}${image ~/.config/conky/plots/51-185.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 52}${image ~/.config/conky/plots/52-180.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 53}${image ~/.config/conky/plots/53-170.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 54}${image ~/.config/conky/plots/54-165.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 55}${image ~/.config/conky/plots/55-160.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 56}${image ~/.config/conky/plots/56-155.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 57}${image ~/.config/conky/plots/57-150.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 58}${image ~/.config/conky/plots/58-140.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 59}${image ~/.config/conky/plots/59-135.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 60}${image ~/.config/conky/plots/60-130.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 61}${image ~/.config/conky/plots/61-125.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 62}${image ~/.config/conky/plots/62-120.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 63}${image ~/.config/conky/plots/63-105.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 64}${image ~/.config/conky/plots/64-95.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 65}${image ~/.config/conky/plots/65-90.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 66}${image ~/.config/conky/plots/66-85.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 67}${image ~/.config/conky/plots/67-80.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 68}${image ~/.config/conky/plots/68-70.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 69}${image ~/.config/conky/plots/69-65.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 70}${image ~/.config/conky/plots/70-60.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 71}${image ~/.config/conky/plots/71-50.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 72}${image ~/.config/conky/plots/72-45.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 73}${image ~/.config/conky/plots/73-40.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 74}${image ~/.config/conky/plots/74-35.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 75}${image ~/.config/conky/plots/75-30.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 76}${image ~/.config/conky/plots/76-25.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 77}${image ~/.config/conky/plots/77-20.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 78}${image ~/.config/conky/plots/78-15.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 79}${image ~/.config/conky/plots/79-10.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 80}${image ~/.config/conky/plots/80-5.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 81}${image ~/.config/conky/plots/81-0.png -p 0,860 -s 380x190}${endif}
+]]</code></pre>
+
+<p>OK that's a lot, but basically there are 6 sections to it. The first one is almost untouched from the basic config file:</p>
+
+<pre><code class="bash">${font DejaVu Sans Mono:size=18}${exec date +"%A %d %B, %H:%M"}$font
+$hr
+${color grey}Uptime:$color $uptime_short
+${color grey}RAM Usage:$color $mem/$memmax - $memperc% ${membar 4}
+${color grey}CPU Usage:$color $cpu% ${cpubar 4}
+${color grey}Processes:$color $processes  ${color grey}Running:$color $running_processes
+$hr
+${color grey}File systems:
+ / $color${fs_used /}/${fs_size /} ${fs_bar 6 /}
+$hr
+${color grey}Name              PID   CPU%   MEM%
+${color lightgrey} ${top name 1} ${top pid 1} ${top cpu 1} ${top mem 1}
+${color lightgrey} ${top name 2} ${top pid 2} ${top cpu 2} ${top mem 2}
+${color lightgrey} ${top name 3} ${top pid 3} ${top cpu 3} ${top mem 3}
+${color lightgrey} ${top name 4} ${top pid 4} ${top cpu 4} ${top mem 4}$color
+$hr</code></pre>
+
+<p>There is a basic color (here white) used overall,but when one need to momentarily use another color, one uses those <code>${color ...}</code> statements followed by <code>$color</code> to go back to the main color. Same with fonts. The first line uses something that I ll be using everywhere afterwards: <code>${exec ...}</code>, which just execute a shell command and return the standard output. Here just the date and time. All the rest are standard conky parameters: <code>top</code> gives the current processes using the most CPU, <code>$cpu%</code> returns the percentage of CPU used, <code>${cpubar ...}</code> the same but as a barchart, etc. Now the second segments (that is in fact intercalated between the file system size and the "top" section):</p>
+
+<pre><code>${color grey}Core 0:$color ${exec sensors | awk '/Core 0/ {print $3}'} ${execbar sensors | awk '/Core 0/ {print $3}'}
+${color grey}Core 1:$color ${exec sensors | awk '/Core 1/ {print $3}'} ${execbar sensors | awk '/Core 1/ {print $3}'}
+${color grey}Core 2:$color ${exec sensors | awk '/Core 2/ {print $3}'} ${execbar sensors | awk '/Core 2/ {print $3}'}
+${color grey}Core 3:$color ${exec sensors | awk '/Core 3/ {print $3}'} ${execbar sensors | awk '/Core 3/ {print $3}'}</code></pre>
+
+<p>This uses <a href="https://wiki.archlinux.org/index.php/lm_sensors"><code>sensors</code></a> to check the temperature of the cores. Unfortunately what sensors returns is a much too complicated text, but I just want the actually numbers here, so a bit of "awk" regex is necessary. What <code>${execbar ...}</code> does, is that it executes a shell command but returns a bar chart (the output of the command is treated as an integer between 0 and 100). The third section starts using R scripts in the background:</p>
+
+<pre><code>$hr
+${color grey}Coronavirus in Berlin
+${image ~/.config/conky/corona_berlin.png -p 0,435 -s 380x150}
+
+
+
+
+
+
+
+
+${color grey}Total cases:$color ${exec cut -d ',' -f1 ~/.config/conky/coronaberlin.txt} (${exec cut -d ',' -f2 ~/.config/conky/coronaberlin.txt} active)
+${color grey}New:$color ${exec cut -d ',' -f3 ~/.config/conky/coronaberlin.txt} ${color grey}- R:$color ${exec cut -d ',' -f4 ~/.config/conky/coronaberlin.txt} ${color grey}- ICU beds:$color ${exec cut -d ',' -f5 ~/.config/conky/coronaberlin.txt}%
+$hr</code></pre>
+
+<p>OK,a lot to go through here. As one can see in the "config" part of the setup, the whole thing refreshes every 1s. Bash is fast so that's fine, but running a R script, particularly one that grabs data online and produces a chart as a result is not. So I chose to do that asynchronically. There is a separate R script running once every 3 hours that grabs the latest Coronavirus report from the Berlin <a href="https://www.berlin.de/corona/">official website</a>, and outputs on one hand a simple text file with the latest data, and on the other a full plot showing the complete local history. The plot is shown with <code>${image ...}</code>, argument "p" specify the position (relative to the overall window/widget). As you can see, I left some empty lines for space for the plot. Then with <code>${exec ...}</code> i run simple bash commands that reads the data file, and pick the necessary fields (with <code><a href="https://man7.org/linux/man-pages/man1/cut.1.html">cut</a></code>).
+Here is the associated R script:</p>
+
+<pre><code class="R">library(rjson)
+a &lt;- fromJSON(readLines("https://www.berlin.de/lageso/gesundheit/infektionsepidemiologie-infektionsschutz/corona/tabelle-indikatoren-gesamtuebersicht/index.php/index/all.json?q=4",warn=FALSE)) #Grabs json file online
+date &lt;- as.Date(sapply(a$index,function(x)x$datum)) #Date
+cases &lt;- as.integer(sapply(a$index,function(x)x$fallzahl)) #Total cases
+gueri &lt;- as.integer(sapply(a$index,function(x)x$genesene)) #Total recovered
+dead &lt;- as.integer(sapply(a$index,function(x)x$todesfaelle)) #Total deaths
+r0 &lt;- as.numeric(sapply(a$index,function(x)x$`4_tage_r_wert_berlin_rki`)) #R
+its &lt;- as.numeric(sapply(a$index,function(x)x$its_belegung)) #Percentage of ICU beds used
+daily &lt;- diff(cases) #Daily new cases
+d7ave &lt;- sapply(7:length(daily),function(x)mean(daily[x-6:0])) #Running weekly average of the latter
+cat(tail(cases,1), tail(cases,1)-tail(dead,1)-tail(gueri,1), tail(diff(cases),1),r0[length(r0)-5], tail(its,1),sep=",",file="~/.config/conky/coronaberlin.txt") #Save the last data in a file as comma separated values
+cat(sprintf("Total cases: %i (%i active)\nNew: %i - R: %.2f - ICU beds: %.0f%%", tail(cases,1), tail(cases,1)-tail(dead,1)-tail(gueri,1), tail(diff(cases),1),r0[length(r0)-5], tail(its,1)))
+png("~/.config/conky/corona_berlin.png",bg="transparent",w=395,h=150) #Plot the historical data
+par(mar=c(0,0,0,0))
+plot(date,c(cases[1],daily),type="n",yaxs="i",ax=F,ann=F,ylim=c(0,max(round(diff(cases)+500,-3))),xlim=c(date[1],tail(date,1)+1),xaxs="i")
+segments(date,0,
+         date,c(cases[1],daily),col="grey50")
+lines(head(date[-(1:4)],-3),d7ave,lwd=2,col="white")
+box(lwd=2,col="white")
+invisible(dev.off()) #invisible is needed here only if the script is directly executed by conky as conky prints all stdout.</code></pre>
+
+The fourth section is very similar, in that it grabs data online (of <a href="https://en.wikipedia.org/wiki/Mauna_Loa_Observatory">Mauna Loa weekly CO2 concentrations</a>) with an R script asynchronically, saves them in a data file and then conky reads them and prints them:
+
+<pre><code>$hr
+${color grey}Current pCO2:$color ${exec cut -d ',' -f1 ~/.config/conky/pco2.txt | head -n 1} ${color grey}ppm on$color ${exec cut -d ',' -f2 ~/.config/conky/pco2.txt | head -n 1}
+${color grey}Max pCO2    :$color ${exec cut -d ',' -f1 ~/.config/conky/pco2.txt | tail -n 1} ${color grey}ppm on$color ${exec cut -d ',' -f2 ~/.config/conky/pco2.txt | tail -n 1}
+$hr</code></pre>
+
+And the corresponding R script:
+
+<pre><code>r &lt;- readLines("ftp://aftp.cmdl.noaa.gov/products/trends/co2/co2_weekly_mlo.txt")
+d &lt;- do.call(rbind,strsplit(r[!grepl("^#",r)]," +"))
+a &lt;- apply(d,2,as.numeric)
+a &lt;- a[,-1]
+a[a== -999.99] &lt;- NA
+maunalau &lt;- data.frame(date=as.Date(paste(a[,1],a[,2],a[,3],sep="-")),co2=a[,5])
+with(tail(maunalau,1),
+     cat(sprintf("%.2f,%s\n",round(co2,2),as.character(date)),file="~/.config/conky/pco2.txt"))
+with(maunalau[which.max(maunalau$co2),],
+     cat(sprintf("%.2f,%s",round(co2,2),as.character(date)),append=TRUE,file="~/.config/conky/pco2.txt"))</code></pre>
+
+<p>The 5th section grabs calendar data and prints them to conky. Honestly it's still very clunky so I m not going to explain it here until I'll figure out a proper to do it. The 6th however is interesting: it shows an animated earth with plate tectonics for the full Phanerozoic (using the latest reconstructions of continental margins/shorelines by <a href="https://www.sciencedirect.com/science/article/abs/pii/S0012825220305092">Kocsis &amp; Scotese</a>). This time the way I did it is to first produce the maps using R, save them in an accessible folder and then just loop through those pictures with conky at each refresh (i. e. one map every second). This is what the 6th section thus look like in the confy setting file:</p>
+
+<pre><code>${if_updatenr 1}${image ~/.config/conky/plots/01-535.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 2}${image ~/.config/conky/plots/02-525.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 3}${image ~/.config/conky/plots/03-515.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 4}${image ~/.config/conky/plots/04-510.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 5}${image ~/.config/conky/plots/05-505.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 6}${image ~/.config/conky/plots/06-500.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 7}${image ~/.config/conky/plots/07-495.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 8}${image ~/.config/conky/plots/08-490.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 9}${image ~/.config/conky/plots/09-485.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 10}${image ~/.config/conky/plots/10-480.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 11}${image ~/.config/conky/plots/11-475.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 12}${image ~/.config/conky/plots/12-470.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 13}${image ~/.config/conky/plots/13-465.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 14}${image ~/.config/conky/plots/14-455.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 15}${image ~/.config/conky/plots/15-450.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 16}${image ~/.config/conky/plots/16-445.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 17}${image ~/.config/conky/plots/17-440.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 18}${image ~/.config/conky/plots/18-435.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 19}${image ~/.config/conky/plots/19-430.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 20}${image ~/.config/conky/plots/20-425.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 21}${image ~/.config/conky/plots/21-420.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 22}${image ~/.config/conky/plots/22-415.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 23}${image ~/.config/conky/plots/23-410.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 24}${image ~/.config/conky/plots/24-400.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 25}${image ~/.config/conky/plots/25-390.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 26}${image ~/.config/conky/plots/26-385.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 27}${image ~/.config/conky/plots/27-375.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 28}${image ~/.config/conky/plots/28-365.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 29}${image ~/.config/conky/plots/29-355.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 30}${image ~/.config/conky/plots/30-340.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 31}${image ~/.config/conky/plots/31-325.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 32}${image ~/.config/conky/plots/32-320.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 33}${image ~/.config/conky/plots/33-310.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 34}${image ~/.config/conky/plots/34-305.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 35}${image ~/.config/conky/plots/35-300.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 36}${image ~/.config/conky/plots/36-295.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 37}${image ~/.config/conky/plots/37-285.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 38}${image ~/.config/conky/plots/38-275.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 39}${image ~/.config/conky/plots/39-270.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 40}${image ~/.config/conky/plots/40-265.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 41}${image ~/.config/conky/plots/41-260.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 42}${image ~/.config/conky/plots/42-255.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 43}${image ~/.config/conky/plots/43-250.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 44}${image ~/.config/conky/plots/44-245.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 45}${image ~/.config/conky/plots/45-240.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 46}${image ~/.config/conky/plots/46-230.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 47}${image ~/.config/conky/plots/47-220.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 48}${image ~/.config/conky/plots/48-205.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 49}${image ~/.config/conky/plots/49-200.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 50}${image ~/.config/conky/plots/50-195.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 51}${image ~/.config/conky/plots/51-185.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 52}${image ~/.config/conky/plots/52-180.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 53}${image ~/.config/conky/plots/53-170.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 54}${image ~/.config/conky/plots/54-165.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 55}${image ~/.config/conky/plots/55-160.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 56}${image ~/.config/conky/plots/56-155.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 57}${image ~/.config/conky/plots/57-150.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 58}${image ~/.config/conky/plots/58-140.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 59}${image ~/.config/conky/plots/59-135.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 60}${image ~/.config/conky/plots/60-130.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 61}${image ~/.config/conky/plots/61-125.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 62}${image ~/.config/conky/plots/62-120.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 63}${image ~/.config/conky/plots/63-105.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 64}${image ~/.config/conky/plots/64-95.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 65}${image ~/.config/conky/plots/65-90.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 66}${image ~/.config/conky/plots/66-85.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 67}${image ~/.config/conky/plots/67-80.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 68}${image ~/.config/conky/plots/68-70.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 69}${image ~/.config/conky/plots/69-65.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 70}${image ~/.config/conky/plots/70-60.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 71}${image ~/.config/conky/plots/71-50.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 72}${image ~/.config/conky/plots/72-45.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 73}${image ~/.config/conky/plots/73-40.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 74}${image ~/.config/conky/plots/74-35.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 75}${image ~/.config/conky/plots/75-30.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 76}${image ~/.config/conky/plots/76-25.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 77}${image ~/.config/conky/plots/77-20.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 78}${image ~/.config/conky/plots/78-15.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 79}${image ~/.config/conky/plots/79-10.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 80}${image ~/.config/conky/plots/80-5.png -p 0,860 -s 380x190}${endif}
+${if_updatenr 81}${image ~/.config/conky/plots/81-0.png -p 0,860 -s 380x190}${endif}</code></pre>
+
+<p>Here <code>${if_updatenr ...}</code> does all the heavy lifting: "updatenr" increments at each refresh until it reaches the highest value used in the file (here 81) and then starts again at 1. Simple enough.</p>
+
+<p>Eventually all R scripts arebundled in a single bash script that I run every 3 hours with <a href="https://en.wikipedia.org/wiki/Cron">cron</a> (i. e. <code>0 */3 * * * ~/.config/conky/rcripts.sh</code>). And so here is the (very humble) result (captured with <a href="https://linuxecke.volkoh.de/vokoscreen/vokoscreen.html">VokoscreenNG</a>):</p>
+
+<video width="1000" controls><source src="vid/conky.mp4" type="video/mp4"></video><br/>
+<picture><source srcset="vid/conky.mp4" type="video/mp4"></picture>
+
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2020-12-24.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
