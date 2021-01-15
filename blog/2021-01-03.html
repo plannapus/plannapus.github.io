@@ -123,7 +123,7 @@ ek1
 
 <p>As said before, most of it is from the default setup, except from a few things: the <code>own_window_colour</code> which I set to the color of the rest of the background, <code>gap_x, gap_y, minimum_width</code> which I set up so that the "window" is just glued to the dash column. The second and most important part is what actually set the content of the "window/widget":</p>
 
-<pre><code class="bash">conky.text = [[
+<pre><code class="none">conky.text = [[
 ${font DejaVu Sans Mono:size=18}${exec date +"%A %d %B, %H:%M"}$font
 $hr
 ${color grey}Uptime:$color $uptime_short
@@ -419,14 +419,14 @@ ${if_updatenr 81}${image ~/.config/conky/plots/81-0.png -p 0,860 -s 380x190}${en
 
 <p>Here <code>${if_updatenr ...} ... ${endif}</code> does all the heavy lifting: "updatenr" increments at each refresh until it reaches the highest value used in the file (here 81) and then starts again at 1. Simple enough.</p>
 
-<p>Eventually all R scripts are bundled in a single bash script (i. e. <code>/usr/bin/Rscript ~/.config/conky/coronaberlin.R; /usr/bin/Rscript ~/.config/conky/maunaloa.R; ...</code>) that I run every 3 hours with <a href="https://en.wikipedia.org/wiki/Cron">cron</a> (i. e. <code>0 */3 * * * ~/.config/conky/rcripts.sh</code>). And so here is the (very humble) result (captured with <a href="https://linuxecke.volkoh.de/vokoscreen/vokoscreen.html">VokoscreenNG</a>):</p>
+<p>Eventually all R scripts are bundled in a single bash script (i. e. <code>/usr/bin/Rscript ~/.config/conky/coronaberlin.R; /usr/bin/Rscript ~/.config/conky/maunaloa.R; ...</code>) that I run every 3 hours with <a href="https://en.wikipedia.org/wiki/Cron">cron</a> (i. e. <code>0 */3 * * * ~/.config/conky/rscripts.sh</code>). And so here is the (very humble) result (captured with <a href="https://linuxecke.volkoh.de/vokoscreen/vokoscreen.html">VokoscreenNG</a>):</p>
 
 <video width="1000" controls><source src="vid/conky.mp4" type="video/mp4"></video><br/>
 
 			</p>
 			<hr/>
 			<div class="footer">
-				<a href="2020-12-24.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+				<a href="2020-12-24.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-01-15.html">Next entry &gt;</a>
 			</div>
 		</div>
 	</body>
