@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Using R code in Julia and Python</title><link>http://plannapus.github.io/blog/2021-03-13.html</link><pubDate>2021-03-13</pubDate><description>
+As we are moving toward the data analysis part of our project, I am trying to teach my working group how to use the stack of R functions I wrote during the past decade. The issue is however that R does not seem to be a popular option among my working group and that they prefer using either Python or Julia. As translating a decade-worth of code into those two languages is a bit of a bummer, I've been looking at how to read and use R functions in Julia and Python instead.
+</description><category>Programming</category><category>R</category><category>Python</category><category>Julia</category></item>
 <item><title>A look back at IODP Expedition 379</title><link>http://plannapus.github.io/blog/2021-02-25.html</link><pubDate>2021-02-25</pubDate><description>
 This week, the Proceedings from IODP Expedition 379 finallyThey were supposed to come out six months ago, but were delayed because of COVID. came out! The occasion to reminisce about the expedition, while being able to actually talk about what we found (as the moratorium on the preliminary results is over).</description><category>Science</category></item>
 <item><title>Unagi Onigirazu</title><link>http://plannapus.github.io/blog/2021-01-15.html</link><pubDate>2021-01-15</pubDate><description>Yes, I reached that stage of the lockdown when I like to pretend I am still going to work by preparing myself a bento :)</description><category>Cooking</category></item>

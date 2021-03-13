@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="Using R code in Julia and Python" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<meta name="category" content="Python">
+		<meta name="category" content="Julia">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Using R code in Julia and Python</p>
+			<p class="blog-date">2021-03-13</p>
+			<p class="blog-content">
+As we are moving toward the data analysis part of <a href="http://ehrenberglab.github.io/pages/mopga.html">our project</a>, I am trying to teach my working group how to use the stack of R functions I wrote during the past decade. The issue is however that R does not seem to be a popular option among my working group and that they prefer using either Python or Julia. As translating a decade-worth of code into those two languages is a bit of a bummer, I've been looking at how to read and use R functions in Julia and Python instead.
+<p>Julia has, in particular, a very intuitive and well-done package to achieve this: <a href="https://github.com/JuliaInterop/RCall.jl">RCall.jl</a>:</p>
+
+<pre><code class="julia">using RCall
+R""" #Macro to make operations in an R environment
+x &lt;- c(0,1,2)
+a &lt;- 2
+"""
+X = @rget x # moving object from the R environemnt to Julia
+y = X .+ randn(3)
+@rput y # moving object from julia to the R environment
+R"z &lt;- y + rpois(3,2)"
+@rget z
+
+# Skipping the @rput step using the dollar sign notation
+x = randn(10)
+R"y &lt;- mean($x)"
+@rget y
+
+# Concrete example using a function I wrote in R to compute Chao1 estimator and its Confidence Interval
+R"""
+chao1 &lt;- function(mat){
+  a &lt;- sum(mat==1) #Number of singletons
+  b &lt;- sum(mat==2) #Number of doubletons
+  S &lt;- sum(mat>0)  #Number of species
+  chao1 &lt;- S+(a^2)/(2*b)
+  d &lt;- a/b
+  varS1 &lt;- b*((d/4)^4+d^3+(d/2)^2)
+  t &lt;- chao1-S
+  k &lt;- exp(1.96*sqrt(log(1+varS1/t^2)))
+  c(S+t/k, chao1, S+t*k)
+}
+"""
+#Alternatively
+R"source('path/to/chao1.R')"
+
+sample = [1, 42, 0, 3, 23, 2, 1, 1, 2, 5, 6, 0, 123, 9] #Made-up sample
+res = R"chao1($sample)"
+</code></pre>
+
+<p>It's very easy to use, and the conversion between Julia and R objects is a no-brainer, even with dataframes. In the following example I take a species-accumulation curve (<a href="../data/sac.csv">here</a>) and fit a curve (using <a href="https://doi.org/10.1007/BF01042995">de Caprariis <emph>et al.</emph></a> formula) to estimate its asymptote (the results of the function is a list containing the fitted curve as a data.frame and a named vector containing the parameters of the function along with fit quality measures).</p>
+
+<pre><code class="julia">using CSV
+using DataFrames
+sac = CSV.read("sac.csv", DataFrame, header=1, delim="\t")
+R"""
+caprariis &lt;- function(SAC){
+         caprariis.misfit &lt;- function(parametres,x){
+           Smax &lt;- parametres[1]
+           b &lt;- parametres[2]
+           FIT &lt;- c()
+           misfit &lt;- 0
+           for (i in 1:nrow(x)){
+             FIT[i] &lt;- (Smax*i)/(b+i)
+             misfit &lt;- sum(abs(FIT[i]-x[i,2]))+misfit
+           }
+           return(misfit)
+         }
+         OPT &lt;- optim(c(50,10),caprariis.misfit,method="BFGS",x=SAC,control=list(trace=1))
+         Smax &lt;- OPT$par[1]
+         b &lt;- OPT$par[2]
+         FIT &lt;- c()
+         caprar &lt;- list()
+         misfit &lt;- OPT$value
+         for (i in 1:nrow(SAC)) FIT[i] &lt;- (Smax*i)/(b+i)
+         caprar$Curve.fitting &lt;- cbind(SAC,FIT)
+         colnames(caprar$Curve.fitting) &lt;- c("N","SAC","Fitting")
+         pearson &lt;- cor(FIT,SAC[,2])
+         pearson.squared &lt;- pearson^2
+         all &lt;- c(Smax,b,misfit,pearson,pearson.squared)
+         names(all) &lt;- c("Smax","b","Misfit","Pearson","Pearson squared")
+         caprar$Summary &lt;- all
+         return(caprar)
+       }
+"""
+R"caprariis($sac)"</code></pre>
+
+<p>In Python, using <a href="https://pypi.org/project/rpy2/">rpy2</a>, it's still very easy (though a bit less elegant than with Julia I must say):</p>
+
+<pre><code class="python">import rpy2.robjects as robjects
+
+# As in Julia the object rpy2.robjects.r contains a queryable R environment
+robjects.r('''
+chao1 &lt;- function(mat){
+  a &lt;- sum(mat==1) #Number of singletons
+  b &lt;- sum(mat==2) #Number of doubletons
+  S &lt;- sum(mat>0)  #Number of species
+  chao1 &lt;- S+(a^2)/(2*b)
+  d &lt;- a/b
+  varS1 &lt;- b*((d/4)^4+d^3+(d/2)^2)
+  t &lt;- chao1-S
+  k &lt;- exp(1.96*sqrt(log(1+varS1/t^2)))
+  c(S+t/k,chao1,S+t*k)
+}
+''')
+#Or read directly from the script
+robjects.r('source(/path/to/chao1.R)')
+#Or:
+robjects.r.source("/path/to/chao1.R")
+
+sample = [1, 42, 0, 3, 23, 2, 1, 1, 2, 5, 6, 0, 123, 9]
+r_sample = robjects.IntVector(sample) #The conversion in python needs to be explicit
+chao1 = robjects.r['chao1']
+chao1(r_sample)</code></pre>
+
+<p>The explicit conversion is a bit annoying, however when using pandas and dataframes, one can bypass that and make it way easier:</p>
+
+<pre><code class="python">import pandas
+from rpy2.robjects import pandas2ri
+pandas2ri.activate()
+robjects.r.source("/path/to/caprariis.R")
+cap = robjects.r['caprariis']
+sac = pandas.read_csv("sac.csv", delimiter="\t", header=1)
+res = cap(sac)</code></pre>
+
+<p>In the other direction, I have been using package <a href="">reticulate</a> to use Python code in R. Maybe I'll also write a post one day about it. Anyway I'm glad to see all my legacy code can still be used even by non-R-programmers.</p>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2021-02-25.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
