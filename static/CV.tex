@@ -1,7 +1,7 @@
 \documentclass[11pt, a4paper]{article}
-\usepackage[margin=0.7cm]{geometry}
+\usepackage[margin=0.65cm]{geometry}
 \usepackage{array}
-\usepackage{longtable}
+\usepackage{longtable,needspace}
 \usepackage{titlesec}
 \usepackage{fontspec}
 \usepackage{fancyhdr}
@@ -38,15 +38,14 @@
 \makeatother
 
 \begin{document}
-
-\begin{longtable}{p{0.45\linewidth} >{\raggedleft\arraybackslash}p{0.5\linewidth}}
+\begin{longtable}{@{}p{0.45\linewidth} >{\raggedleft\arraybackslash}p{0.5\linewidth}@{}}
 {\bfseries \Large Johan RENAUDIE} & born in Sarlat-la-Can\'{e}da (France), July the 26th, 1983 \\
 \href{mailto:johan.renaudie@mfn.berlin}{johan.renaudie@mfn.berlin} & ORCID: \href{http://orcid.org/0000-0002-9107-1984}{0000-0002-9107-1984}\\
 \hline
 \end{longtable}
 
 \section{EDUCATION}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2013 & Promotion (PhD) in Biology (Paleontology) at Humboldt-Universit\"{a}t, Berlin, Germany.\\
 2007 & Master (MSc) in Systematic, Evolution and Paleontology at Universit\'{e} Pierre et Marie Curie (UPMC) coaccredited with Museum National d'Histoire Naturelle and \'{E}cole Normale Sup\'{e}rieure, Paris, France.\\
 2004 & Licence (BSc) in Earth and Space Sciences at Universit\'{e} Paul Sabatier, Toulouse, France.\\
@@ -55,7 +54,7 @@
 \end{longtable}
 
 \section{RESEARCH EXPERIENCE}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2018--22 & PostDoc research project (\href{https://www.daad.de/medien/hochschulen/regional/europa/mopga/projektbeschreibungen_englisch_15-05-2018.pdf}{DAAD MOPGA-GRI grant 57429681}) at the Museum f\"{u}r Naturkunde (MfN) with G. Asatryan and D.B. Lazarus on `Polar Paleogene Plankton and Productivity'.\\
 2015--17 & PostDoc research project (\href{http://gepris.dfg.de/gepris/projekt/279867559}{DFG grant RE3470/3-1}) at MfN on `Diatoms, Radiolarians and the Cenozoic Silicon and Carbon cycles'.\\
 2014--15 & PostDoc research project at MfN with D.B. Lazarus and H. P\"{a}like on `\href{http://earthtime-eu.eu/earthtime/?page_id=686}{Earthtime-EU}: Integrated deep-sea microfossil chronostratigraphic database, website and analytic tools'.\\
@@ -65,13 +64,15 @@
 \end{longtable}
 
 \section{FIELDWORK}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2019 & \href{https://iodp.tamu.edu/scienceops/expeditions/amundsen_sea_ice_sheet_history.html}{IODP Expedition 379 `Amundsen Sea West Antarctic ice-sheet history'}: Radiolarian specialist.\\
 \end{longtable}
 
 \section{PUBLICATIONS}
 \subsection{Peer-reviewed articles}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
+2021 %& Fenton I., Woodhouse A., Aze T., Lazarus D., Renaudie J., Dunhill A., Young J., Saupe E. Triton: a new database of Cenozoic Planktonic Foraminifera. \textit{Scientific Data}\\
+& Buchwitz M., Jansen M.A., Renaudie J., Marchetti L., Voigt S. \href{http://doi.org/10.3389/fevo.2021.674779}{Evolutionary change in locomotion close to the origin of amniotes inferred in a phylogenetically informed analysis of trackway data}. \textit{Frontiers in Ecology and Evolution}, 9:674779.\\
 2020 & Trubovitz S., Lazarus D., Renaudie J., Noble P. \href{http://doi.org/10.1038/s41467-020-18879-7}{Marine plankton show threshold extinction response to Neogene climate change}. \textit{Nature Communications}, 11:5069.\\
  & Renaudie J., Lazarus D.B., Diver P. \href{https://palaeo-electronica.org/content/2020/2966-the-nsb-database}{NSB (Neptune Sandbox Berlin): An expanded and improved database of marine planktonic microfossil data and deep-sea stratigraphy.}. \textit{Palaeontologia Electronica}, 23(2):a11.\\
 2019 & Piazza V., Duarte L.V., Renaudie J., Aberhan M. \href{http://doi.org/10.1017/pab.2019.11}{Reductions in body size of benthic macro- invertebrates as a precursor of the Early Toarcian (Early Jurassic) extinction event in the Lusitanian Basin, Portugal}. \textit{Paleobiology}, 45(2), 296--316.\\
@@ -89,32 +90,30 @@
 \end{longtable}
 
 \subsection{Other publications}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
-2021 & Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists\footnoteref{exp379scientists}. \href{https://doi.org/10.14379/iodp.proc.379.101.2021}{Expedition 379 Summary}. \textit{In} Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists, \textit{Amundsen Sea West Antarctic Ice Sheet History}. \href{http://publications.iodp.org/proceedings/379/379title.html}{Proceedings of the International Ocean Discovery Program, 379}: College Station, TX (IODP).\\
- & Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists\footnoteref{exp379scientists}. \href{https://doi.org/10.14379/iodp.proc.379.102.2021}{Expedition 379 Methods}. \textit{In} Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists, \textit{Amundsen Sea West Antarctic Ice Sheet History}. \href{http://publications.iodp.org/proceedings/379/379title.html}{Proceedings of the International Ocean Discovery Program, 379}: College Station, TX (IODP).\\
- & Wellner J., Gohl K., Klaus A. and the Expedition 379 Scientists\footnoteref{exp379scientists}. \href{https://doi.org/10.14379/iodp.proc.379.103.2021}{Site U1532}. \textit{In} Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists, \textit{Amundsen Sea West Antarctic Ice Sheet History}. \href{http://publications.iodp.org/proceedings/379/379title.html}{Proceedings of the International Ocean Discovery Program, 379}: College Station, TX (IODP).\\
- & Wellner J., Gohl K., Klaus A. and the Expedition 379 Scientists\footnoteref{exp379scientists}. \href{https://doi.org/10.14379/iodp.proc.379.104.2021}{Site U1533}. \textit{In} Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists, \textit{Amundsen Sea West Antarctic Ice Sheet History}. \href{http://publications.iodp.org/proceedings/379/379title.html}{Proceedings of the International Ocean Discovery Program, 379}: College Station, TX (IODP).\\
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
+2021 & Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists\footnoteref{exp379scientists}. \href{https://doi.org/10.14379/iodp.proc.379.101.2021}{Expedition 379 Summary}. \textit{In} Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists, \textit{Amundsen Sea West Antarctic Ice Sheet History}. \href{http://publications.iodp.org/proceedings/379/379title.html}{Proceedings of the International Ocean Discovery Program, 379}: 1--21.\\
+ & Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists\footnoteref{exp379scientists}. \href{https://doi.org/10.14379/iodp.proc.379.102.2021}{Expedition 379 Methods}. \textit{In} Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists, \textit{Amundsen Sea West Antarctic Ice Sheet History}. \href{http://publications.iodp.org/proceedings/379/379title.html}{Proceedings of the International Ocean Discovery Program, 379}: 1--42.\\
+ & Wellner J., Gohl K., Klaus A. and the Expedition 379 Scientists\footnoteref{exp379scientists}. \href{https://doi.org/10.14379/iodp.proc.379.103.2021}{Site U1532}. \textit{In} Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists, \textit{Amundsen Sea West Antarctic Ice Sheet History}. \href{http://publications.iodp.org/proceedings/379/379title.html}{Proceedings of the International Ocean Discovery Program, 379}: 1--47.\\
+ & Wellner J., Gohl K., Klaus A. and the Expedition 379 Scientists\footnoteref{exp379scientists}. \href{https://doi.org/10.14379/iodp.proc.379.104.2021}{Site U1533}. \textit{In} Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists, \textit{Amundsen Sea West Antarctic Ice Sheet History}. \href{http://publications.iodp.org/proceedings/379/379title.html}{Proceedings of the International Ocean Discovery Program, 379}: 1--46.\\
 2019 & Gohl K., Wellner J., Klaus A. and the Expedition 379 Scientists\footnote{\label{exp379scientists}Gohl K., Wellner J., Klaus A., Bauersachs T., Bohaty S.M., Courtillat M., Cowan E.A., Esteves M.S.R., De Lira Mota M.A., Fegyveresi J.M., Frederichs T.W., Gao L., Halberstadt A.R., Hillenbrand C.-D., Horikawa K., Iwai M., Kim J.-H., King T.M., Klages J.P., Passchier S., Penkrot M.L., Prebble J.G., Rahaman W., Reinardy B.T.I., Renaudie J., Robinson D.E., Scherer R.P., Siddoway C.S., Wu L., Yamane M.}. \href{http://publications.iodp.org/preliminary_report/379/index.html}{Expedition 379 Preliminary Report: Amundsen Sea West Antarctic Ice Sheet History}. \textit{International Ocean Discovery Program: Preliminary Reports}, 379:1--33.\\
   & Varela S., Sbrocco E.J., Tarroso P., Perez-Luque A.J., Renaudie J., Warnst\"{a}dt N., Fandos G., Foster W.J., Tietje M. \href{http://dx.doi.org/10.7818/ECOS.1707}{BioExtreme hackathon en el Museum f\"{u}r Naturkunde de Berlín, Alemania.} \textit{Ecosistemas}, 28(1):129.\\
 \end{longtable}
 
 \subsection{Submitted}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
-2021 & Buchwitz M., Jansen M.A., Renaudie J., Voigt S. Evolutionary shift in locomotion close to the origin of amniotes inferred in a phylogenetically informed analysis of trackway data.\\
-2020 & Fenton I., Woodhouse A., Aze T., Lazarus D., Renaudie J., Dunhill A., Young J., Saupe E. Triton: a new database of Cenozoic Planktonic Foraminifera.\\
- & Coiffard C., Renaudie J., El Atfy H., Bussert R., Uhl D. Emergence of the tropical rainforest biome in the Cretaceous.\\
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
+%2020 & Coiffard C., Renaudie J., El Atfy H., Bussert R., Uhl D. Emergence of the tropical rainforest biome in the Cretaceous.\\
 2018 & Renaudie J., Gray R., Lazarus D.B. \href{https://peerj.com/preprints/27328/}{Accuracy of a neural net classification of closely-related species of microfossils from a sparse dataset of unedited images.} \textit{Submitted to PeerJ}.\\
 \end{longtable}
 
 \section{SEMINAR TALKS}
 \subsection{Invited talks}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
-2019 & Museum f\"{u}r Naturkunde Magdeburg, Germany: \href{http://www.naturkundemuseum-magdeburg.de/data/mediapool/qprgm004-2019-web.pdf}{Antarktisches Mikroplankton und vergangene Klimawandel}. November, 6th.\\
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
+2019 & Museum f\"{u}r Naturkunde Magdeburg, Germany: Antarktisches Mikroplankton und vergangene Klimawandel. November, 6th.\\
  & GFZ-Potsdam, Germany: \href{http://plannapus.github.io/data/20190723Potsdam.pdf}{Cenozoic changes in the Si and C marine cycles from the point of view of diatoms}. July, 23rd.\\
 2016 & University of Leeds, UK : Diatoms, climate and the marine Silicon cycle. November, 10th.\\
 \end{longtable}
 \subsection{In-house talks}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2020 & \iffalse Wissenschaftstag `Lighthouse Projects' (MfN): \fi Automatic species counting for biodiversity and climate change research using AI and massive collection imaging. September, 21st.\\
 2018 & \iffalse Evolutionsbiologisches Seminar (MfN): \fi The Cenozoic evolution of the diatom-climate system. September, 27th.\\
 2017 & \iffalse Wissenschaftstag `Taxonomie' (MfN): \fi Micropaleontology, between taxonomic backbone databases and alpha taxonomy. May, 31st.\\
@@ -122,15 +121,16 @@
 
 \section{CONGRESS PARTICIPATIONS}
 \subsection{Organization}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2019 & EGU general meeting in Vienna, Austria: \href{https://meetingorganizer.copernicus.org/EGU2019/session/31041}{`SSP4.6: Plankton in modern and past ecosystems'} (convener: Thibault N.; co-conveners: Bottini C., Luciani V., Renaudie J., Noble P.).
 \end{longtable}
+\Needspace{6\baselineskip}
 \subsection{Displays}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2020 & EGU2020 Sharing Geoscience Online: \underline{Renaudie J.}, Lazarus D., Trubovitz S., \"{O}zen V., Rodrigues de Faria G., Asatryan G., Noble P., \href{https://meetingorganizer.copernicus.org/EGU2020/EGU2020-3456.html}{Cenozoic plankton diversity dynamics and the impact of macroevolution on the marine carbon cycle}; \underline{Rodrigues de Faria G.}, Lazarus D., Struck U., Asatryan G., Renaudie J., \"{O}zen V., \href{https://meetingorganizer.copernicus.org/EGU2020/EGU2020-5924.html}{Paleogene Polar Plankton and export productivity changes between the Eocene and Oligocene}.\\
 \end{longtable}
 \subsection[Talks]{Talks \textnormal{\footnotesize{(\underline{speaker}; last 5 only)}}}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 %2021 & Goldschmidt2021 in Lyon, France: \underline{Fontorbe G.}, Frings P.J., Renaudie J., Cao Z., Zhang Z., Frank M., Radiolarian species-specific fractionation: insights from a Miocene sediment core.\\
 2020 & Progressive Palaeontology 2020 Online: \underline{Woodhouse A.}, Fenton I., Aze T., Lazarus D., Renaudie J., Young J., Saupe E., Triton: a new extension of the Neptune Database.\\
  & AGU Fall Meeting 2020 Online Everywhere: \underline{Woodhouse A. D.}, Fenton I., Jackson S., Saupe E., Dunhill A., Renaudie J., Lazarus D. B., Sexton P. F., Young J. R., Pearson P. N., Wignall P., Aze T., Can the Cenozoic marine paleontological record be used to predict multi-scaled extinction susceptibility?\iffalse ; \underline{Furlong H. L.}, Scherer R. P., Expedition 379 Scientists\footnoteref{exp379scientists}, Microfabric Analysis of Upper Pliocene Amundsen Sea Interglacial Sediments (IODP Exp. 379) Demonstrate a Link Between Iceberg Melt and Diatom Productivity.\fi \\
@@ -152,10 +152,10 @@
 %  & TMS annual meeting in Nottingham, UK: \underline{Renaudie J.}, Lazarus D., Toward an high-resolution stratigraphy for Antarctic Neogene radiolarians.\\
 % 2011 & TMS Silicofossil Group meeting in Lille, France: \underline{Renaudie J.}, Lazarus D., Macro-evolutionary patterns in Antarctic Neogene radiolarians.\\
 % 2007 & Congr\`{e}s de l'Association Fran\c{c}aise de Pal\'{e}ontologie in Dignes-les-Bains, France: \underline{Renaudie J.}, Danelian T., Saint-Martin S., Eocene diatoms in the tropical Atlantic (ODP Leg 207) and climate changes.\\
-since 2007 & 25 talks (including 11 as speaker) at 20 international conferences.
+2007--now  & 25 talks (including 11 as speaker) at 20 international conferences.
 \end{longtable}
 \subsection[Posters]{Posters \textnormal{\footnotesize{(\underline{presenting}; last 5 only)}}}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2020 & Ocean Sciences meeting in San Diego, USA: \underline{Trubovitz S.}, Lazarus D., Renaudie J., Noble P., Radiolarians exhibit a threshold response to climate change during the late Neogene.\\
  & TMS General Meeting online: \underline{\"{O}zen V.}, Rodrigues de Faria G., Renaudie J., Lazarus D., Southern Ocean diatom diversity at the Eocene-Oligocene transition; \underline{Rodrigues de Faria G.}, Renaudie J., Struck U., Lazarus D., Southern Ocean productivity across the Eocene-Oligocene boundary.\\
 2019 & EGU general meeting in Vienna, Austria: \underline{Asatryan G.}, Lazarus D., Renaudie J., The preliminary studies of plankton in the framework of the project ``Paleogene Polar Plankton and Paleoproductivity''.\\
@@ -183,41 +183,42 @@ since 2007 & 25 talks (including 11 as speaker) at 20 international conferences.
 %  & InterRad 12th meeting in Nanjing, China: Lazarus D.B., \underline{Renaudie J.}, Synthesis on Antarctic Neogene Radiolaria: preliminary results.\\
 % 2007 & Paleontological Association 51st Annual Meeting in Uppsala, Sweden: Renaudie J., \underline{Danelian T.}, Saint-Martin S., The siliceous plankton response of the equatorial Atlantic to the Middle Eocene Climatic Optimum event (ODP Site 1260, Demerara Rise, off Surinam).\\
 % 2006 & Paleontological Association 50th Annual Meeting in Sheffield, UK: \underline{Danelian T.}, Renaudie J., Blanc-Valleron M.-M., The radiolarian record of the equatorial Atlantic during the Paleocene/Eocene Thermal Maximum event.\\
-since 2006 & 34 posters (including 17 as presenting author) at 27 international conferences.
+2006--now  & 34 posters (including 17 as presenting author) at 27 international conferences.
 \end{longtable}
 
 \section{SCIENTIFIC PROGRAMMING}
 \subsection{Softwares}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2017 & \href{http://github.com/plannapus/NSB_ADP_wx/releases}{NSB\_ADP\_wx} -- Age-Depth plot maker in Python (last update: \href{http://doi.org/10.5281/zenodo.3408657}{version 0.7}; 2019).\\
 2016 & \href{http://github.com/plannapus/Raritas/releases}{Raritas} -- Micropaleontological counting software in Python (last update: \href{https://github.com/plannapus/Raritas/releases/tag/v0.7}{version 0.7}; 2018).\\
 \end{longtable}
 \subsection{Packages}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2014 & \href{http://github.com/plannapus/NSBcompanion}{NSBcompanion} -- R package to work with the NSB database (last update: \href{http://doi.org/10.5281/zenodo.3408198}{version 2.1}; 2019).\\
 2013 & \href{http://github.com/plannapus/CONOP9companion}{CONOP9companion} -- R package to integrate software CONOP9 in a statistical workflow.\\
      & \href{https://cran.r-project.org/web/packages/dendextend/index.html}{dendextend} -- R package for dendrogram visualizations (\underline{as contributor only}).\\
 \end{longtable}
 \subsection{Databases}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
-since 2013 & Maintainer and developer of the \href{http://nsb-mfn-berlin.de/}{NSB database}, successor of the legacy Neptune database.\\
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
+2013--now  & Maintainer and developer of the \href{http://nsb-mfn-berlin.de/}{NSB database}, successor of the legacy Neptune database.\\
 \end{longtable}
 
 \section{SERVICES TO PROFESSION}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
-since 2021 & Reviewer Board member for \href{https://www.mdpi.com/journal/biology/submission_reviewers}{Biology}.\\
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
+%2021 & Scientific board member for INTERRAD meeting.
+2021--now & Reviewer board member for \href{https://www.mdpi.com/journal/biology/submission_reviewers}{Biology}.\\
 2019 & Outside reader for an MSc defense (William Bugbee; University of Northern Illinois, USA).\\
 2018 & Remote reviewer for an ERC Advanced Grant proposal.\\
 2015--18 & Organizer of the \href{https://github.com/plannapus/MfN-Code-Clinic}{MfN `Code Clinic' Scientific Programming Club} (on-the-job training for ECR). \\
-since 2013 & \href{http://publons.com/a/1291154/}{Reviews} for \textit{Proceedings of the Royal Society B}; \textit{Paleoceanography}; \textit{Paleobiology}; \textit{Palaeo\-geography, Palaeo\-climatology, Palaeo\-ecology}; \textit{Global and Planetary Change}; \textit{Marine Geology}; \textit{Quaternary Science Reviews}; \textit{Microorganisms}; \textit{Biology}; \textit{Diversity}; \textit{Sustainability}; \textit{Water}; \textit{Journal of Plankton Research}; \textit{Bulletin de la Soci\'{e}t\'{e} G\'{e}ologique de France}; \textit{Revue de Micropal\'{e}ontologie} and \textit{Acta Palaeontologica Romaniae}. \\
+2013--now  & \href{http://publons.com/a/1291154/}{Reviews} for \textit{Proceedings of the Royal Society B}; \textit{Paleoceanography}; \textit{Paleobiology}; \textit{Palaeo\-geography, Palaeo\-climatology, Palaeo\-ecology}; \textit{Global and Planetary Change}; \textit{Marine Geology}; \textit{Quaternary Science Reviews}; \textit{Microorganisms}; \textit{Biology}; \textit{Diversity}; \textit{Sustainability}; \textit{Water}; \textit{Journal of Plankton Research}; \textit{Bulletin de la Soci\'{e}t\'{e} G\'{e}ologique de France}; \textit{Revue de Micropal\'{e}ontologie} and \textit{Acta Palaeontologica Romaniae}. \\
 \end{longtable}
 
 \section{WORKSHOPS}
 % \subsection{As organizer}
-% \begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+% \begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}}
 % \end{longtable}
 % \subsection{As participant}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2021--22 & `BioDeepTIME: rhythms, aberrations, and drivers of ecological turnover from daily to million-year timescales' PaleoSynthesis Workshop at Friedrich-Alexander-Universit\"{a}t, Erlangen, Germany.\\
 2018 & \href{https://github.com/macroecology/BioExtremes}{BioExtreme hackathon} at MfN.\\
 2017 & \href{https://abcd.biowikifarm.net/wiki/Events:WorkshopEFG2017}{`Access to Geosciences: sharing and publishing data related to paleontological, mineralogical, and petrological objects using a common data standard'} workshop at MfN.\\
@@ -225,9 +226,10 @@ since 2013 & \href{http://publons.com/a/1291154/}{Reviews} for \textit{Proceedin
 \end{longtable}
 
 \section{PUBLIC OUTREACH}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
+%2021 & Made interactive display for the ``Minerale des Lebens -- das Geheimnis der Schale'' exhibition at the Museum f\"{u}r Naturkunde Magdeburg, Germany.\\
 2019 & Guest of the \href{https://www.museumfuernaturkunde.berlin/de/museum/veranstaltungen/aktionstag-zum-globalen-klimastreik-0}{Museum Salon} in the context of the ``Fourth Global Day of Climate Action'' event for `Fridays For Future' at the MfN.\\
- & Public talk on \href{http://www.naturkundemuseum-magdeburg.de/data/mediapool/qprgm004-2019-web.pdf}{`Antarktisches Mikroplankton und vergangene Klimawandel'} for the Fachgruppe Pal\"{a}ontologie at the Museum f\"{u}r Naturkunde Magdeburg, Germany.\\
+ & Public talk on `Antarktisches Mikroplankton und vergangene Klimawandel' for the Fachgruppe Pal\"{a}ontologie at the Museum f\"{u}r Naturkunde Magdeburg, Germany.\\
  & `The ocean’s plankton and climate change; how to see the future from the bottom of the ocean' booth at the MfN during the \href{http://www.langenachtderwissenschaften.de/}{Lange Nacht der Wissenschaften} and the \href{http://www.lange-nacht-der-museen.de/}{Lange Nacht der Museen}.\\
 2014 & `Tiefenzeit Geschichten der Zukunft: von Plankton, Muscheln und Klimawandel' booth at the MfN during the \href{http://www.langenachtderwissenschaften.de/}{Lange Nacht der Wissenschaften}.\\
 2011 & Guided tour of the MfN Micropaleontology Collection during the \href{http://www.lange-nacht-der-museen.de/}{Lange Nacht der Museen}.\\
@@ -235,17 +237,17 @@ since 2013 & \href{http://publons.com/a/1291154/}{Reviews} for \textit{Proceedin
 
 \section{GRANTS \& AWARDS}
 \subsection{Grants}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2018 & DAAD `Make Our Planet Great Again--German Research Initiative' grant 57429681 (PI:Asatryan).\\
 2015 & DFG Grant RE3470/3--1: `Eigene Stelle' grant in the Priority Program 527 (IODP).\\
 \end{longtable}
 \subsection{Awards}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2012 & TMS Student Prize for best Poster at InterRad 13th meeting in Cadiz, Spain.\\
 \end{longtable}
 
 \section[MEDIA COVERAGE]{MEDIA COVERAGE \textnormal{\footnotesize{ of projects I'm involved with (selection)}}}
-\begin{longtable}{p{0.1\linewidth} P{0.85\linewidth}}
+\begin{longtable}{@{}p{0.1\linewidth} P{0.85\linewidth}@{}}
 2020 & \emph{NevadaToday}: \href{https://www.unr.edu/nevada-today/news/2020/marine-plankton}{Marine Plankton face threat of extinction as planet warms}.\\
  & \emph{IEEE Spectrum}: \href{https://spectrum.ieee.org/computing/software/ambitious-data-project-aims-to-organize-the-worlds-geoscientific-records}{Ambitious data project aims to organize the world’s geoscientific records}.\\
 2019 & \emph{BBC}: \href{https://www.bbc.com/reel/video/p07bvx51/the-time-machines-unlocking-antarctica-s-past}{The `time machines' unlocking Antarctica's past}.\\
@@ -254,7 +256,7 @@ since 2013 & \href{http://publons.com/a/1291154/}{Reviews} for \textit{Proceedin
 \end{longtable}
 
 \section{WORK EXPERIENCE}
-\begin{longtable}{p{0.2\linewidth} P{0.75\linewidth}}
+\begin{longtable}{@{}p{0.2\linewidth} P{0.75\linewidth}@{}}
 09/2018--06/2022 & Postdoctoral researcher (DAAD MOPGA-GRI) at the MfN.\\
 11/2015--05/2017 & Postdoctoral researcher (DFG) at the MfN.\\
 03/2014--06/2015 & Postdoctoral researcher (Earthtime-EU) at the MfN.\\
@@ -266,7 +268,7 @@ since 2013 & \href{http://publons.com/a/1291154/}{Reviews} for \textit{Proceedin
 \end{longtable}
 
 \section{OTHER}
-\begin{longtable}{P{0.94\linewidth} p{0.01\linewidth}}
+\begin{longtable}{@{}p{0.94\linewidth} p{0.01\linewidth}@{}}
 Fluent in French (native) and English, intermediate level in Latin and German. & \\
 Advanced programming skills in R, python (including Django and wxPython), postgreSQL (and other SQL derivatives) and \LaTeX. Familiar with Unix shell and Apache Webserver. & \\
 \end{longtable}
