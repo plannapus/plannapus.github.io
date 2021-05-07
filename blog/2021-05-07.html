@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="Micha and Momo's paper in Frontiers in Ecology &amp; Evolution" />
+		<meta property="og:image" content="img/distrib1.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Science">
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Micha and Momo's paper in <i>Frontiers in Ecology &amp; Evolution</i></p>
+			<p class="blog-date">2021-05-07</p>
+			<p class="blog-content">
+Our paper, lead by Michael Buchwitz and Maren Jansen, came out today in <i><a href="http://doi.org/10.3389/fevo.2021.674779">Frontiers in Ecology &amp; Evolution</a></i>, in the context of a special issue on the <a href="https://www.frontiersin.org/research-topics/14947/origin-and-early-evolution-of-amniotes#articles">Origin and Early Evolution of Amniotes</a>. This is a study I have been contributing to since 2018 (if I remember correctly), so I am glad to see it finally published. The idea of the paper was to use a fairly impressive database of measurements on early tetrapod trackways, and current hypotheses on track-trackmaker relationships, to test some of those hypotheses and characterize the mode of locomotion of the last common ancestors of amniotes. As it is quite outside of my usual expertise I am not here going to delve into the details of the study, given I was, after all, involved only as the number guy.
+<p>I don't have a lot of opportunities to work with phylogenies in my own line of work, though my training in Paris was very heavily phologenetically-oriented, so it was fun to finaly make use of it.</p>
+<p>One particular thing I did for this paper was to try taking into account track polymorphism into the ancestral state reconstruction, given the data we used had, for some species, a large amount of specimens measured, and the distribution of the measurements showed quite a spread (ranging from juveniles to adult forms) and the occasional bimodal set-up. The idea I had to account for this was simply to bootstrap these data, meaning that instead of simply using the mean measurement, or median measurement, for each ichnospecies, I picked a single species randomly representing each species, and reiterated the operation a large amount of time. Here the code in R (full code for the entire study is available <a href="https://github.com/plannapus/tracks_asr/">here</a>):</p>
+<pre><code class="r">#Bootstrap based on polymorphism
+n_trials &lt;- 1e4
+n_char &lt;- length(all_char) #all_char contains the list of characters for which we want to run the ASR
+# This is fairly time consuming so to make things smoother I used doSNOW to parallelize it.
+# The following 7 lines are only there to set it up.
+library(doSNOW)
+cl &lt;- parallel::makeCluster(2)
+registerDoSNOW(cl)
+pb &lt;- txtProgressBar(max = n_trials, style = 3)
+progress &lt;- function(n) setTxtProgressBar(pb, n)
+opts &lt;- list(progress = progress)
+set.seed(20180822)
+aas &lt;- foreach(i = seq_len(n_trials), .options.snow = opts) %dopar% {
+    R &lt;- list() # will contain the results of the 1e4 x n_char x n_tree ASR.
+    for(j in 1:n_char){
+      R[[j]]&lt;-list()
+      # Pick a random specimen for each run and get the value for the specific measurement.
+			# First get the list of specimens for which that particular character was measured:
+      sp &lt;- dat$specimens[!is.na(dat$specimens[,colnames(dat$specimens)==all_char[j]]),]
+			# Then select randomly a single specimen for each ichnospecies:
+      specimen_set &lt;- sapply(split(sp$`No Specimen`,sp$`No Species`),function(x)ifelse(length(x)>1,sample(x,1),x))
+			# Then pick its corresponding measurement:
+      values &lt;- sapply(specimen_set,function(x)sp[sp$`No Specimen`==x,colnames(sp)==all_char[j]])
+			# We tried several phylogenetic hypotheses here
+      for(k in 1:n_tree){
+				 # Maximum likelihood ASR
+        R[[j]][[k]] &lt;- ape::reconstruct(values,dat$trees[[k]],method="ML")
+      }
+    }
+    R
+  }
+close(pb)
+stopCluster(cl)
+</code></pre>
+<p>It gives a nice idea of the incertitude linked to the set of specimens measured that is introduced by ASR.</p>
+<img class="current" src="img/distrib1.png" width="400">
+<p class="caption">An example of the distribution of the ancestral values for a given character for each node, when picking which specimen represent the species at random over 10 000 runs.</p>
+<p>Anyway, the paper is naturally about way more than just this (in fact it is a very minor point of that paper) but I thought it was a cool solution to that particular issue.</p>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2021-03-13.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>

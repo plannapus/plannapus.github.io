@@ -221,3 +221,12 @@ video{
 		font-size: 12px;
 	}
 }
+
+@media print {
+	div.navbar{
+		visibility:hidden;
+	}
+	div.main{
+		margin-left: 0px;
+	}
+}

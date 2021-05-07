@@ -41,10 +41,10 @@ rss_footer <- "</channel>\n</rss>"
 k <- c()
 for(i in 1:nrow(all)){
   k[i]<-sprintf("<item><title>%s</title><link>%s</link><pubDate>%s</pubDate><description>%s</description>%s</item>",
-          all$title[i],
+          gsub("&","&amp;",all$title[i]),
           paste0("http://plannapus.github.io/blog/",all$url[i]),
           all$date[i],
-          gsub("^[[:space:]]*([^\n]+)\n.+$","\\1",all$content[i]), #Regex to isolate first sentence
+          gsub("^[[:space:]]*([^\n]+)\n.+$","\\1",gsub("&","&amp;",all$content[i])), #Regex to isolate first sentence
           #ifelse(is.na(lang),"",sprintf("<category>%s</category>",lang)))
           ifelse(all(is.na(catg[[i]])),"",paste(sprintf("<category>%s</category>",catg[[i]]),collapse="")))
 }
