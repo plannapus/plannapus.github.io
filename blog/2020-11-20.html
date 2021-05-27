@@ -67,7 +67,7 @@
   &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 
-				<p>Basically the idea is just to fill in the title, date and content. I do not touch the rest at first. You will notice that the link to the previously published page is already entered (the script does that). Only in the <code>&lt;head&gt;</code> part of the html code I modify the following meta tags:</p>
+				<p>Basically the idea is just to fill in the title, date and content. I do not touch the rest at first. You will notice that the link to the previously published page is already entered (the script does that). Only in the <code class="inline">&lt;head&gt;</code> part of the html code I modify the following meta tags:</p>
 
 				<pre><code class="html">&lt;meta property="og:title" content="" /&gt;
 &lt;meta property="og:image" content="" /&gt;
@@ -78,7 +78,7 @@
 				<p>And so, the <a href="http://github.com/plannapus/plannapus.github.io/blob/master/blog/process_blog.R">code itself</a> (in R, naturally), to process the blog:</p>
 
 				<pre><code class="R">library(XML) #Only uses package XML
-process &lt;- function(html_file){ 
+process &lt;- function(html_file){
 # This function will retrieve the content of each blogpost as a dataframe
 # containing the url, the date, the title and the actual content.
   h &lt;-htmlParse(html_file,encoding="utf-8") #Parse the file

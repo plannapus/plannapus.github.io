@@ -47,14 +47,14 @@
 			<p class="blog-title">AoC2020 Days 1-2 and Buckwheat Pancakes</p>
 			<p class="blog-date">2020-12-02</p>
 			<p class="blog-content">
-			As mentioned in the <a href="2020-11-30.html">previous post</a>, the Advent of Code 2020 started yesterday. As expected the first two days were quite simple (the challenges tend to ramp up pretty quickly though). <a href="https://adventofcode.com/2020/day/1">Day 1</a> consisted on a bit of integer manipulation, while <a href="https://adventofcode.com/2020/day/2">day 2</a> was about string manipulation. You can find my solutions in R in <a href="http://github.com/plannapus/Advent_of_Code/tree/master/2020">my code repository</a>. 
+			As mentioned in the <a href="2020-11-30.html">previous post</a>, the Advent of Code 2020 started yesterday. As expected the first two days were quite simple (the challenges tend to ramp up pretty quickly though). <a href="https://adventofcode.com/2020/day/1">Day 1</a> consisted on a bit of integer manipulation, while <a href="https://adventofcode.com/2020/day/2">day 2</a> was about string manipulation. You can find my solutions in R in <a href="http://github.com/plannapus/Advent_of_Code/tree/master/2020">my code repository</a>.
 
 			<p>One interesting bit is that, as often, most of the code on those simple challenges is spent on input parsing. In this case, in day 2 challenge, the input had a form as follows: </p>
 
 				<pre><code>1-2 a: ahgtnkjz
 3-12 j: asjdladajsdsjdaslj</code></pre>
 
-			<p>Obviously, given the inconsistent column separator, the easiest here was to use a tailored regex. So I whipped up that ol' function from the help file of <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/grep.html"><code>?regexpr</code></a> that I remembered from an old <a href="https://stackoverflow.com/a/29669403/1451109">StackOverflow answer of mine</a>:</p>
+			<p>Obviously, given the inconsistent column separator, the easiest here was to use a tailored regex. So I whipped up that ol' function from the help file of <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/grep.html"><code class="inline">?regexpr</code></a> that I remembered from an old <a href="https://stackoverflow.com/a/29669403/1451109">StackOverflow answer of mine</a>:</p>
 				<pre><code class="r">input &lt;- readLines("input02.txt")
 parse.one &lt;- function(res, result) {
   m &lt;- do.call(rbind, lapply(seq_along(res), function(i) {
@@ -69,7 +69,7 @@ parsed &lt;- regexpr("^(?&lt;lb&gt;[0-9]+)-(?&lt;ub&gt;[0-9]+) (?&lt;let&gt;[a-z
 tab &lt;- parse.one(input,parsed)
 tab &lt;- as.data.frame(tab)</code></pre>
 
-			<p>What <code>parse.one</code> does is just a modification of <code>regmatches</code> that allows the capture of "named" group, PERL-style; i. e. it allows me to use that weird regex trick of <code>(?&lt;name&gt;group)</code>. Once done and transformed into a data.frame, the columns are already named correctly and are instantly usable.</p>
+			<p>What <code class="inline">parse.one</code> does is just a modification of <code class="inline">regmatches</code> that allows the capture of "named" group, PERL-style; i. e. it allows me to use that weird regex trick of <code class="inline">(?&lt;name&gt;group)</code>. Once done and transformed into a data.frame, the columns are already named correctly and are instantly usable.</p>
 
 			<img class="current" src="img/buckwheat_pancake.png" width="400">
 			<p class="caption">From my experience in the last 3 days, it tastes brilliant, either alone, or with some spicy sauce (sriracha) if in a savoury mood, or some Pflaumenmuss (if in a sweet mood).</p>

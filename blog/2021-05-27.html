@@ -71,7 +71,7 @@ ui_win[["Controller"]] &lt;- fluidPage(
 	                  min = 0, max = 5, value = 0.301, step = .0001),width=8)))
 #[...]</code></pre>
 
-<p>Overall it's a good solution and work as expected. However problems arise when using, server-side, the <code class="R">updateSliderInput</code>. In this case, we have a series of preselected forms: when clicking on one of them, the values of that form replace the current values on the various sliders.</p>
+<p>Overall it's a good solution and work as expected. However problems arise when using, server-side, the <code class="inline">updateSliderInput</code>. In this case, we have a series of preselected forms: when clicking on one of them, the values of that form replace the current values on the various sliders.</p>
 <pre><code class="R">ui_win[["Controller"]] &lt;- fluidPage(
   tags$head(tags$script(HTML(JS.logify))),
   tags$head(tags$script(HTML(JS.onload))),
@@ -112,7 +112,7 @@ serv_calc[[1]] &lt;- function(input,session){
   )
 }
 # [...]</code></pre>
-<p>And so, when it does, the slide becomes "de-logified" (i.e., ranging from 0 to 5 instead of 10^1 to 10^5). I knew from the start that the issue was that, while the JS script was run on page load, it was not rerun on update. The solution, which took me a while to find, was to use shinyjs's <code>runjs</code> together with the shiny server's <code>onFlushed</code>:</p>
+<p>And so, when it does, the slide becomes "de-logified" (i.e., ranging from 0 to 5 instead of 10^1 to 10^5). I knew from the start that the issue was that, while the JS script was run on page load, it was not rerun on update. The solution, which took me a while to find, was to use shinyjs's <code class="inline">runjs</code> together with the shiny server's <code class="inline">onFlushed</code>:</p>
 <pre><code class="R">library(shiny)
 library(mwshiny)
 library(shinyjs)
@@ -169,7 +169,7 @@ serv_calc[[1]] &lt;- function(input,session){
   )
 }
 # [...]</code></pre>
-			<p>What runjs does is run a javascript script (here <code>logifySlider('W');</code>) and what <code>session$onFlushed</code> does is run whatever R code is passed to it everytime after something is updated/changed ("flushed") in the current session. QED.</p>
+			<p>What runjs does is run a javascript script (here <code class="inline">logifySlider('W');</code>) and what <code class="inline">session$onFlushed</code> does is run whatever R code is passed to it everytime after something is updated/changed ("flushed") in the current session. QED.</p>
 			<hr/>
 			<div class="footer">
 				<a href="2021-05-07.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->

@@ -46,7 +46,7 @@
 			<p class="blog-title">Addendum to the previous post on paleogeographic maps</p>
 			<p class="blog-date">2020-11-03</p>
 			<p class="blog-content">
-				As it turned out, I realized the way I have been making maps in R since 10 years is more or less deprecated! Package <code>sp</code> was superseded by package <code>sf</code>, and indeed the coordinate system transformation works so much better and do not need as much <a href="https://github.com/plannapus/Unsorted-functions/blob/master/myTransform.R">weird hacking</a> to work on complex projections.
+				As it turned out, I realized the way I have been making maps in R since 10 years is more or less deprecated! Package <code class="inline">sp</code> was superseded by package <code class="inline">sf</code>, and indeed the coordinate system transformation works so much better and do not need as much <a href="https://github.com/plannapus/Unsorted-functions/blob/master/myTransform.R">weird hacking</a> to work on complex projections.
 				The code from <a href="2020-10-15.html">last time</a> thus become as follows:
 				<pre><code class="r">library(sf)
 system("gplates reconstruct -l /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Coastlines/Shapefile/Seton_etal_ESR2012_Coastlines_2012.1_Polygon.shp \\

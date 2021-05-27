@@ -121,7 +121,7 @@ ek1
     show_graph_range = false
 }</code></pre>
 
-<p>As said before, most of it is from the default setup, except from a few things: the <code>own_window_colour</code> which I set to the color of the rest of the background, <code>gap_x, gap_y, minimum_width</code> which I set up so that the "window" is just glued to the dash column. The second and most important part is what actually set the content of the "window/widget":</p>
+<p>As said before, most of it is from the default setup, except from a few things: the <code class="inline">own_window_colour</code> which I set to the color of the rest of the background, <code class="inline">gap_x, gap_y, minimum_width</code> which I set up so that the "window" is just glued to the dash column. The second and most important part is what actually set the content of the "window/widget":</p>
 
 <pre><code class="none">conky.text = [[
 ${font DejaVu Sans Mono:size=18}${exec date +"%A %d %B, %H:%M"}$font
@@ -265,16 +265,16 @@ ${color lightgrey} ${top name 3} ${top pid 3} ${top cpu 3} ${top mem 3}
 ${color lightgrey} ${top name 4} ${top pid 4} ${top cpu 4} ${top mem 4}$color
 $hr</code></pre>
 
-<p>There is a basic color (here white) used overall, but when one needs to momentarily use another color, one uses those <code>${color ...}</code> statements followed by <code>$color</code> to go back to the main color. Same with fonts. The first line uses something that I'll be using everywhere afterwards: <code>${exec ...}</code>, which just execute a shell command and return the standard output. Here just the date and time. All the rest are standard conky parameters: <code>top</code> gives the current processes using the most CPU, <code>$cpu%</code> returns the percentage of CPU used, <code>${cpubar ...}</code> the same but as a bar chart, etc. Now the second segment (that is in fact intercalated between the file system size subsection and the "top" subsection):</p>
+<p>There is a basic color (here white) used overall, but when one needs to momentarily use another color, one uses those <code class="inline">${color ...}</code> statements followed by <code class="inline">$color</code> to go back to the main color. Same with fonts. The first line uses something that I'll be using everywhere afterwards: <code class="inline">${exec ...}</code>, which just execute a shell command and return the standard output. Here just the date and time. All the rest are standard conky parameters: <code class="inline">top</code> gives the current processes using the most CPU, <code class="inline">$cpu%</code> returns the percentage of CPU used, <code class="inline">${cpubar ...}</code> the same but as a bar chart, etc. Now the second segment (that is in fact intercalated between the file system size subsection and the "top" subsection):</p>
 
-<pre><code>${color grey}Core 0:$color ${exec sensors | awk '/Core 0/ {print $3}'} ${execbar sensors | awk '/Core 0/ {print $3}'}
+<pre><code class="none">${color grey}Core 0:$color ${exec sensors | awk '/Core 0/ {print $3}'} ${execbar sensors | awk '/Core 0/ {print $3}'}
 ${color grey}Core 1:$color ${exec sensors | awk '/Core 1/ {print $3}'} ${execbar sensors | awk '/Core 1/ {print $3}'}
 ${color grey}Core 2:$color ${exec sensors | awk '/Core 2/ {print $3}'} ${execbar sensors | awk '/Core 2/ {print $3}'}
 ${color grey}Core 3:$color ${exec sensors | awk '/Core 3/ {print $3}'} ${execbar sensors | awk '/Core 3/ {print $3}'}</code></pre>
 
-<p>This uses <a href="https://wiki.archlinux.org/index.php/lm_sensors"><code>sensors</code></a> to check the temperature of the cores. Unfortunately what sensors returns is a much too complicated text, but I just want the actually numbers here, so a bit of "awk" regex is necessary. What <code>${execbar ...}</code> does, is that it executes a shell command but returns a bar chart (the output of the command is treated as an integer between 0 and 100). The third section starts using R scripts in the background:</p>
+<p>This uses <a href="https://wiki.archlinux.org/index.php/lm_sensors"><code class="inline">sensors</code></a> to check the temperature of the cores. Unfortunately what sensors returns is a much too complicated text, but I just want the actually numbers here, so a bit of "awk" regex is necessary. What <code class="inline">${execbar ...}</code> does, is that it executes a shell command but returns a bar chart (the output of the command is treated as an integer between 0 and 100). The third section starts using R scripts in the background:</p>
 
-<pre><code>$hr
+<pre><code class="none">$hr
 ${color grey}Coronavirus in Berlin
 ${image ~/.config/conky/corona_berlin.png -p 0,435 -s 380x150}
 
@@ -289,7 +289,7 @@ ${color grey}Total cases:$color ${exec cut -d ',' -f1 ~/.config/conky/coronaberl
 ${color grey}New:$color ${exec cut -d ',' -f3 ~/.config/conky/coronaberlin.txt} ${color grey}- R:$color ${exec cut -d ',' -f4 ~/.config/conky/coronaberlin.txt} ${color grey}- ICU beds:$color ${exec cut -d ',' -f5 ~/.config/conky/coronaberlin.txt}%
 $hr</code></pre>
 
-<p>OK,a lot to go through here. As one can see in the "config" part of the setup, the whole thing refreshes every 1s. Bash is fast so that's fine, but running a R script, particularly one that grabs data online and produces a chart as a result is not. So I chose to do that asynchronously. There is a separate R script running once every 3 hours that grabs the latest Coronavirus report from the Berlin <a href="https://www.berlin.de/corona/">official website</a>, and outputs on one hand a simple text file with the latest data, and on the other a full plot showing the complete local history. The plot is shown with <code>${image ...}</code>, argument "p" specify the position (relative to the overall window/widget). As you can see, I left some empty lines for space for the plot. Then with <code>${exec ...}</code> i run simple bash commands that reads the data file, and pick the necessary fields (with <code><a href="https://man7.org/linux/man-pages/man1/cut.1.html">cut</a></code>).
+<p>OK,a lot to go through here. As one can see in the "config" part of the setup, the whole thing refreshes every 1s. Bash is fast so that's fine, but running a R script, particularly one that grabs data online and produces a chart as a result is not. So I chose to do that asynchronously. There is a separate R script running once every 3 hours that grabs the latest Coronavirus report from the Berlin <a href="https://www.berlin.de/corona/">official website</a>, and outputs on one hand a simple text file with the latest data, and on the other a full plot showing the complete local history. The plot is shown with <code class="inline">${image ...}</code>, argument "p" specify the position (relative to the overall window/widget). As you can see, I left some empty lines for space for the plot. Then with <code class="inline">${exec ...}</code> i run simple bash commands that reads the data file, and pick the necessary fields (with <code class="inline"><a href="https://man7.org/linux/man-pages/man1/cut.1.html">cut</a></code>).
 Here is the associated R script:</p>
 
 <pre><code class="R">library(rjson)
@@ -315,14 +315,14 @@ invisible(dev.off()) #invisible is needed here only if the script is directly ex
 
 The fourth section is very similar, in that it grabs data online (of <a href="https://en.wikipedia.org/wiki/Mauna_Loa_Observatory">Mauna Loa weekly CO2 concentrations</a>) with an R script asynchronously, saves them in a data file and then conky reads them and prints them:
 
-<pre><code>$hr
+<pre><code class="none">$hr
 ${color grey}Current pCO2:$color ${exec cut -d ',' -f1 ~/.config/conky/pco2.txt | head -n 1} ${color grey}ppm on$color ${exec cut -d ',' -f2 ~/.config/conky/pco2.txt | head -n 1}
 ${color grey}Max pCO2    :$color ${exec cut -d ',' -f1 ~/.config/conky/pco2.txt | tail -n 1} ${color grey}ppm on$color ${exec cut -d ',' -f2 ~/.config/conky/pco2.txt | tail -n 1}
 $hr</code></pre>
 
 And the corresponding R script:
 
-<pre><code>r &lt;- readLines("ftp://aftp.cmdl.noaa.gov/products/trends/co2/co2_weekly_mlo.txt")
+<pre><code class="none">r &lt;- readLines("ftp://aftp.cmdl.noaa.gov/products/trends/co2/co2_weekly_mlo.txt")
 d &lt;- do.call(rbind,strsplit(r[!grepl("^#",r)]," +"))
 a &lt;- apply(d,2,as.numeric)
 a &lt;- a[,-1]
@@ -335,7 +335,7 @@ with(maunalau[which.max(maunalau$co2),],
 
 <p>The 5th section grabs calendar data and prints them to conky. Honestly it's still very clunky so I'm not going to explain it here until I'll figure out a proper to do it. The 6th however is interesting: it shows an animated earth with plate tectonics for the full Phanerozoic (using the latest reconstructions of continental margins/shorelines by <a href="https://www.sciencedirect.com/science/article/abs/pii/S0012825220305092">Kocsis &amp; Scotese</a>). This time the way I did it is to first produce the maps using R, save them in an accessible folder and then just loop through those pictures with conky at each refresh (i. e. one map every second). This is what the 6th section thus look like in the conky setting file:</p>
 
-<pre><code>${if_updatenr 1}${image ~/.config/conky/plots/01-535.png -p 0,860 -s 380x190}${endif}
+<pre><code class="none">${if_updatenr 1}${image ~/.config/conky/plots/01-535.png -p 0,860 -s 380x190}${endif}
 ${if_updatenr 2}${image ~/.config/conky/plots/02-525.png -p 0,860 -s 380x190}${endif}
 ${if_updatenr 3}${image ~/.config/conky/plots/03-515.png -p 0,860 -s 380x190}${endif}
 ${if_updatenr 4}${image ~/.config/conky/plots/04-510.png -p 0,860 -s 380x190}${endif}
@@ -417,9 +417,9 @@ ${if_updatenr 79}${image ~/.config/conky/plots/79-10.png -p 0,860 -s 380x190}${e
 ${if_updatenr 80}${image ~/.config/conky/plots/80-5.png -p 0,860 -s 380x190}${endif}
 ${if_updatenr 81}${image ~/.config/conky/plots/81-0.png -p 0,860 -s 380x190}${endif}</code></pre>
 
-<p>Here <code>${if_updatenr ...} ... ${endif}</code> does all the heavy lifting: "updatenr" increments at each refresh until it reaches the highest value used in the file (here 81) and then starts again at 1. Simple enough.</p>
+<p>Here <code class="inline">${if_updatenr ...} ... ${endif}</code> does all the heavy lifting: "updatenr" increments at each refresh until it reaches the highest value used in the file (here 81) and then starts again at 1. Simple enough.</p>
 
-<p>Eventually all R scripts are bundled in a single bash script (i. e. <code>/usr/bin/Rscript ~/.config/conky/coronaberlin.R; /usr/bin/Rscript ~/.config/conky/maunaloa.R; ...</code>) that I run every 3 hours with <a href="https://en.wikipedia.org/wiki/Cron">cron</a> (i. e. <code>0 */3 * * * ~/.config/conky/rscripts.sh</code>). And so here is the (very humble) result (captured with <a href="https://linuxecke.volkoh.de/vokoscreen/vokoscreen.html">VokoscreenNG</a>):</p>
+<p>Eventually all R scripts are bundled in a single bash script (i. e. <code class="inline">/usr/bin/Rscript ~/.config/conky/coronaberlin.R; /usr/bin/Rscript ~/.config/conky/maunaloa.R; ...</code>) that I run every 3 hours with <a href="https://en.wikipedia.org/wiki/Cron">cron</a> (i. e. <code class="inline">0 */3 * * * ~/.config/conky/rscripts.sh</code>). And so here is the (very humble) result (captured with <a href="https://linuxecke.volkoh.de/vokoscreen/vokoscreen.html">VokoscreenNG</a>):</p>
 
 <video width="1000" controls><source src="vid/conky.mp4" type="video/mp4"></video><br/>
 
