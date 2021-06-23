@@ -21,7 +21,24 @@ all <- all[order(all$date,decreasing=TRUE),]
 cats <- names(sort(table(unlist(catg)),decreasing=TRUE))
 
 index <- readLines("index.html",encoding="utf-8")
-j <- sprintf("\t\t\t<tr><td class=\"date\">%s</td><td class=\"title\"><a href=\"%s\">%s</a></td></tr>",all$date, all$url, all$title)
+j <- c()
+for(i in 1:nrow(all)){
+  if(i==1){
+    j <- c(j,sprintf("<tbody><tr/><th>%s</th><th></th></tr>",format(all$date[i],"%Y")))
+  }else{
+    if(format(all$date[i],"%Y")!=format(all$date[i-1],"%Y")){
+      j <- c(j,sprintf("<tbody><tr/><th>%s</th><th></th></tr>",format(all$date[i],"%Y")))
+    }
+  }
+  j <- c(j,sprintf("\t\t\t<tr><td class=\"date\">%s</td><td class=\"title\"><a href=\"%s\">%s</a></td></tr>",all$date[i], all$url[i], all$title[i]))
+  if(i==nrow(all)){
+    j <- c(j,"</tbody>")
+  }else{
+    if(format(all$date[i],"%Y")!=format(all$date[i+1],"%Y")){
+      j <- c(j,"</tbody>")
+    }
+  }
+}
 index <- c(index[1:grep("<table",index)],j,index[grep("</table",index):length(index)])
 index[grep(">Categories:",index)] <- sprintf("\t\t\t<div class=\"footer\">Categories: %s<br/>",paste(sprintf("<a href=\"categories/%1$s.html\">%1$s</a>",cats),collapse=" - "))
 cat(index,file="index.html",sep="\n")

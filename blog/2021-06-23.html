@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="The GPTS switch" />
+		<meta property="og:image" content="img/crappy_am.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Science">
+		<meta name="category" content="R">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">The GPTS switch</p>
+			<p class="blog-date">2021-06-23</p>
+			<p class="blog-content">
+				I'm often asked some fairly technical questions on biostratigraphy or micropaleontology by our <a href="http://nsb.mfn.berlin.de">NSB</a> users. One that comes often is how to switch from one GPTS to another. I thought I would reproduce my answers here for reference.
+				<p>But first a bit of explanations for people not used to working with geological ages. GPTS stands for geomagnetic polarity time scale. As mentioned in a previous <a href="2020-10-28.html">blogpost</a>, putting an actual numeric age on a sample is not trivial and in most cases we end up building ages models using stratigraphic data calibraed on different sites where they've been compared to the magnetostratigraphic record. That record itself is also something that is being calibrated (in the case of the C part of the scale, based on the Atlantic seafloor), and this calibrations are occasionally updated, most famously in the serie of book "The Geological Timescale" of which the <a href="https://www.sciencedirect.com/book/9780128243602/geologic-time-scale-2020">2020 edition</a> is the latest update.</p>
+				<p>As biostratigraphic events calibrated on the GPTS are expressed linearly on it, switching from one scale to another is just a matter of linear interpolation (see here my answer on <a href="https://www.researchgate.net/post/Age_Interpolation_of_marker_microfossils_in_new_GPTS">ResearchGate</a>):</p>
+				<blockquote cite="https://www.researchgate.net/post/Age_Interpolation_of_marker_microfossils_in_new_GPTS">With an example: in Agnini et al 2014, the LAD of <i>Discoaster lodoensis</i> was calibrated at 48.37Ma on the 1995 GPTS. It is thus between the bottom of C21n (47.906Ma) and the top of C22n (49.037Ma). On the 2020 GPTS, those chron boundaries are at 47.760 and 48.878Ma respectively. The mapped age of the LAD of Discoaster lodoensis on the 2020 GPTS is thus (by linear interpolation):
+				47.760 + (48.37-47.906)*(47.906-47.760)/(49.037-48.878) = 48.18606 Ma</blockquote>
+				<p>In practice however this is very tedious to do on a large amount of data. Hence this function I wrote some time ago in my package <a href="https://github.com/plannapus/NSBcompanion">NSBcompanion</a>, called <code class="inline">changeAgeScale</code>. It does require a user account to NSB (though in practice people can use the guest account mentioned in the help pages of the package).</p>
+				<pre><code class="R">library(NSBcompanion)
+nsb &lt;- nsbConnect("guest","arm_aber_sexy") #Connect to the database in order to access the various GPTS data
+old_ages &lt;- c(0,1,2,3,4,5)
+changeAgeScale(nsb, old_ages, from="CK95", "GTS2020")</code></pre>
+				<p>For the list of available GPTS and their abbreviations, see the <a href="https://nsb.mfn-berlin.de/help/">help page</a> of the NSB website.</p>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2021-05-27.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>

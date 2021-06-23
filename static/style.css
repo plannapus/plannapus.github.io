@@ -81,6 +81,9 @@ div.twitter-feed{
 b.unbold{
 	font-weight:normal;
 }
+th{
+	text-align:left;
+}
 /* Current project page */
 p.current{
 	text-align: left;
