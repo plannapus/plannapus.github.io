@@ -3,3 +3,4 @@ ignored/*
 *.log
 *.out
 .R*
+blog/future/*
