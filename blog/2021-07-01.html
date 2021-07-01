@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="Connecting to PostgreSQL from R, Python and Julia" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<meta name="category" content="Python">
+		<meta name="category" content="Julia">
+		<meta name="category" content="PostgreSQL">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Connecting to PostgreSQL from R, Python and Julia</p>
+			<p class="blog-date">2021-07-01</p>
+			<p class="blog-content">
+				As part of my duties as database manager for the <a href="http://nsb.mfn-berlin.de">Neptune database</a>, I spend a lot of time writing pieces of code that interact with postgreSQL databases, either to access them and retrieve data, or to add or clean data in them. While database managing software nowadays are fairly practical and allow you to do a lot of things, in practice it is still a million time more convenient to connect from whatever programming language one is using at the moment. In particular it allows clever use of metaprogramming to form SQL queries that allows you to add thousands of rows of data with minimal effort.
+				<p>Anyway I thought I would here write down some of the tools I use in R, python and julia to connect to and interact with such DBs. As I use R on an everyday basis I'll start with it. There are two basic paths in R to connect to DBs in general: DBI and OCDB. I use DBI as it is the first I discovered, but honestly OCDB is as good. In practice one will load the flavoured-DBI package that match the SQL-flavour of the DB one uses: RMySQL, RSQLite, RPostgreSQL, etc. All of them uses DBI in the background and all of them uses the same grammar. Which is:</p>
+				<pre><code class="R">library(RPostgreSQL)
+# First we connect to the database
+driver &lt;- dbDriver("PostgreSQL")
+host &lt;- "212.201.100.111"
+database &lt;- "nsb"
+username &lt;- "guest"
+password &lt;- "arm_aber_sexy"
+con &lt;- dbConnect(driver, host = host, port = "5432", dbname = database,
+                user = username, password = password)
+# Of course one can do that as a oneliner:
+con &lt;- dbConnect(dbDriver("PostgreSQL"), host = "212.201.100.111", port = "5432", dbname = "nsb",
+                user = "guest", password = "arm_aber_sexy")
+# Then we can look at which tables are present:
+dbListTables(con)
+# Read one of them fully:
+nhs &lt;- dbReadTable(con, "neptune_hole_summary")
+# Or one can send a query:
+dbSendQuery(con, "UPDATE whatever SET field=value WHERE other_field='VALUE';") #Dummy code as guest do not have writing permissions anyway
+# Or get data:
+dbGetQuery(con, "SELECT hole_id FROM neptune_hole_summary WHERE ocean='ANT';")
+# And of course one can do batch operations:
+sapply(sprintf("SELECT hole_id FROM neptune_hole_summary WHERE leg=%i;", 1:4), function(x) dbGetQuery(con, x))</code></pre>
+
+<p>This is a very simple paradigm. Python uses a slightly different one though. In psycopg2 for instance one creates an engine, a connexion and a cursor:</p>
+<pre><code class="python">import psycopg2 as pg
+
+# First create an engine to connect to the db:
+host = "212.201.100.111"
+database = "nsb"
+username = "guest"
+password = "arm_aber_sexy"
+engine = "host=%s dbname=%s port=5432 user=%s password=%s" % (host, database, username, password)
+
+# Establish a connection
+con = pg.connect(engine)
+
+# Create a "cursor" that will send a query to the db
+cur = con.cursor()
+
+# Execute a query in SQL:
+cur.execute("SELECT hole_id, sample_depth_mbsf FROM neptune_sample;")
+
+# Fetch the results
+cur.execute(query)
+res = cur.fetchall()
+
+# Then close the cursor (should be done right away)
+cur.close()
+
+# Here res is a list of unnamed tuples, i. e. in that case [("113_689B",23.456), ...]
+# which is not always ideal.
+# To get a list of dictionaries (i. e. [{'hole_id'; '113_689B', sample_depth_mbsf: 23.456}, ...])
+# You need to do the following
+cur = con.cursor(cursor_factory=ex.RealDictCursor)
+query = "SELECT hole_id, sample_depth_mbsf FROM samples;"
+cur.execute(query)
+res = cur.fetchall()
+cur.close()
+
+# If you want to do an UPDATE or INSERT query, here is a way to do that:
+input = [{'site': 511, 'geochemistry': 'not done yet'}, {'site': 703, 'geochemistry': 'not planned'}]
+cur = con.cursor()
+cur.executemany('UPDATE whatever SET geochemistry=%(geochemistry)s WHERE site=%(site)s;', input) #Dummy code here
+con.commit() #Note that it is con.commit and not cur.commit!
+cur.close()
+
+#Eventually when everything is finished, close the connection:
+con.close()</code></pre>
+
+<p>An alternative is to use sqlalchemy as it is neatly connected to pands:</p>
+<pre><code class="python">import pandas as pd
+import pandas.io.sql as psql
+from sqlalchemy import create_engine
+
+#The process is the same.
+#First create an engine to connect:
+theEngine = "postgresql://%s:%s@%s/%s" % (username, password, host, database)
+engine = create_engine(theEngine, client_encoding='utf8')
+engine.connect()
+
+query = "SELECT hole_id, sample_depth_mbsf FROM neptune_sample;"
+res = psql.read_sql_query(query, engine)
+
+#Here res is a pandas dataframe with columns named after the columns called from the table.
+#I'm not as familiar with sqlalchemy but the way I do UPDATE and INSERT queries are as follow:
+
+input = [{'site': 511, 'geochemistry': 'not done yet'}, {'site': 703, 'geochemistry': 'not planned'}]
+with engine.begin() as con: #Here this syntax allow us to open a 'cursor' without having to explicitely close it.
+    #Using dictionary comprehension and printf syntax:
+    queries = ["UPDATE whatever WITH geochemistry='%s' WHERE site=%s;" % (k['geochemistry'], k['site']) for k in input] #Dummy code of course
+    for q in queries: #As far as I know they need to be sent one by one.
+        con.execute(q)
+
+#And close the connection:
+engine.dispose()</code></pre>
+
+<p>Finally, in Julia. I am very new to Julia so do not expect a very good piece of code here, but I did write a function recently connecting to the DB to compute sample ages, so here we go:</p>
+
+<pre><code class="julia">using LibPQ
+using DataFrames
+host = "212.201.100.111"
+database = "nsb"
+username = "guest"
+password = "arm_aber_sexy"
+con = LibPQ.Connection("dbname=$database host=$host port=5432 user=$username password=$password")
+nhs = DataFrame(execute(con, "SELECT hole_id, sample_depth_mbsf FROM neptune_sample;"))
+close(con)</code></pre>
+			</p>
+			<hr/>
+			<div class="footer">
+				<a href="2021-06-28.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
