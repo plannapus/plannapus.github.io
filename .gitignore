@@ -2,5 +2,6 @@ ignored/*
 *.aux
 *.log
 *.out
+*.ent
 .R*
 blog/future/*
