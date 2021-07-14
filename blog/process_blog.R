@@ -5,7 +5,7 @@ process <- function(html_file){
   h <-htmlParse(html_file,encoding="utf-8")
   tit <- xpathSApply(h,"//p[@class='blog-title']",xmlValue)
   dat <- xpathSApply(h,"//p[@class='blog-date']",xmlValue)
-  desc <- xpathSApply(h,"//p[@class='blog-content']",xmlValue)
+  desc <- xpathSApply(h,"//div[@class='main']",saveXML)
   data.frame(url=html_file,title=tit,date=as.Date(dat),content=desc)
 }
 categories <- function(html_file){
@@ -61,7 +61,7 @@ for(i in 1:nrow(all)){
           gsub("&","&amp;",all$title[i]),
           paste0("http://plannapus.github.io/blog/",all$url[i]),
           all$date[i],
-          gsub("^[[:space:]]*([^\n]+)\n.+$","\\1",gsub("&","&amp;",all$content[i])), #Regex to isolate first sentence
+          gsub("&","&amp;",all$content[i]),
           #ifelse(is.na(lang),"",sprintf("<category>%s</category>",lang)))
           ifelse(all(is.na(catg[[i]])),"",paste(sprintf("<category>%s</category>",catg[[i]]),collapse="")))
 }
