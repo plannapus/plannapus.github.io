@@ -3,3 +3,7 @@ xelatex CV
 xelatex CV
 xelatex CV
 xelatex CV
+xelatex conffull
+xelatex conffull
+xelatex conffull
+xelatex conffull
