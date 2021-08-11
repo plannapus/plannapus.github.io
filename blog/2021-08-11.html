@@ -96,7 +96,14 @@ coiling &lt;- function(RT,W,generating_shape, turns,steps,dir="dextral"){
                 Z = circle[,2])
   }
   XYZ
-}</code></pre>
+}
+# [...]
+# With D, S, RT and W defined by the user; 
+# res and steps and the resolution of the opening shape and the resolution of the coiling
+# And turns the number of turns desired (which can be also a parameters for the user to defined if wanted)
+circle &lt;- make_elliptic_generating_shape(D,S,res)
+ce &lt;- coiling(RT,W,circle,turns,steps,"dextral")
+</code></pre>
 
 <h4>References:</h4>
 <p class="publications">Raup, D. (1966). <a href="http://www.jstor.org/stable/1301992">Geometric Analysis of Shell Coiling: General Problems</a>. Journal of Paleontology, 40(5), 1178-1190.</p>
