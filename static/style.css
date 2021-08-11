@@ -95,6 +95,9 @@ img.current{
 	margin-right: auto;
 	max-width:100%;
 }
+img.bd{
+	border: 1px solid black;
+}
 object.blog{
 	display: block;
 	margin-left: auto;

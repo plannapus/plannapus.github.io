@@ -1,6 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Our Shiny app displaying Raup's Coiling model</title><link>http://plannapus.github.io/blog/2021-08-11.html</link><pubDate>2021-08-11</pubDate><description><div class="main">
+			<p class="blog-title">Our Shiny app displaying Raup's Coiling model</p>
+			<p class="blog-date">2021-08-11</p>
+			<p class="blog-content">
+			As teased <a href="2021-05-27.html">previously</a>, I made a R shiny app for an <a href="https://www.naturkundemuseum-magdeburg.de/ausstellungen/sonderausstellungen/biominerale/">exhibition at the Museum für Naturkunde in Magdeburg</a>, together with a colleague of mine, <a href="https://www.researchgate.net/profile/David-Ware">David Ware</a>. The app allows users to discover <a href="https://www.jstor.org/stable/1301992">David Raup's mollusc coiling model</a>, a morphometric model able to basically recreate any mollusc form, using a limited number of parameters; and thus allows them to discover the full potential morphospace of molluscs.
+			<img class="current" src="img/display.jpeg" width="400"/></p><p class="caption">The display in the exhibit.</p>
+			<p>The way we made it, the app opens 2 windows: one displayed on a touchscreen, showing the controls; the other shows the actual result, i. e. the model. The control panel allows the user to specify the 4 parameters of the model (the whorl expansion rate, the umbilicus opening, the shape of the opening and the rate of translation), the orientation of the model (on a single window display the user would be able to rotate the model in any direction desired but since it is here shown in a separate window we simplified it, and the user can only rotate along the x axis) or select predefined forms (such as nautilus, ammonite, snail, mussel, etc).</p>
+<table class="img_current"><tr><td><a href="img/controller.png"><img class="current bd" src="img/controller.png" width="400"/></a></td>
+<td><a href="img/display.png"><img class="current bd" src="img/display.png" width="400"/></a></td>
+</tr></table><p class="caption">Controller (left) and display (right).</p>
+			<p>The code is available in <a href="http://github.com/plannapus/raupShiny">its repository</a>. Currently I only put the code for the app as displayed in the exhibit but I'll add soon a simplified, one-window version, in english, as a skeleton app so that people can build more complex apps from it. It was my first experience with shiny, and I'm frankly impressed at how simple and versatile it is.</p>
+			<p>The part of the code creating the actual mollusc form is surprisingly simple (which I guess is the beauty of Raup's concept). The only difficulty (so to speak) is working in cylindrical coordinates instead of cartesian ones.</p>
+				<pre><code class="R">make_elliptic_generating_shape &amp;lt;- function(D,S,res=100){
+  #Let's define the original ray as 1
+  a &amp;lt;- 1
+  rc &amp;lt;- (D+1)*a/(1-D) #D is the ratio between the distance from the origin to the distal part of the shape and that from the origin to the proximal part.
+  t&amp;lt;-seq(0,2*pi,by=pi/res)
+  b &amp;lt;- a/S # Here S is the long axis v short axis ratio of the ellipsis (as we only modelled elliptical/circular opening shapes here)
+  circle_0 &amp;lt;- cbind(r=rc + a*cos(t), y= b*sin(t), phi=0) #This is the equation for the shape in cylindrical coordinates.
+  return(circle_0)
+}
+
+#Function to coil the shape around the axis
+coiling &amp;lt;- function(RT,W,generating_shape, turns,steps,dir="dextral"){
+  PHI &amp;lt;- seq(0,2*pi*turns,length=steps)
+  far_end &amp;lt;- generating_shape[1,1]
+  closest_end &amp;lt;- approx(generating_shape[generating_shape[,1]&amp;lt;far_end-1,2],
+                        generating_shape[generating_shape[,1]&amp;lt;far_end-1,1],0)$y
+  D &amp;lt;- closest_end/far_end
+  rc &amp;lt;- (D+1)/(1-D)
+  rho &amp;lt;- function(theta, W, r0) r0 * W^(theta/(2*pi)) #See Raup 1966 for the equations.
+  y &amp;lt;- function(y0,W,theta,rc,T) y0 * W^(theta/(2*pi)) + rc*T*(W^(theta/(2*pi))-1)
+  circle &amp;lt;- apply(generating_shape,1,
+                  function(x)lapply(PHI,
+                                    function(theta)cbind(r=rho(theta, W, x['r']),
+                                                         y=y(x['y'],W,theta, rc,RT),
+                                                         phi=theta)))
+  circle &amp;lt;- do.call(rbind,lapply(circle,function(x)do.call(rbind,x)))
+  
+  #To cartesian coordinates
+  if(dir=="dextral"){ #For a dextral shell
+    XYZ &amp;lt;- list(X = circle[,1] * sin(circle[,3]),
+                Y = circle[,1] * cos(circle[,3]),
+                Z = circle[,2])
+  }else{ #For a sinistral shell
+    XYZ &amp;lt;- list(X = circle[,1] * cos(circle[,3]),
+                Y = circle[,1] * sin(circle[,3]),
+                Z = circle[,2])
+  }
+  XYZ
+}</code></pre>
+
+<h4>References:</h4>
+<p class="publications">Raup, D. (1966). <a href="http://www.jstor.org/stable/1301992">Geometric Analysis of Shell Coiling: General Problems</a>. Journal of Paleontology, 40(5), 1178-1190.</p>
+			
+			<hr/><div class="footer">
+				<a href="2021-07-01.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &amp;gt;</a>-->
+			</div>
+		</div></description><category>Science</category><category>Programming</category><category>R</category></item>
 <item><title>Connecting to PostgreSQL from R, Python and Julia</title><link>http://plannapus.github.io/blog/2021-07-01.html</link><pubDate>2021-07-01</pubDate><description><div class="main">
 			<p class="blog-title">Connecting to PostgreSQL from R, Python and Julia</p>
 			<p class="blog-date">2021-07-01</p>
