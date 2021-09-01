@@ -1,13 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>raupShiny</title><link>http://plannapus.github.io/blog/2021-09-01.html</link><pubDate>2021-09-01</pubDate><description><div class="main">
+			<p class="blog-title">raupShiny</p>
+			<p class="blog-date">2021-09-01</p>
+			<p class="blog-content">
+				As a follow-up on the <a href="2021-08-11.html">previous post</a>, I finally got the time to write a <a href="https://github.com/plannapus/raupShiny/blob/master/raupShiny.R">simplified version</a> of the shiny app we made for the <a href="https://www.naturkundemuseum-magdeburg.de/ausstellungen/sonderausstellungen/biominerale/">exhibition on biomineralization at the Museum für Naturkunde in Magdeburg</a>, so that people can built upon it and make a better, more complex version, and so I am going to briefly explain it here.
+</p><pre><code class="R">library(shiny)
+library(shinyWidgets)
+library(rgl)
+
+make_elliptic_generating_shape &amp;lt;- function(D,S,res=100){
+  #Let's define the original ray as 1
+  a &amp;lt;- 1
+  rc &amp;lt;- (D+1)*a/(1-D)
+  t&amp;lt;-seq(0,2*pi,by=pi/res)
+  b &amp;lt;- a/S
+  circle_0 &amp;lt;- cbind(r=rc + a*cos(t), y= b*sin(t), phi=0)
+  return(circle_0)
+}
+
+#Function to coil the shape around the axis
+coiling &amp;lt;- function(RT,W,generating_shape, turns,steps,dir="dextral"){
+  PHI &amp;lt;- seq(0,2*pi*turns,length=steps)
+  far_end &amp;lt;- generating_shape[1,1]
+  closest_end &amp;lt;- approx(generating_shape[generating_shape[,1]&amp;lt;far_end-1,2],
+                        generating_shape[generating_shape[,1]&amp;lt;far_end-1,1],0)$y
+  D &amp;lt;- closest_end/far_end
+  rc &amp;lt;- (D+1)/(1-D)
+  rho &amp;lt;- function(theta, W, r0) r0 * W^(theta/(2*pi))
+  y &amp;lt;- function(y0,W,theta,rc,T) y0 * W^(theta/(2*pi)) + rc*T*(W^(theta/(2*pi))-1)
+  circle &amp;lt;- apply(generating_shape,1,
+                  function(x)lapply(PHI,
+                                    function(theta)cbind(r=rho(theta, W, x['r']),
+                                                         y=y(x['y'],W,theta, rc,RT),
+                                                         phi=theta)))
+  circle &amp;lt;- do.call(rbind,lapply(circle,function(x)do.call(rbind,x)))
+  
+  #To cartesian coordinates
+  if(dir=="dextral"){
+    XYZ &amp;lt;- list(X = circle[,1] * sin(circle[,3]),
+                Y = circle[,1] * cos(circle[,3]),
+                Z = circle[,2])
+  }else{
+    XYZ &amp;lt;- list(X = circle[,1] * cos(circle[,3]),
+                Y = circle[,1] * sin(circle[,3]),
+                Z = circle[,2])
+  }
+  XYZ
+}
+
+#Function to transform the final shape into polygons
+pt2quad &amp;lt;- function(pts,steps,res){
+  pts$pt_n&amp;lt;- rep(1:(res*2+1),each=steps)
+  pts$step &amp;lt;- 1:steps
+  eg &amp;lt;- expand.grid(1:(2*res),1:(steps-1))
+  apply(eg,1,function(x)c(which(pts$step==x[2] &amp;amp; pts$pt_n==x[1]),
+                          which(pts$step==x[2]+1 &amp;amp; pts$pt_n==x[1]),
+                          which(pts$step==x[2]+1 &amp;amp; pts$pt_n==x[1]+1),
+                          which(pts$step==x[2] &amp;amp; pts$pt_n==x[1]+1)))
+}</code></pre>
+
+<p>OK that first part is the one I showed last time, with an additional function <code class="inline">pt2quad</code> which takes a dataframe of points (as XYZ coordinates) and return a dataframe of quadrilaterals that will define the 3D shape.</p>
+<pre><code class="R">JS.logify &amp;lt;-"function logifySlider (sliderId) {
+    // regular number style
+    $('#'+sliderId).data('ionRangeSlider').update({
+      'prettify': function (num) { return (Math.pow(10, num).toFixed(2)); }
+    })
+}"
+JS.onload &amp;lt;-"$(document).ready(function() {
+  setTimeout(function() {
+    logifySlider('W')
+  }, 5)})"
+
+uirgl &amp;lt;- fluidPage(
+  tags$head(tags$script(HTML(JS.logify))),
+  tags$head(tags$script(HTML(JS.onload))),
+  titlePanel("Raup Coiling model for Mollusks"),
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput(input="W",label="Whorl Expansion Rate (W)",
+                  min = 0, max = 5, value = 0.301, step = .0001),
+      sliderInput(input="D",label="Umbilicus opening (D)", 
+                  min=0, max=0.9,value=0.3,step=0.01),
+      sliderInput(input="S",label="Shape of opening (S)", 
+                  min=0.1, max=5,value=1,step=0.01),
+      sliderInput(input="RT",label="Rate of translation (T)",
+                  min=0, max=35,value=2,step=0.1),
+    ),
+    mainPanel(
+      rglwidgetOutput("coilrgl",width=800, height=800)
+    )
+  )
+)</code></pre>
+
+<p><code class="inline">shiny</code> makes it very easy! This is the whole code to create the actual HTML page the user is going to interact with. We just define our variables while creating sliders for variable selection. I already discussed the two javascript functions <a href="2021-05-27.html">before</a>.</p>
+
+<pre><code class="R">serverrgl &amp;lt;- function(input,output){
+  mqd &amp;lt;- reactive({ #Compute the shape
+    # First we need to grab the variables picked by the user
+    RT &amp;lt;- input$RT
+    D &amp;lt;- input$D
+    res &amp;lt;- 20
+    W &amp;lt;- round(10^input$W,2)
+    S &amp;lt;- input$S
+    # To make the app more functional we're actually computing the number of turns instead of
+    # proposing it as a variable. 
+    turns &amp;lt;- 5
+    if(W&amp;lt;1.5 &amp;amp; RT&amp;gt;2) turns &amp;lt;- 10
+    if(D&amp;gt;0.5) turns &amp;lt;- 10
+    if(D&amp;lt;0.1 &amp;amp; RT==0) turns &amp;lt;- 2
+    if(W&amp;gt;100) turns &amp;lt;- 1
+    # We also made the number of steps a functional of the number of turns:
+    steps &amp;lt;- ifelse(turns&amp;gt;5,150,75)
+    # Then we compute the generating shape
+    circle &amp;lt;- make_elliptic_generating_shape(D,S,res)
+    # We coil it:
+    ce &amp;lt;- coiling(RT,W,circle,turns,steps,"dextral")
+    # I am a bit ashamed of the next 3 lines, but 3D geometry is hard :)
+    CE &amp;lt;- as.data.frame(ce)
+    CE &amp;lt;- CE[c(2,3,1)]
+    CE[,2] &amp;lt;- -1*CE[,2]
+    # We transform the points into a series of polygons:
+    qd &amp;lt;- pt2quad(CE,steps,res)
+    # And we make it a 3D mesh
+    mesh3d(CE,quads=qd)
+  })
+  output$coilrgl &amp;lt;- renderRglwidget({ #Render it as 3D plot
+    rgl.open(useNULL=TRUE)
+    # Having the shape being computed outside this function allows the shape not to be recomputed all the time 
+    # (useful in the actual app in which the users modify the angle of the plot as a variable, not so much here):
+    m &amp;lt;- mqd()
+    rgl.viewpoint(zoom = 1, theta=90, phi=30)
+    bg3d(color="grey80")
+    material3d(color="lightsalmon",emission="black",alpha=1,specular="white",ambient="black",textype="luminance")
+    shade3d(m,override=TRUE) #Apart from this line that actual plot the shape, the rest is pure aesthetic
+    light3d(theta=10,phi=10)
+    rglwidget() #Launch the rgl widget
+  })
+}
+
+#The last line finally launch the app:
+shinyApp(ui = uirgl, server = serverrgl,options=list("launch.browser"=TRUE))</code></pre>
+
+<p>And this is what happens "server-side". The retrival of the variables, the computation of the shape and its plotting, and that's it. Note the <code class="inline">output$coilrgl</code>: "coilrgl" is the name we gave in the previous code block to the placeholder for the rgl plot in the HTML page; and "output" is the name of the server's output... because we named it that way in the arguments of the function (see first line). Both <code class="inline">reactive</code> and <code class="inline">renderRglwidget</code> are "reactive" in that they will re-run every time they need to (i. e. when the user do something that would change their output).</p>
+
+<img class="current" src="img/raupShiny.png" width="400"/><p class="caption">The result.</p>
+
+			
+			<hr/><div class="footer">
+				<a href="2021-08-11.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &amp;gt;</a>-->
+			</div>
+		</div></description><category>Programming</category><category>R</category></item>
 <item><title>Our Shiny app displaying Raup's Coiling model</title><link>http://plannapus.github.io/blog/2021-08-11.html</link><pubDate>2021-08-11</pubDate><description><div class="main">
 			<p class="blog-title">Our Shiny app displaying Raup's Coiling model</p>
 			<p class="blog-date">2021-08-11</p>
 			<p class="blog-content">
-			As teased <a href="2021-05-27.html">previously</a>, I made a R shiny app for an <a href="https://www.naturkundemuseum-magdeburg.de/ausstellungen/sonderausstellungen/biominerale/">exhibition at the Museum für Naturkunde in Magdeburg</a>, together with a colleague of mine, <a href="https://www.researchgate.net/profile/David-Ware">David Ware</a>. The app allows users to discover <a href="https://www.jstor.org/stable/1301992">David Raup's mollusc coiling model</a>, a morphometric model able to basically recreate any mollusc form, using a limited number of parameters; and thus allows them to discover the full potential morphospace of molluscs.
+			As teased <a href="2021-05-27.html">previously</a>, I made a R shiny app for an <a href="https://www.naturkundemuseum-magdeburg.de/ausstellungen/sonderausstellungen/biominerale/">exhibition on biomineralization at the Museum für Naturkunde in Magdeburg</a>, together with a colleague of mine, <a href="https://www.researchgate.net/profile/David-Ware">David Ware</a>. The app allows users to discover <a href="https://www.jstor.org/stable/1301992">David Raup's mollusc coiling model</a>, a morphometric model able to basically recreate any mollusc form, using a limited number of parameters; and thus allows them to discover the full potential morphospace of molluscs.
 			<img class="current" src="img/display.jpeg" width="400"/></p><p class="caption">The display in the exhibit.</p>
-			<p>The way we made it, the app opens 2 windows: one displayed on a touchscreen, showing the controls; the other shows the actual result, i. e. the model. The control panel allows the user to specify the 4 parameters of the model (the whorl expansion rate, the umbilicus opening, the shape of the opening and the rate of translation), the orientation of the model (on a single window display the user would be able to rotate the model in any direction desired but since it is here shown in a separate window we simplified it, and the user can only rotate along the x axis) or select predefined forms (such as nautilus, ammonite, snail, mussel, etc).</p>
+			<p>The way we made it, the app opens 2 windows: one displayed on a touchscreen, showing the controls; the other shows the actual result, i. e. the model. The control panel allows the user to specify the 4 parameters of the model (the whorl expansion rate, the umbilicus opening, the shape of the opening and the rate of translation), the orientation of the model (on a single window display the user would be able to rotate the model in any direction desired but since it is here shown in a separate window we simplified it, and the user can only rotate around the x axis) or select predefined forms (such as nautilus, ammonite, snail, mussel, etc).</p>
 <table class="img_current"><tr><td><a href="img/controller.png"><img class="current bd" src="img/controller.png" width="400"/></a></td>
 <td><a href="img/display.png"><img class="current bd" src="img/display.png" width="400"/></a></td>
 </tr></table><p class="caption">Controller (left) and display (right).</p>
@@ -51,7 +202,14 @@ coiling &amp;lt;- function(RT,W,generating_shape, turns,steps,dir="dextral"){
                 Z = circle[,2])
   }
   XYZ
-}</code></pre>
+}
+# [...]
+# With D, S, RT and W defined by the user; 
+# res and steps and the resolution of the opening shape and the resolution of the coiling
+# And turns the number of turns desired (which can be also a parameters for the user to defined if wanted)
+circle &amp;lt;- make_elliptic_generating_shape(D,S,res)
+ce &amp;lt;- coiling(RT,W,circle,turns,steps,"dextral")
+</code></pre>
 
 <h4>References:</h4>
 <p class="publications">Raup, D. (1966). <a href="http://www.jstor.org/stable/1301992">Geometric Analysis of Shell Coiling: General Problems</a>. Journal of Paleontology, 40(5), 1178-1190.</p>
@@ -175,7 +333,7 @@ nhs = DataFrame(execute(con, "SELECT hole_id, sample_depth_mbsf FROM neptune_sam
 close(con)</code></pre>
 			
 			<hr/><div class="footer">
-				<a href="2021-06-28.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &amp;gt;</a>-->
+				<a href="2021-06-28.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-08-11.html">Next entry &amp;gt;</a>
 			</div>
 		</div></description><category>Programming</category><category>R</category><category>Python</category><category>Julia</category><category>PostgreSQL</category></item>
 <item><title>The Triton Database paper in Scientific Data</title><link>http://plannapus.github.io/blog/2021-06-28.html</link><pubDate>2021-06-28</pubDate><description><div class="main">
