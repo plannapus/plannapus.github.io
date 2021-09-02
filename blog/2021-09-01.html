@@ -91,15 +91,15 @@ coiling &lt;- function(RT,W,generating_shape, turns,steps,dir="dextral"){
   XYZ
 }
 
-#Function to transform the final shape into polygons
-pt2quad &lt;- function(pts,steps,res){
-  pts$pt_n&lt;- rep(1:(res*2+1),each=steps)
-  pts$step &lt;- 1:steps
+#Function to create the indices of the vertices of the mesh
+pt2quad &lt;- function(steps,res){
+  pt_n&lt;- rep(1:(res*2+1),each=steps)
+  step &lt;- 1:steps
   eg &lt;- expand.grid(1:(2*res),1:(steps-1))
-  apply(eg,1,function(x)c(which(pts$step==x[2] &amp; pts$pt_n==x[1]),
-                          which(pts$step==x[2]+1 &amp; pts$pt_n==x[1]),
-                          which(pts$step==x[2]+1 &amp; pts$pt_n==x[1]+1),
-                          which(pts$step==x[2] &amp; pts$pt_n==x[1]+1)))
+  apply(eg,1,function(x)c(which(step==x[2] &amp; pt_n==x[1]),
+                          which(step==x[2]+1 &amp; pt_n==x[1]),
+                          which(step==x[2]+1 &amp; pt_n==x[1]+1),
+                          which(step==x[2] &amp; pt_n==x[1]+1)))
 }</code></pre>
 
 <p>OK that first part is the one I showed last time, with an additional function <code class="inline">pt2quad</code> which takes a dataframe of points (as XYZ coordinates) and return a dataframe of quadrilaterals that will define the 3D shape.</p>
@@ -142,7 +142,7 @@ uirgl &lt;- fluidPage(
     # First we need to grab the variables picked by the user
     RT &lt;- input$RT
     D &lt;- input$D
-    res &lt;- 20
+    res &lt;- 20 #Resolution of a single step is fixed here
     W &lt;- round(10^input$W,2)
     S &lt;- input$S
     # To make the app more functional we're actually computing the number of turns instead of
@@ -152,7 +152,7 @@ uirgl &lt;- fluidPage(
     if(D&gt;0.5) turns &lt;- 10
     if(D&lt;0.1 & RT==0) turns &lt;- 2
     if(W&gt;100) turns &lt;- 1
-    # We also made the number of steps a functional of the number of turns:
+    # We also made the number of steps a function of the number of turns:
     steps &lt;- ifelse(turns&gt;5,150,75)
     # Then we compute the generating shape
     circle &lt;- make_elliptic_generating_shape(D,S,res)
@@ -162,8 +162,8 @@ uirgl &lt;- fluidPage(
     CE &lt;- as.data.frame(ce)
     CE &lt;- CE[c(2,3,1)]
     CE[,2] &lt;- -1*CE[,2]
-    # We transform the points into a series of polygons:
-    qd &lt;- pt2quad(CE,steps,res)
+    # We compute the indices of the vertices
+    qd &lt;- pt2quad(steps,res)
     # And we make it a 3D mesh
     mesh3d(CE,quads=qd)
   })
