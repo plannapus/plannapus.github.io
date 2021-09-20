@@ -45,7 +45,7 @@
 		<div class="main">
 			<p class="blog-title">Addendum to the previous post on paleogeographic maps</p>
 			<p class="blog-date">2020-11-03</p>
-			<p class="blog-content">
+			<div class="blog-content">
 				As it turned out, I realized the way I have been making maps in R since 10 years is more or less deprecated! Package <code class="inline">sp</code> was superseded by package <code class="inline">sf</code>, and indeed the coordinate system transformation works so much better and do not need as much <a href="https://github.com/plannapus/Unsorted-functions/blob/master/myTransform.R">weird hacking</a> to work on complex projections.
 				The code from <a href="2020-10-15.html">last time</a> thus become as follows:
 				<pre><code class="r">library(sf)
@@ -106,7 +106,7 @@ As one can see South America and Africa suffer from the projection:
 
 Hopefully I ll find a solution for that, at some point.
 
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2020-10-28.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-11-09.html">Next entry &gt;</a>

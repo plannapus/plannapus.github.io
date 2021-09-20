@@ -45,7 +45,7 @@
 		<div class="main">
 			<p class="blog-title">Scraping rendered HTML</p>
 			<p class="blog-date">2020-09-28</p>
-			<p class="blog-content">
+			<div class="blog-content">
 				Once in a while (or, you know, every day), when you're doing 'big' data analysis you need to do some web scraping – grab directly data from public websites – particularly if they do not have an API to deliver the data you are interested in. Most of the time, all it takes is to read in the HTML page in R (thanks to <a href="https://cran.r-project.org/web/packages/XML/index.html">package XML</a>), and pick up the data, which in the best case scenario already lies there as a table. 
 
 				<p>But thanks to web 2.0, most of the time nowadays it does not work. Why? Because the data is actually not contained in the HTML itself but put there by a script (usually Javascript) that is run by your browser when you go on the page itself. Meaning that if you try to get it from R, which is not a browser, you'll see squat. Luckily, enter headless browsers. What they are, are command-line tools that mimic browsers by executing this kind of scripts. Personally I use <a href="https://phantomjs.org/">phantomJS</a> because it is the easiest for me to use given i don't really know Javascript that much. So, once you installed phantomJS, all you need to do is write a little script that just reads in the page, processes it and outputs the result as a pure HTML page. Here, as an example, a script I wrote a year or two ago, for a colleague, that grabs data from the website of the IUCN red list:</p>
@@ -77,7 +77,7 @@ system("phantomjs scrape.js")
 h &lt;- htmlParse("species.html")
 # and pick whatever info you wanted in the first place (here using xpath)
 xpathSApply(h, "//div[@id='threats-details']//div[@class='text-body']", xmlValue)</code></pre>
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2020-09-27.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-10-02.html">Next entry &gt;</a>

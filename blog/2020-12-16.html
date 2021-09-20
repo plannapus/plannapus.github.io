@@ -45,7 +45,7 @@
 		<div class="main">
 			<p class="blog-title">AoC2020 Days 13 to 16</p>
 			<p class="blog-date">2020-12-16</p>
-			<p class="blog-content">Here we are in lockdown again. Luckily the advent of code does brighten the day somewhat. And some challenges were noticeably harder this week (though still not remotely as hard as last year I must say). It started with day <a href="http://adventofcode.com/2020/day/13">13</a>: the given input was a list of buses (whose names correspond to their periodicities), and find out a time t from which each bus arrives at t+n where n is their place in the list. As someone pointed out on <a href="http://reddit.com/r/adventofcode">reddit</a>, this problem is known as the Chinese Remainder Problem. Though one (like me) didn't need to know that to solve it thankfully. Brute-focing it (by trying all integers until we find one) was clearly not the best idea (as you will see with the solution) so one had to find a way to solve it faster. And the solution ended up fairly trivial: finding an integer i at which the first bus arrive, and then incrementing only by the periodicity of that bus until we end up on a time at which the second one arrive, then incrementing by the product of both, etc.
+			<div class="blog-content">Here we are in lockdown again. Luckily the advent of code does brighten the day somewhat. And some challenges were noticeably harder this week (though still not remotely as hard as last year I must say). It started with day <a href="http://adventofcode.com/2020/day/13">13</a>: the given input was a list of buses (whose names correspond to their periodicities), and find out a time t from which each bus arrives at t+n where n is their place in the list. As someone pointed out on <a href="http://reddit.com/r/adventofcode">reddit</a>, this problem is known as the Chinese Remainder Problem. Though one (like me) didn't need to know that to solve it thankfully. Brute-focing it (by trying all integers until we find one) was clearly not the best idea (as you will see with the solution) so one had to find a way to solve it faster. And the solution ended up fairly trivial: finding an integer i at which the first bus arrive, and then incrementing only by the periodicity of that bus until we end up on a time at which the second one arrive, then incrementing by the product of both, etc.
 				<pre><code class="r">options(digits=22)
 input &lt;- readLines("input13.txt")
 bus &lt;- as.integer(el(strsplit(input[2],",")))
@@ -122,7 +122,7 @@ which(age%in%maxn)-1
 
 <p>Day <a href="http://adventofcode.com/2020/day/16">16</a> finally was way simpler and thus not really worth explaining here (all operations involved were trivial in R: checking whether numbers belongs to a list, checking which row only has a single TRUE value, etc.), but you can always check it out on <a href="http://github.com/plannapus/Advent_of_Code">my repository</a>.</p>
 
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2020-12-12.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-12-18.html">Next entry &gt;</a>

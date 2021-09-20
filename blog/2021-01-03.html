@@ -45,7 +45,7 @@
 		<div class="main">
 			<p class="blog-title">Wrap-up on AoC2020 and my conky setup</p>
 			<p class="blog-date">2021-01-03</p>
-			<p class="blog-content">
+			<div class="blog-content">
 				First thing first: the final day of AoC2020. <a href="http://adventofcode.com/2020/day/25">The puzzle for the 25th</a>, as usual, was only a one-parter (the second part is awarded if and only if all of the other 49 puzzles were successfully completed). It was a fairly simple cryptography problem. Two numbers have gone through a mathematically operation (multiplication/modulo) an indeterminate amount of times, i.e. number x is the result of a number going through n iterations and y the result of the same number going through m iterations, and the problem is to find n and m such as when x goes through m iterations and y through n iterations it results in an identical number (which becomes the solution of the puzzle). My simple solution:
 				<pre><code class="r">input &lt;- scan("input25.txt")
 cardpk &lt;- input[1]
@@ -423,7 +423,7 @@ ${if_updatenr 81}${image ~/.config/conky/plots/81-0.png -p 0,860 -s 380x190}${en
 
 <video width="1000" controls><source src="vid/conky.mp4" type="video/mp4"></video><br/>
 
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2020-12-24.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-01-15.html">Next entry &gt;</a>

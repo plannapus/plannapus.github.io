@@ -153,7 +153,7 @@ p.blog-title{
 p.blog-date{
 	font-size:75%;
 }
-p.blog-content{}
+div.blog-content{}
 p.publications{
 	text-indent: -1em;
 	padding-left: 1em;

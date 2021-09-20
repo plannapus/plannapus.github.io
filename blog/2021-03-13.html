@@ -47,7 +47,7 @@
 		<div class="main">
 			<p class="blog-title">Using R code in Julia and Python</p>
 			<p class="blog-date">2021-03-13</p>
-			<p class="blog-content">
+			<div class="blog-content">
 As we are moving toward the data analysis part of <a href="http://ehrenberglab.github.io/pages/mopga.html">our project</a>, I am trying to teach my working group how to use the stack of R functions I wrote during the past decade. The issue is however that R does not seem to be a popular option among my working group and that they prefer using either Python or Julia. As translating a decade-worth of code into those two languages is a bit of a bummer, I've been looking at how to read and use R functions in Julia and Python instead.
 <p>Julia has, in particular, a very intuitive and well-done package to achieve this: <a href="https://github.com/JuliaInterop/RCall.jl">RCall.jl</a>:</p>
 
@@ -164,7 +164,7 @@ sac = pandas.read_csv("sac.csv", delimiter="\t", header=1)
 res = cap(sac)</code></pre>
 
 <p>In the other direction, I have been using package <a href="">reticulate</a> to use Python code in R. Maybe I'll also write a post one day about it. Anyway I'm glad to see all my legacy code can still be used even by non-R-programmers.</p>
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2021-02-25.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-05-07.html">Next entry &gt;</a>

@@ -48,7 +48,7 @@
 		<div class="main">
 			<p class="blog-title">Connecting to PostgreSQL from R, Python and Julia</p>
 			<p class="blog-date">2021-07-01</p>
-			<p class="blog-content">
+			<div class="blog-content">
 				As part of my duties as database manager for the <a href="http://nsb.mfn-berlin.de">Neptune database</a>, I spend a lot of time writing pieces of code that interact with postgreSQL databases, either to access them and retrieve data, or to add or clean data in them. While database managing software nowadays are fairly practical and allow you to do a lot of things, in practice it is still a million time more convenient to connect from whatever programming language one is using at the moment. In particular it allows clever use of metaprogramming to form SQL queries that allows you to add thousands of rows of data with minimal effort.
 				<p>Anyway I thought I would here write down some of the tools I use in R, python and julia to connect to and interact with such DBs. As I use R on an everyday basis I'll start with it. There are two basic paths in R to connect to DBs in general: DBI and OCDB. I use DBI as it is the first I discovered, but honestly OCDB is as good. In practice one will load the flavoured-DBI package that match the SQL-flavour of the DB one uses: RMySQL, RSQLite, RPostgreSQL, etc. All of them uses DBI in the background and all of them uses the same grammar. Which is:</p>
 				<pre><code class="R">library(RPostgreSQL)
@@ -158,7 +158,7 @@ password = "arm_aber_sexy"
 con = LibPQ.Connection("dbname=$database host=$host port=5432 user=$username password=$password")
 nhs = DataFrame(execute(con, "SELECT hole_id, sample_depth_mbsf FROM neptune_sample;"))
 close(con)</code></pre>
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2021-06-28.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-08-11.html">Next entry &gt;</a>

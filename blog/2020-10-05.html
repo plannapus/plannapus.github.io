@@ -45,7 +45,7 @@
 		<div class="main">
 			<p class="blog-title">A walk through my beamer theme</p>
 			<p class="blog-date">2020-10-05</p>
-			<p class="blog-content">A few years ago I started converting to LaTeX: first for proposals, manuscripts and then eventually for presentations. I am not going to lie: the first one took me way longer than usual but since then, now that I have a basic template, it became really worth it. I didn't go for a flashy, fancy theme but made a very simple one based on <a href="https://www.museumfuernaturkunde.berlin/">my institution</a> official template. And since it is simple, it makes for a nice introduction to people willing to learn how to make their own beamer template.<br/>
+			<div class="blog-content">A few years ago I started converting to LaTeX: first for proposals, manuscripts and then eventually for presentations. I am not going to lie: the first one took me way longer than usual but since then, now that I have a basic template, it became really worth it. I didn't go for a flashy, fancy theme but made a very simple one based on <a href="https://www.museumfuernaturkunde.berlin/">my institution</a> official template. And since it is simple, it makes for a nice introduction to people willing to learn how to make their own beamer template.<br/>
 			First: your theme will reside in a separate file, called by your main presentation file in a way similar to a package. A weird quirk of beamer is that your filename has to be of the form "<b>beamertheme</b><i>themename</i>.sty", i.e. <code class="inline">beamerthemeexample.sty</code> for a theme called "example". In my case the file is called <code class="inline">beamerthememfn_green.sty</code>, and reside in the same folder as the presentation file, it is thus imported in it as follows:
 
 				<pre><code class="Latex">\usetheme{mfn_green}</code></pre>
@@ -113,7 +113,7 @@
 			And it's basically it! In the real file I also upload a couple of logos to add to the first and last slide footers but it could be as well done in the presentation file itself with the usual <code class="inline">\includegraphics</code> bit.<br/>
 			Here is an example of what the output looks like (in this case a seminar talk I gave in Potsdam last year when visiting my colleagues at the GFZ):<br/>
 			<object class="blog" data="../data/20190723Potsdam.pdf" width="500" height="425" type="application/pdf"><p><a href="../data/20190723Potsdam.pdf">Download.</a></p></object>
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2020-10-02.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-10-10.html">Next entry &gt;</a>

@@ -46,7 +46,7 @@
 		<div class="main">
 			<p class="blog-title">AoC2020 Days 3-4 and Quinces</p>
 			<p class="blog-date">2020-12-04</p>
-			<p class="blog-content">
+			<div class="blog-content">
 				Days 3 and 4 of the Advent of Code were still relatively trivial to solve. Day 3 was just playing with coordinates on a 2D discrete map while day 4 entailed more adventures in input parsing :)
 
 				<p>This time the input was fairly randomly organised. Each set of data was on a random number of lines but separated from the next one by an empty line, and each set was composed of values in the form <code class="inline">key:value</code> and separated from the others by a space. I'm pretty sure it could have been entirely sparsed by regex but I was <span class="tooltip">feeling lazy<span class="tooltiptext">having woken up way earlier than usual</span></span>, so I used instead the standard tools (<code class="inline">scan, readLines, strsplit</code>) to create a list of named vectors. Named vectors are frankly rarely used nowadays in R but, maybe it is because I have been programming a lot in python in the last few years, I like to use them as they are R equivalent to python's dictionaries.</p>
@@ -71,7 +71,7 @@ sum(sapply(pass,function(x)all(c("byr","iyr","eyr","hgt","hcl","ecl","pid")%in%n
 
 				<img class="current" src="img/quince_cheesecake.png" width="800">
 				<p class="caption">What remained after my working group ate the cake. It's a great frustration of mine to have a lab big enough to make cooking a cake worthwhile but so small that I still have tons of leftovers :)</p>
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2020-12-02.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-12-07.html">Next entry &gt;</a>

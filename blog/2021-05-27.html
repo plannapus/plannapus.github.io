@@ -45,7 +45,7 @@
 		<div class="main">
 			<p class="blog-title">Shiny app: logarithmic slider and updateSliderInput</p>
 			<p class="blog-date">2021-05-27</p>
-			<p class="blog-content">
+			<div class="blog-content">
 I am currently working on a R shiny app for an <a href="https://www.naturkundemuseum-magdeburg.de/ausstellungen/vorschau/sonderausstellung-biominerale/">exposition by a colleague from the Museum für Naturkunde in Magdeburg</a> (more on that later when it'll be finished). I stumbled onto a very specific issue that took me a while to solve so I thought I'll share my solution here, for future reference.
 <p>The app allows the user to fiddle with the parameters of <a href="https://www.jstor.org/stable/1301992">Raup's mollusk model</a>, with the result being shown as a rgl 3D plot. One of the parameter (W, the Whorl Expansion Rate) needed to be represented as a logarithmic scale (as values range from 1 to 100 000, with most of the changes happening between 1 and 10). As this is not a native option in shiny, I had to use some javascript to sort it out, as per <a href="https://stackoverflow.com/a/39028280/1451109">this StackOverflow answer</a>:</p>
 <pre><code class="R">library(shiny)
@@ -169,7 +169,7 @@ serv_calc[[1]] &lt;- function(input,session){
   )
 }
 # [...]</code></pre>
-			<p>What runjs does is run a javascript script (here <code class="inline">logifySlider('W');</code>) and what <code class="inline">session$onFlushed</code> does is run whatever R code is passed to it everytime after something is updated/changed ("flushed") in the current session. QED.</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2021-05-07.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-06-23.html">Next entry &gt;</a>

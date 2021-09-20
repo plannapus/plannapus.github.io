@@ -5,7 +5,7 @@ process <- function(html_file){
   h <-htmlParse(html_file,encoding="utf-8")
   tit <- xpathSApply(h,"//p[@class='blog-title']",xmlValue)
   dat <- xpathSApply(h,"//p[@class='blog-date']",xmlValue)
-  desc <- xpathSApply(h,"//div[@class='main']",saveXML)
+  desc <- xpathSApply(h,"///div[@class='blog-content']",saveXML)
   data.frame(url=html_file,title=tit,date=as.Date(dat),content=desc)
 }
 categories <- function(html_file){

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
-<item><title>raupShiny</title><link>http://plannapus.github.io/blog/2021-09-01.html</link><pubDate>2021-09-01</pubDate><description><div class="main">
-			<p class="blog-title">raupShiny</p>
-			<p class="blog-date">2021-09-01</p>
-			<p class="blog-content">
+<item><title>raupShiny</title><link>http://plannapus.github.io/blog/2021-09-01.html</link><pubDate>2021-09-01</pubDate><description><div class="blog-content">
 				As a follow-up on the <a href="2021-08-11.html">previous post</a>, I finally got the time to write a <a href="https://github.com/plannapus/raupShiny/blob/master/raupShiny.R">simplified version</a> of the shiny app we made for the <a href="https://www.naturkundemuseum-magdeburg.de/ausstellungen/sonderausstellungen/biominerale/">exhibition on biomineralization at the Museum für Naturkunde in Magdeburg</a>, so that people can built upon it and make a better, more complex version, and so I am going to briefly explain it here.
-</p><pre><code class="R">library(shiny)
+<pre><code class="R">library(shiny)
 library(shinyWidgets)
 library(rgl)
 
@@ -50,15 +47,15 @@ coiling &amp;lt;- function(RT,W,generating_shape, turns,steps,dir="dextral"){
   XYZ
 }
 
-#Function to transform the final shape into polygons
-pt2quad &amp;lt;- function(pts,steps,res){
-  pts$pt_n&amp;lt;- rep(1:(res*2+1),each=steps)
-  pts$step &amp;lt;- 1:steps
+#Function to create the indices of the vertices of the mesh
+pt2quad &amp;lt;- function(steps,res){
+  pt_n&amp;lt;- rep(1:(res*2+1),each=steps)
+  step &amp;lt;- 1:steps
   eg &amp;lt;- expand.grid(1:(2*res),1:(steps-1))
-  apply(eg,1,function(x)c(which(pts$step==x[2] &amp;amp; pts$pt_n==x[1]),
-                          which(pts$step==x[2]+1 &amp;amp; pts$pt_n==x[1]),
-                          which(pts$step==x[2]+1 &amp;amp; pts$pt_n==x[1]+1),
-                          which(pts$step==x[2] &amp;amp; pts$pt_n==x[1]+1)))
+  apply(eg,1,function(x)c(which(step==x[2] &amp;amp; pt_n==x[1]),
+                          which(step==x[2]+1 &amp;amp; pt_n==x[1]),
+                          which(step==x[2]+1 &amp;amp; pt_n==x[1]+1),
+                          which(step==x[2] &amp;amp; pt_n==x[1]+1)))
 }</code></pre>
 
 <p>OK that first part is the one I showed last time, with an additional function <code class="inline">pt2quad</code> which takes a dataframe of points (as XYZ coordinates) and return a dataframe of quadrilaterals that will define the 3D shape.</p>
@@ -101,7 +98,7 @@ uirgl &amp;lt;- fluidPage(
     # First we need to grab the variables picked by the user
     RT &amp;lt;- input$RT
     D &amp;lt;- input$D
-    res &amp;lt;- 20
+    res &amp;lt;- 20 #Resolution of a single step is fixed here
     W &amp;lt;- round(10^input$W,2)
     S &amp;lt;- input$S
     # To make the app more functional we're actually computing the number of turns instead of
@@ -111,7 +108,7 @@ uirgl &amp;lt;- fluidPage(
     if(D&amp;gt;0.5) turns &amp;lt;- 10
     if(D&amp;lt;0.1 &amp;amp; RT==0) turns &amp;lt;- 2
     if(W&amp;gt;100) turns &amp;lt;- 1
-    # We also made the number of steps a functional of the number of turns:
+    # We also made the number of steps a function of the number of turns:
     steps &amp;lt;- ifelse(turns&amp;gt;5,150,75)
     # Then we compute the generating shape
     circle &amp;lt;- make_elliptic_generating_shape(D,S,res)
@@ -121,8 +118,8 @@ uirgl &amp;lt;- fluidPage(
     CE &amp;lt;- as.data.frame(ce)
     CE &amp;lt;- CE[c(2,3,1)]
     CE[,2] &amp;lt;- -1*CE[,2]
-    # We transform the points into a series of polygons:
-    qd &amp;lt;- pt2quad(CE,steps,res)
+    # We compute the indices of the vertices
+    qd &amp;lt;- pt2quad(steps,res)
     # And we make it a 3D mesh
     mesh3d(CE,quads=qd)
   })
@@ -147,17 +144,10 @@ shinyApp(ui = uirgl, server = serverrgl,options=list("launch.browser"=TRUE))</co
 
 <img class="current" src="img/raupShiny.png" width="400"/><p class="caption">The result.</p>
 
-			
-			<hr/><div class="footer">
-				<a href="2021-08-11.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &amp;gt;</a>-->
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>Our Shiny app displaying Raup's Coiling model</title><link>http://plannapus.github.io/blog/2021-08-11.html</link><pubDate>2021-08-11</pubDate><description><div class="main">
-			<p class="blog-title">Our Shiny app displaying Raup's Coiling model</p>
-			<p class="blog-date">2021-08-11</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>Our Shiny app displaying Raup's Coiling model</title><link>http://plannapus.github.io/blog/2021-08-11.html</link><pubDate>2021-08-11</pubDate><description><div class="blog-content">
 			As teased <a href="2021-05-27.html">previously</a>, I made a R shiny app for an <a href="https://www.naturkundemuseum-magdeburg.de/ausstellungen/sonderausstellungen/biominerale/">exhibition on biomineralization at the Museum für Naturkunde in Magdeburg</a>, together with a colleague of mine, <a href="https://www.researchgate.net/profile/David-Ware">David Ware</a>. The app allows users to discover <a href="https://www.jstor.org/stable/1301992">David Raup's mollusc coiling model</a>, a morphometric model able to basically recreate any mollusc form, using a limited number of parameters; and thus allows them to discover the full potential morphospace of molluscs.
-			<img class="current" src="img/display.jpeg" width="400"/></p><p class="caption">The display in the exhibit.</p>
+			<img class="current" src="img/display.jpeg" width="400"/><p class="caption">The display in the exhibit.</p>
 			<p>The way we made it, the app opens 2 windows: one displayed on a touchscreen, showing the controls; the other shows the actual result, i. e. the model. The control panel allows the user to specify the 4 parameters of the model (the whorl expansion rate, the umbilicus opening, the shape of the opening and the rate of translation), the orientation of the model (on a single window display the user would be able to rotate the model in any direction desired but since it is here shown in a separate window we simplified it, and the user can only rotate around the x axis) or select predefined forms (such as nautilus, ammonite, snail, mussel, etc).</p>
 <table class="img_current"><tr><td><a href="img/controller.png"><img class="current bd" src="img/controller.png" width="400"/></a></td>
 <td><a href="img/display.png"><img class="current bd" src="img/display.png" width="400"/></a></td>
@@ -213,17 +203,10 @@ ce &amp;lt;- coiling(RT,W,circle,turns,steps,"dextral")
 
 <h4>References:</h4>
 <p class="publications">Raup, D. (1966). <a href="http://www.jstor.org/stable/1301992">Geometric Analysis of Shell Coiling: General Problems</a>. Journal of Paleontology, 40(5), 1178-1190.</p>
-			
-			<hr/><div class="footer">
-				<a href="2021-07-01.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &amp;gt;</a>-->
-			</div>
-		</div></description><category>Science</category><category>Programming</category><category>R</category></item>
-<item><title>Connecting to PostgreSQL from R, Python and Julia</title><link>http://plannapus.github.io/blog/2021-07-01.html</link><pubDate>2021-07-01</pubDate><description><div class="main">
-			<p class="blog-title">Connecting to PostgreSQL from R, Python and Julia</p>
-			<p class="blog-date">2021-07-01</p>
-			<p class="blog-content">
+			</div></description><category>Science</category><category>Programming</category><category>R</category></item>
+<item><title>Connecting to PostgreSQL from R, Python and Julia</title><link>http://plannapus.github.io/blog/2021-07-01.html</link><pubDate>2021-07-01</pubDate><description><div class="blog-content">
 				As part of my duties as database manager for the <a href="http://nsb.mfn-berlin.de">Neptune database</a>, I spend a lot of time writing pieces of code that interact with postgreSQL databases, either to access them and retrieve data, or to add or clean data in them. While database managing software nowadays are fairly practical and allow you to do a lot of things, in practice it is still a million time more convenient to connect from whatever programming language one is using at the moment. In particular it allows clever use of metaprogramming to form SQL queries that allows you to add thousands of rows of data with minimal effort.
-				</p><p>Anyway I thought I would here write down some of the tools I use in R, python and julia to connect to and interact with such DBs. As I use R on an everyday basis I'll start with it. There are two basic paths in R to connect to DBs in general: DBI and OCDB. I use DBI as it is the first I discovered, but honestly OCDB is as good. In practice one will load the flavoured-DBI package that match the SQL-flavour of the DB one uses: RMySQL, RSQLite, RPostgreSQL, etc. All of them uses DBI in the background and all of them uses the same grammar. Which is:</p>
+				<p>Anyway I thought I would here write down some of the tools I use in R, python and julia to connect to and interact with such DBs. As I use R on an everyday basis I'll start with it. There are two basic paths in R to connect to DBs in general: DBI and OCDB. I use DBI as it is the first I discovered, but honestly OCDB is as good. In practice one will load the flavoured-DBI package that match the SQL-flavour of the DB one uses: RMySQL, RSQLite, RPostgreSQL, etc. All of them uses DBI in the background and all of them uses the same grammar. Which is:</p>
 				<pre><code class="R">library(RPostgreSQL)
 # First we connect to the database
 driver &amp;lt;- dbDriver("PostgreSQL")
@@ -331,35 +314,21 @@ password = "arm_aber_sexy"
 con = LibPQ.Connection("dbname=$database host=$host port=5432 user=$username password=$password")
 nhs = DataFrame(execute(con, "SELECT hole_id, sample_depth_mbsf FROM neptune_sample;"))
 close(con)</code></pre>
-			
-			<hr/><div class="footer">
-				<a href="2021-06-28.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-08-11.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category><category>Python</category><category>Julia</category><category>PostgreSQL</category></item>
-<item><title>The Triton Database paper in Scientific Data</title><link>http://plannapus.github.io/blog/2021-06-28.html</link><pubDate>2021-06-28</pubDate><description><div class="main">
-			<p class="blog-title">The Triton Database paper in <em>Scientific Data</em></p>
-			<p class="blog-date">2021-06-28</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category><category>Python</category><category>Julia</category><category>PostgreSQL</category></item>
+<item><title>The Triton Database paper in Scientific Data</title><link>http://plannapus.github.io/blog/2021-06-28.html</link><pubDate>2021-06-28</pubDate><description><div class="blog-content">
 				An offshoot of our <a href="http://nsb.mfn-berlin.de">Neptune Database</a>, the Triton Database, just got published today in <a href="http://doi.org/10.1038/s41597-021-00942-7"><em>Scientific Data</em></a>. The database focussed on plantonic foraminifera, and is very complete (more than half a million occurrences just for Cenozoic forams!): it not only includes data from NSB but also from the most recent deep sea drilling sites, land sections, and piston cores. It also contains a bunch of new age models for deep sea drilling sites, which were made semi-automatically using GAMs (kudos to the lead author, <a href="https://twitter.com/isabelfenton">Isabel Fenton</a>, for that brilliant idea!). The taxonomy has also been updated as it is based on a soon-to-be-published review of Cenozoic planktonic foram taxonomy by some of our co-authors.
 
-				<img class="current" src="img/triton.png" width="600"/></p><p class="caption">Figure from the <a href="http://doi.org/10.1038/s41597-021-00942-7">MS</a> showing the data density in Triton (a) vs the one in Neptune (b). Planktonic foram biogeography in the Plio-Pleistocene is impressively well-resolved in Triton for instance.</p>
+				<img class="current" src="img/triton.png" width="600"/><p class="caption">Figure from the <a href="http://doi.org/10.1038/s41597-021-00942-7">MS</a> showing the data density in Triton (a) vs the one in Neptune (b). Planktonic foram biogeography in the Plio-Pleistocene is impressively well-resolved in Triton for instance.</p>
 
 				<p>Uncharacteristically for a MS I coauthored, most of the work is in front of me as I will be making in the coming months a dedicated page on our website for people to query Triton. I will also start importing back its data into NSB, which will probably take a while as it means creating new structures to accomodate land sections and piston cores, in particular.</p>
 				<p>Currently the database is accessible on <a href="https://springernature.figshare.com/collections/Triton_a_new_database_of_Cenozoic_Planktonic_Foraminifera/5242154">FigShare</a>, and I invite you all to explore it! I will probably post a second blogpost soonish with some examples and whatnots.</p>
 				<p>Thanks again to Isabel and Adam for inviting us to collaborate with them on that paper!</p>
 				<h4>Reference:</h4>
 			<p class="publications">Fenton I., Woodhouse A., Aze T., Lazarus D., Renaudie J., Dunhill A., Young J., Saupe E. (2021). <a href="http://doi.org/10.1038/s41597-021-00942-7">Triton, a new species-level database of Cenozoic planktonic foraminiferal occurrences</a>. Scientific Data.</p>
-			
-			<hr/><div class="footer">
-				<a href="2021-06-23.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-07-01.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Science</category><category>MS-related</category></item>
-<item><title>The GPTS switch</title><link>http://plannapus.github.io/blog/2021-06-23.html</link><pubDate>2021-06-23</pubDate><description><div class="main">
-			<p class="blog-title">The GPTS switch</p>
-			<p class="blog-date">2021-06-23</p>
-			<p class="blog-content">
+			</div></description><category>Science</category><category>MS-related</category></item>
+<item><title>The GPTS switch</title><link>http://plannapus.github.io/blog/2021-06-23.html</link><pubDate>2021-06-23</pubDate><description><div class="blog-content">
 				I'm often asked some fairly technical questions on biostratigraphy or micropaleontology by our <a href="http://nsb.mfn.berlin.de">NSB</a> users. One that comes often is how to switch from one GPTS to another. I thought I would reproduce my answers here for reference.
-				</p><p>But first a bit of explanations for people not used to working with geological ages. GPTS stands for geomagnetic polarity time scale. As mentioned in a previous <a href="2020-10-28.html">blogpost</a>, putting an actual numeric age on a sample is not trivial and in most cases we end up building ages models using stratigraphic data calibrated on different sites where they've been compared to the magnetostratigraphic record. That record itself is also something that is being calibrated (in the case of the C part of the scale, based on the Atlantic seafloor), and this calibrations are occasionally updated, most famously in the serie of book "The Geological Timescale" of which the <a href="https://www.sciencedirect.com/book/9780128243602/geologic-time-scale-2020">2020 edition</a> is the latest update.</p>
+				<p>But first a bit of explanations for people not used to working with geological ages. GPTS stands for geomagnetic polarity time scale. As mentioned in a previous <a href="2020-10-28.html">blogpost</a>, putting an actual numeric age on a sample is not trivial and in most cases we end up building ages models using stratigraphic data calibrated on different sites where they've been compared to the magnetostratigraphic record. That record itself is also something that is being calibrated (in the case of the C part of the scale, based on the Atlantic seafloor), and this calibrations are occasionally updated, most famously in the serie of book "The Geological Timescale" of which the <a href="https://www.sciencedirect.com/book/9780128243602/geologic-time-scale-2020">2020 edition</a> is the latest update.</p>
 				<p>As biostratigraphic events calibrated on the GPTS are expressed linearly on it, switching from one scale to another is just a matter of linear interpolation (see here my answer on <a href="https://www.researchgate.net/post/Age_Interpolation_of_marker_microfossils_in_new_GPTS">ResearchGate</a>):</p>
 				<blockquote cite="https://www.researchgate.net/post/Age_Interpolation_of_marker_microfossils_in_new_GPTS">With an example: in Agnini et al 2014, the LAD of <i>Discoaster lodoensis</i> was calibrated at 48.37Ma on the 1995 GPTS. It is thus between the bottom of C21n (47.906Ma) and the top of C22n (49.037Ma). On the 2020 GPTS, those chron boundaries are at 47.760 and 48.878Ma respectively. The mapped age of the LAD of Discoaster lodoensis on the 2020 GPTS is thus (by linear interpolation):
 				47.760 + (48.37-47.906)*(47.906-47.760)/(49.037-48.878) = 48.18606 Ma</blockquote>
@@ -369,17 +338,10 @@ nsb &amp;lt;- nsbConnect("guest","arm_aber_sexy") #Connect to the database in or
 old_ages &amp;lt;- c(0,1,2,3,4,5)
 changeAgeScale(nsb, old_ages, from="CK95", to="GTS2020")</code></pre>
 				<p>For the list of available GPTS and their abbreviations, see the <a href="https://nsb.mfn-berlin.de/help/">help page</a> of the NSB website.</p>
-			
-			<hr/><div class="footer">
-				<a href="2021-05-27.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-06-28.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Science</category><category>R</category></item>
-<item><title>Shiny app: logarithmic slider and updateSliderInput</title><link>http://plannapus.github.io/blog/2021-05-27.html</link><pubDate>2021-05-27</pubDate><description><div class="main">
-			<p class="blog-title">Shiny app: logarithmic slider and updateSliderInput</p>
-			<p class="blog-date">2021-05-27</p>
-			<p class="blog-content">
+			</div></description><category>Science</category><category>R</category></item>
+<item><title>Shiny app: logarithmic slider and updateSliderInput</title><link>http://plannapus.github.io/blog/2021-05-27.html</link><pubDate>2021-05-27</pubDate><description><div class="blog-content">
 I am currently working on a R shiny app for an <a href="https://www.naturkundemuseum-magdeburg.de/ausstellungen/vorschau/sonderausstellung-biominerale/">exposition by a colleague from the Museum für Naturkunde in Magdeburg</a> (more on that later when it'll be finished). I stumbled onto a very specific issue that took me a while to solve so I thought I'll share my solution here, for future reference.
-</p><p>The app allows the user to fiddle with the parameters of <a href="https://www.jstor.org/stable/1301992">Raup's mollusk model</a>, with the result being shown as a rgl 3D plot. One of the parameter (W, the Whorl Expansion Rate) needed to be represented as a logarithmic scale (as values range from 1 to 100 000, with most of the changes happening between 1 and 10). As this is not a native option in shiny, I had to use some javascript to sort it out, as per <a href="https://stackoverflow.com/a/39028280/1451109">this StackOverflow answer</a>:</p>
+<p>The app allows the user to fiddle with the parameters of <a href="https://www.jstor.org/stable/1301992">Raup's mollusk model</a>, with the result being shown as a rgl 3D plot. One of the parameter (W, the Whorl Expansion Rate) needed to be represented as a logarithmic scale (as values range from 1 to 100 000, with most of the changes happening between 1 and 10). As this is not a native option in shiny, I had to use some javascript to sort it out, as per <a href="https://stackoverflow.com/a/39028280/1451109">this StackOverflow answer</a>:</p>
 <pre><code class="R">library(shiny)
 library(mwshiny)
 JS.logify &amp;lt;-"function logifySlider (sliderId) {
@@ -501,17 +463,10 @@ serv_calc[[1]] &amp;lt;- function(input,session){
   )
 }
 # [...]</code></pre>
-			<p>What runjs does is run a javascript script (here <code class="inline">logifySlider('W');</code>) and what <code class="inline">session$onFlushed</code> does is run whatever R code is passed to it everytime after something is updated/changed ("flushed") in the current session. QED.</p>
-			<hr/><div class="footer">
-				<a href="2021-05-07.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-06-23.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>Micha and Momo's paper in Frontiers in Ecology &amp; Evolution</title><link>http://plannapus.github.io/blog/2021-05-07.html</link><pubDate>2021-05-07</pubDate><description><div class="main">
-			<p class="blog-title">Micha and Momo's paper in <i>Frontiers in Ecology &amp;amp; Evolution</i></p>
-			<p class="blog-date">2021-05-07</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>Micha and Momo's paper in Frontiers in Ecology &amp; Evolution</title><link>http://plannapus.github.io/blog/2021-05-07.html</link><pubDate>2021-05-07</pubDate><description><div class="blog-content">
 Our paper, lead by Michael Buchwitz and Maren Jansen, came out today in <i><a href="http://doi.org/10.3389/fevo.2021.674779">Frontiers in Ecology &amp;amp; Evolution</a></i>, in the context of a special issue on the <a href="https://www.frontiersin.org/research-topics/14947/origin-and-early-evolution-of-amniotes#articles">Origin and Early Evolution of Amniotes</a>. This is a study I have been contributing to since 2018 (if I remember correctly), so I am glad to see it finally published. The idea of the paper was to use a fairly impressive database of measurements on early tetrapod trackways, and current hypotheses on track-trackmaker relationships, to test some of those hypotheses and characterize the mode of locomotion of the last common ancestors of amniotes. As it is quite outside of my usual expertise I am not here going to delve into the details of the study, given I was, after all, involved only as the number guy.
-</p><p>I don't have a lot of opportunities to work with phylogenies in my own line of work, though my training in Paris was very heavily phologenetically-oriented, so it was fun to finaly make use of it.</p>
+<p>I don't have a lot of opportunities to work with phylogenies in my own line of work, though my training in Paris was very heavily phologenetically-oriented, so it was fun to finaly make use of it.</p>
 <p>One particular thing I did for this paper was to try taking into account track polymorphism into the ancestral state reconstruction, given the data we used had, for some species, a large amount of specimens measured, and the distribution of the measurements showed quite a spread (ranging from juveniles to adult forms) and the occasional bimodal set-up. The idea I had to account for this was simply to bootstrap these data, meaning that instead of simply using the mean measurement, or median measurement, for each ichnospecies, I picked a single species randomly representing each species, and reiterated the operation a large amount of time. Here the code in R (full code for the entire study is available <a href="https://github.com/plannapus/tracks_asr/">here</a>):</p>
 <pre><code class="r">#Bootstrap based on polymorphism
 n_trials &amp;lt;- 1e4
@@ -552,17 +507,10 @@ stopCluster(cl)
 <p>Anyway, the paper is naturally about way more than just this (in fact it is a very minor point of that paper) but I thought it was a cool solution to that particular issue.</p>
 <h4>Reference:</h4>
 <p class="publications">Buchwitz M., Jansen M., Renaudie J., Marchetti L., Voigt S. (2021). <a href="https://doi.org/10.3389/fevo.2021.674779">Evolutionary Change in Locomotion Close to the Origin of Amniotes Inferred From Trackway Data in an Ancestral State Reconstruction Approach</a>. Frontiers in Ecology and Evolution, 9:674779.</p>
-			
-			<hr/><div class="footer">
-				<a href="2021-03-13.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-05-27.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Science</category><category>Programming</category><category>R</category><category>MS-related</category></item>
-<item><title>Using R code in Julia and Python</title><link>http://plannapus.github.io/blog/2021-03-13.html</link><pubDate>2021-03-13</pubDate><description><div class="main">
-			<p class="blog-title">Using R code in Julia and Python</p>
-			<p class="blog-date">2021-03-13</p>
-			<p class="blog-content">
+			</div></description><category>Science</category><category>Programming</category><category>R</category><category>MS-related</category></item>
+<item><title>Using R code in Julia and Python</title><link>http://plannapus.github.io/blog/2021-03-13.html</link><pubDate>2021-03-13</pubDate><description><div class="blog-content">
 As we are moving toward the data analysis part of <a href="http://ehrenberglab.github.io/pages/mopga.html">our project</a>, I am trying to teach my working group how to use the stack of R functions I wrote during the past decade. The issue is however that R does not seem to be a popular option among my working group and that they prefer using either Python or Julia. As translating a decade-worth of code into those two languages is a bit of a bummer, I've been looking at how to read and use R functions in Julia and Python instead.
-</p><p>Julia has, in particular, a very intuitive and well-done package to achieve this: <a href="https://github.com/JuliaInterop/RCall.jl">RCall.jl</a>:</p>
+<p>Julia has, in particular, a very intuitive and well-done package to achieve this: <a href="https://github.com/JuliaInterop/RCall.jl">RCall.jl</a>:</p>
 
 <pre><code class="julia">using RCall
 R""" #Macro to make operations in an R environment
@@ -677,16 +625,9 @@ sac = pandas.read_csv("sac.csv", delimiter="\t", header=1)
 res = cap(sac)</code></pre>
 
 <p>In the other direction, I have been using package <a href="">reticulate</a> to use Python code in R. Maybe I'll also write a post one day about it. Anyway I'm glad to see all my legacy code can still be used even by non-R-programmers.</p>
-			
-			<hr/><div class="footer">
-				<a href="2021-02-25.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-05-07.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category><category>Python</category><category>Julia</category></item>
-<item><title>A look back at IODP Expedition 379</title><link>http://plannapus.github.io/blog/2021-02-25.html</link><pubDate>2021-02-25</pubDate><description><div class="main">
-			<p class="blog-title">A look back at IODP Expedition 379</p>
-			<p class="blog-date">2021-02-25</p>
-			<p class="blog-content">
-This week, the <a href="http://publications.iodp.org/proceedings/379/379title.html">Proceedings from IODP Expedition 379</a> <span class="tooltip">finally<span class="tooltiptext">They were supposed to come out six months ago, but were delayed because of COVID.</span></span> came out! The occasion to reminisce about the expedition, while being able to actually talk about what we found (as the moratorium on the preliminary results is over).<br/><img class="current" src="img/exp379.png" width="600"/></p><p class="caption">Credit: Tim Fulton, IODP.</p>
+			</div></description><category>Programming</category><category>R</category><category>Python</category><category>Julia</category></item>
+<item><title>A look back at IODP Expedition 379</title><link>http://plannapus.github.io/blog/2021-02-25.html</link><pubDate>2021-02-25</pubDate><description><div class="blog-content">
+This week, the <a href="http://publications.iodp.org/proceedings/379/379title.html">Proceedings from IODP Expedition 379</a> <span class="tooltip">finally<span class="tooltiptext">They were supposed to come out six months ago, but were delayed because of COVID.</span></span> came out! The occasion to reminisce about the expedition, while being able to actually talk about what we found (as the moratorium on the preliminary results is over).<br/><img class="current" src="img/exp379.png" width="600"/><p class="caption">Credit: Tim Fulton, IODP.</p>
 
 <p>First, let's state the obvious: it was one of the most exciting and fantastic experience I had in my life. Working on a mythical ship such as the JOIDES Resolution with the best, most qualified scientists in the world, at the top of their game, in one of the most remote area on Earth, so rarely visited that we actually got to <span class="tooltip">name<span class="tooltiptext">The Resolution Drift!</span></span> one of the oceanographic feature we spend our time on, surrounded by nothing but a constant flow of icebergs (700+ of them were counted and monitored during our trip) and a few curious humpback whales, all that to work on one of the most pressing question science has to answer right now (how stable is the West Antarctic Ice Sheet, and how fast is it able to restore itself): i can't fathom what experience, as a scientist, could top that for me.</p>
 
@@ -702,31 +643,17 @@ This week, the <a href="http://publications.iodp.org/proceedings/379/379title.ht
 <td><img class="current" src="img/vema.png" width="500"/></td></tr></table><p class="caption">This was the desperate look of the micropaleontology report board during those long, barren grey laminated intervals. But then, when radiolarians are present one stumbles immediately on something that can pinpoint the age fairly precisely: here <em>Helotholus vema</em> Hays 1965.</p>
 
 <p>While most of our research plans were disrupted because of COVID-19, we're still working at it diligently. Stay tune for great science to come out of the material we drilled during Expedition 379!</p>
-			
-			<hr/><div class="footer">
-				<a href="2021-01-15.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-03-13.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Science</category><category>MS-related</category></item>
-<item><title>Unagi Onigirazu</title><link>http://plannapus.github.io/blog/2021-01-15.html</link><pubDate>2021-01-15</pubDate><description><div class="main">
-			<p class="blog-title">Unagi Onigirazu</p>
-			<p class="blog-date">2021-01-15</p>
-			<p class="blog-content">
+			</div></description><category>Science</category><category>MS-related</category></item>
+<item><title>Unagi Onigirazu</title><link>http://plannapus.github.io/blog/2021-01-15.html</link><pubDate>2021-01-15</pubDate><description><div class="blog-content">
 			Yes, I reached that stage of the lockdown when I like to pretend I am still going to work by preparing myself a bento :)
-			</p><p>Today, in my <a href="https://www.instagram.com/p/B8Gj_-Ni2Ei/">ongoing attempt</a> at mastering <a href="https://www.justonecookbook.com/search/?q=onigirazu">onigirazu</a>, coupled by my ongoing attempt at mastering Unagi Kobayashi, I combined both. The concept of onigirazu is fairly simple: one only has to cook rice the way you would cook it for onigiris (minus the surplus of salt), or for sushis (minus the rice vinegar), place a square of nori algae, make a square of rice in the middle (leave a large margin on all sides), place some ingredient on top, a sauce (personnally I like adding some sriracha mayo), some more rice, and then fold the nori algae around the ingredients like some kind of gift wrap. Then put it in a box or wrap it in foil and place in the fridge overnight, the next day slice in half, and voilà: a rice sandwich!</p>
+			<p>Today, in my <a href="https://www.instagram.com/p/B8Gj_-Ni2Ei/">ongoing attempt</a> at mastering <a href="https://www.justonecookbook.com/search/?q=onigirazu">onigirazu</a>, coupled by my ongoing attempt at mastering Unagi Kobayashi, I combined both. The concept of onigirazu is fairly simple: one only has to cook rice the way you would cook it for onigiris (minus the surplus of salt), or for sushis (minus the rice vinegar), place a square of nori algae, make a square of rice in the middle (leave a large margin on all sides), place some ingredient on top, a sauce (personnally I like adding some sriracha mayo), some more rice, and then fold the nori algae around the ingredients like some kind of gift wrap. Then put it in a box or wrap it in foil and place in the fridge overnight, the next day slice in half, and voilà: a rice sandwich!</p>
 
 <img class="current" src="img/onigirazu.png" width="400"/><p>So my main filling today was eel. I defrosted one yesterday, took the head and tail off and sliced it in flat squares. Separately I reduced on the stove a mixture of soy sauce, mirin, sugar and broth (normally fish broth but yesterday I only had beef broth) until it thickens. Then I placed the eel skin-side on aluminium foil in the oven and brushed some of the sauce on both side. Every 5~10min i would open the oven to brush some of the sauce on top of the eel again. The whole process lasted ca. 40min (I flipped the eel 10min before the end). Naturally, proper Unagi Kobayashi is made on a barbecue, but, well, it's winter and I live in a flat.</p>
 			<p>In the past, I made onigirazus with salmon teriyaki, with cucumbers, beetroots, etc. People also make them with spam. It's a very versatile dish.</p>
-			
-			<hr/><div class="footer">
-				<a href="2021-01-03.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-02-25.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Cooking</category></item>
-<item><title>Wrap-up on AoC2020 and my conky setup</title><link>http://plannapus.github.io/blog/2021-01-03.html</link><pubDate>2021-01-03</pubDate><description><div class="main">
-			<p class="blog-title">Wrap-up on AoC2020 and my conky setup</p>
-			<p class="blog-date">2021-01-03</p>
-			<p class="blog-content">
+			</div></description><category>Cooking</category></item>
+<item><title>Wrap-up on AoC2020 and my conky setup</title><link>http://plannapus.github.io/blog/2021-01-03.html</link><pubDate>2021-01-03</pubDate><description><div class="blog-content">
 				First thing first: the final day of AoC2020. <a href="http://adventofcode.com/2020/day/25">The puzzle for the 25th</a>, as usual, was only a one-parter (the second part is awarded if and only if all of the other 49 puzzles were successfully completed). It was a fairly simple cryptography problem. Two numbers have gone through a mathematically operation (multiplication/modulo) an indeterminate amount of times, i.e. number x is the result of a number going through n iterations and y the result of the same number going through m iterations, and the problem is to find n and m such as when x goes through m iterations and y through n iterations it results in an identical number (which becomes the solution of the puzzle). My simple solution:
-				</p><pre><code class="r">input &amp;lt;- scan("input25.txt")
+				<pre><code class="r">input &amp;lt;- scan("input25.txt")
 cardpk &amp;lt;- input[1]
 doorpk &amp;lt;- input[2]
 n_loops &amp;lt;- function(n,to){ #Find the number of loop, knowing the operation, the key number (here 7) and the resulting number
@@ -1098,16 +1025,10 @@ ${if_updatenr 81}${image ~/.config/conky/plots/81-0.png -p 0,860 -s 380x190}${en
 
 <p>Eventually all R scripts are bundled in a single bash script (i. e. <code class="inline">/usr/bin/Rscript ~/.config/conky/coronaberlin.R; /usr/bin/Rscript ~/.config/conky/maunaloa.R; ...</code>) that I run every 3 hours with <a href="https://en.wikipedia.org/wiki/Cron">cron</a> (i. e. <code class="inline">0 */3 * * * ~/.config/conky/rscripts.sh</code>). And so here is the (very humble) result (captured with <a href="https://linuxecke.volkoh.de/vokoscreen/vokoscreen.html">VokoscreenNG</a>):</p>
 
-<video width="1000" controls=""><source src="vid/conky.mp4" type="video/mp4"/></video><br/><hr/><div class="footer">
-				<a href="2020-12-24.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-01-15.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>AoC2020 Days 19 to 24</title><link>http://plannapus.github.io/blog/2020-12-24.html</link><pubDate>2020-12-24</pubDate><description><div class="main">
-			<p class="blog-title">AoC2020 Days 19 to 24</p>
-			<p class="blog-date">2020-12-24</p>
-			<p class="blog-content">
+<video width="1000" controls=""><source src="vid/conky.mp4" type="video/mp4"/></video><br/></div></description><category>Programming</category><category>R</category></item>
+<item><title>AoC2020 Days 19 to 24</title><link>http://plannapus.github.io/blog/2020-12-24.html</link><pubDate>2020-12-24</pubDate><description><div class="blog-content">
 				Today was the penultimate day of the <a href="http://adventofcode.com/2020">Advent of Code 2020</a>. As the difficulty increased significantly in the last week I ended up spending a larger amount of time solving the puzzles, thus leaving me less time to talk about them here.
-				</p><p>First of all: I am very happy with myself as I managed so far to solve every puzzle, thus beating my record from last year. Only one sub-puzzle took me more than a day to solve (and it turned out it was because of a silly mistake, as i actually had the correct algorithm on the first day).</p>
+				<p>First of all: I am very happy with myself as I managed so far to solve every puzzle, thus beating my record from last year. Only one sub-puzzle took me more than a day to solve (and it turned out it was because of a silly mistake, as i actually had the correct algorithm on the first day).</p>
 				<p>To recap quickly (click on the numbers to jump to the adequate section):
 				</p><ul><li>Day <a href="#day19">19</a> was a regular expression eldritch nightmare (including recursion).</li>
 					<li>Day <a href="#day20">20</a> was in my opinion this year's toughest challenge (so far) consisting on solving a jigsaw puzzle where pieces can be flipped and rotated in any direction, and when solved finding how many times a pattern arised in the resulting picture.</li>
@@ -1443,18 +1364,11 @@ for(i in 1:100){ #From now on, literally the same code as day 17
   cat("Day ",i,": ",nrow(tiles),"\n",sep="\n")
 }</code></pre>
 
-			
-			<hr/><div class="footer">
-				<a href="2020-12-18.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2021-01-03.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>AoC2020 Days 17 and 18</title><link>http://plannapus.github.io/blog/2020-12-18.html</link><pubDate>2020-12-18</pubDate><description><div class="main">
-			<p class="blog-title">AoC2020 Days 17 and 18</p>
-			<p class="blog-date">2020-12-18</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>AoC2020 Days 17 and 18</title><link>http://plannapus.github.io/blog/2020-12-18.html</link><pubDate>2020-12-18</pubDate><description><div class="blog-content">
 				OK this time, the difficulity level went up a notch! To summarize briefly, day <a href="http://adventofcode.com/2020/day/17">17</a> was a 3 and 4D extension on <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a> while day <a href="http://adventofcode.com/2020/day/18">18</a> consisted in performing basic arithmetic... but with different precedence order: in part 1 there was no precedence order, i. e. 1+2*3 resolves to 3*3=9; and in part 2 addition took precedence over multiplication so 3*2+1 would also resolve to 9; but in both cases parentheses still enforce precedence, meaning 2 + (3 * 4 +5) * 6 would resolve to 2 + (3 * 9) *6 =  2 + 27 * 6 = 29 * 6 = 174. The way I proceeded for day 18 was to use regex to identify sections of the input equations that needed to be solved first and then evaluate them separately and replacing the original bit by its local solution.
 
-				</p><p>The workhouses of that solution are two functions, one to evaluate and the second to replace the original bits:</p>
+				<p>The workhouses of that solution are two functions, one to evaluate and the second to replace the original bits:</p>
 				<pre><code class="r">input &amp;lt;- readLines("input18.txt") #Read in the equations
 input &amp;lt;- paste0("(",input,")") #Add parentheses around the full equations (probably not necessary but I prefer)
 evaluate_unit &amp;lt;- function(x){ 
@@ -1545,16 +1459,9 @@ for(i in 1:6){
 }</code></pre>
 
 <p>As usual you can check the full code <a href="http://github.com/plannapus/Advent_of_Code/2020">in my repository</a>.</p>
-			
-			<hr/><div class="footer">
-				<a href="2020-12-16.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-12-24.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>AoC2020 Days 13 to 16</title><link>http://plannapus.github.io/blog/2020-12-16.html</link><pubDate>2020-12-16</pubDate><description><div class="main">
-			<p class="blog-title">AoC2020 Days 13 to 16</p>
-			<p class="blog-date">2020-12-16</p>
-			<p class="blog-content">Here we are in lockdown again. Luckily the advent of code does brighten the day somewhat. And some challenges were noticeably harder this week (though still not remotely as hard as last year I must say). It started with day <a href="http://adventofcode.com/2020/day/13">13</a>: the given input was a list of buses (whose names correspond to their periodicities), and find out a time t from which each bus arrives at t+n where n is their place in the list. As someone pointed out on <a href="http://reddit.com/r/adventofcode">reddit</a>, this problem is known as the Chinese Remainder Problem. Though one (like me) didn't need to know that to solve it thankfully. Brute-focing it (by trying all integers until we find one) was clearly not the best idea (as you will see with the solution) so one had to find a way to solve it faster. And the solution ended up fairly trivial: finding an integer i at which the first bus arrive, and then incrementing only by the periodicity of that bus until we end up on a time at which the second one arrive, then incrementing by the product of both, etc.
-				</p><pre><code class="r">options(digits=22)
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>AoC2020 Days 13 to 16</title><link>http://plannapus.github.io/blog/2020-12-16.html</link><pubDate>2020-12-16</pubDate><description><div class="blog-content">Here we are in lockdown again. Luckily the advent of code does brighten the day somewhat. And some challenges were noticeably harder this week (though still not remotely as hard as last year I must say). It started with day <a href="http://adventofcode.com/2020/day/13">13</a>: the given input was a list of buses (whose names correspond to their periodicities), and find out a time t from which each bus arrives at t+n where n is their place in the list. As someone pointed out on <a href="http://reddit.com/r/adventofcode">reddit</a>, this problem is known as the Chinese Remainder Problem. Though one (like me) didn't need to know that to solve it thankfully. Brute-focing it (by trying all integers until we find one) was clearly not the best idea (as you will see with the solution) so one had to find a way to solve it faster. And the solution ended up fairly trivial: finding an integer i at which the first bus arrive, and then incrementing only by the periodicity of that bus until we end up on a time at which the second one arrive, then incrementing by the product of both, etc.
+				<pre><code class="r">options(digits=22)
 input &amp;lt;- readLines("input13.txt")
 bus &amp;lt;- as.integer(el(strsplit(input[2],",")))
 spot &amp;lt;- which(!is.na(bus))-1 # -1 one as R vectors are 1-based but we need 0-based spots
@@ -1630,17 +1537,10 @@ which(age%in%maxn)-1
 
 <p>Day <a href="http://adventofcode.com/2020/day/16">16</a> finally was way simpler and thus not really worth explaining here (all operations involved were trivial in R: checking whether numbers belongs to a list, checking which row only has a single TRUE value, etc.), but you can always check it out on <a href="http://github.com/plannapus/Advent_of_Code">my repository</a>.</p>
 
-			
-			<hr/><div class="footer">
-				<a href="2020-12-12.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-12-18.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>AoC2020 Days 8 to 12</title><link>http://plannapus.github.io/blog/2020-12-12.html</link><pubDate>2020-12-12</pubDate><description><div class="main">
-			<p class="blog-title">AoC2020 Days 8 to 12</p>
-			<p class="blog-date">2020-12-12</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>AoC2020 Days 8 to 12</title><link>http://plannapus.github.io/blog/2020-12-12.html</link><pubDate>2020-12-12</pubDate><description><div class="blog-content">
 				Unfortunately I did not have much time to report on the last batch of puzzles. In part, because they became somewhat harder and thus needed more of my free time to be resovled :)
-				</p><p>Day <a href="http://adventofcode.com/2020/day/8">8</a> required building an interpreter for a simple, 3-operations code (and finding the one instruction that needed to be modified for it not to loop indefinitely: interesting!); day <a href="http://adventofcode.com/2020/day/9">9</a> was fairly simple, as it was purely integer manipulation, though I did need to use package <code class="inline">bit64</code> as the integers were too large for base R which thus relied on floating-point integer (which is not precise enough naturally).</p>
+				<p>Day <a href="http://adventofcode.com/2020/day/8">8</a> required building an interpreter for a simple, 3-operations code (and finding the one instruction that needed to be modified for it not to loop indefinitely: interesting!); day <a href="http://adventofcode.com/2020/day/9">9</a> was fairly simple, as it was purely integer manipulation, though I did need to use package <code class="inline">bit64</code> as the integers were too large for base R which thus relied on floating-point integer (which is not precise enough naturally).</p>
 				<p>Day <a href="http://adventofcode.com/2020/day/10">10</a> was the first one I wasn't able to "brute-force" and thus was a bit more interesting! Basically we had a chain of integer were each integer could only be separated by 1, 2 or 3; and we needed to figure out the number of possible paths between the smaller and the bigger one. At first i tried to solve that using <code class="inline">igraph</code> by turning the problem into a graph and calculating the number of possible paths but it crashed my laptop! As it turned out, it was solvable algebraically. None of the integer were separated by 2 meaning we had a serie of numbers separated by 1 or 3. The ones separated by 3 are not skippable given we can't connect to number separated by more than 3, so the problem in the hand was subsettable into figuring out the number of paths that was possible in each serie of numbers separated by only a single unit. There were no series longer than 5, as it turned out. So the number of possibilities were 7 for a series of 5 consecutive integers:</p>
 				<pre><code>0 - 3 - 4 - 5 - 6 - 7 - 10
 0 - 3 - 4 - 5 - 7 - 10
@@ -1671,17 +1571,10 @@ r &amp;lt;- rle(diff(chain)) #Run Length Encoding: returns a list of lengths and
 
 <p>The option to display a large amount of digits was necessary as the result (in my case) was a staggerring 193 434 623 148 032. No wonder the graph solution crashed!</p>
 <p>Day <a href="http://adventofcode.com/2020/day/11">11</a> was frankly the hardest: a form of <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">game of life</a> mixed with "line-of-sight" computations on a 2D map. It took me quite a while (I had to refactor entirely the code of part 1 to be able to process part 2), but transforming the "line-of-sight" (a row, a column or a matrix diagonal in that case) into a character string and then using regex to analyse it turned out to be the easiest solution. The solution is a bit too tedious to share here however, but feel free to have a look in <a href="https://github.com/plannapus/Advent_of_Code/blob/master/2020/aoc11.R#L25">my repository</a>. Day <a href="http://adventofcode.com/2020/day/12">12</a> (i. e. today) finally was simpler: just take a series of instructions and translates that into coordinates. Not especially hard though the instructions on part 2 were not super clear (the rotation was ill defined I think).</p>
-			
-			<hr/><div class="footer">
-				<a href="2020-12-07.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-12-16.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>AoC2020 Days 5 to 7</title><link>http://plannapus.github.io/blog/2020-12-07.html</link><pubDate>2020-12-07</pubDate><description><div class="main">
-			<p class="blog-title">AoC2020 Days 5 to 7</p>
-			<p class="blog-date">2020-12-07</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>AoC2020 Days 5 to 7</title><link>http://plannapus.github.io/blog/2020-12-07.html</link><pubDate>2020-12-07</pubDate><description><div class="blog-content">
 				Days <a href="http://adventofcode.com/2020/day/5">5</a> and <a href="http://adventofcode.com/2020/day/6">6</a> were pretty uneventful, still relatively easy; the first one solvable trivially by transforming the input into a binary sequence and translating it into an integer, the second one needed to be carefully parsed but once done was solved just by applying <code class="inline">table</code> to it, so nothing unsurmontable. Day <a href="http://adventofcode.com/2020/day/7">7</a> however was a notch more complicated, in that it needed recursion, which is always an head-scratcher.
-				</p><p>Technically it was reminiscent from <a href="http://adventofcode.com/2019/day/14">day 14 of last year</a> but simpler: the input consisted of sentences like "light red bags contain 1 bright white bag, 2 muted yellow bags." and "faded blue bags contain no other bags." and one needed to figure out how many bags a "shiny gold" bag contained, which necessited to go through the whole "reaction" path (i. e. <code class="inline">a=2b+4c; c=3d+4b; etc.</code>). <a href="https://github.com/plannapus/Advent_of_Code/blob/master/2020/aoc07.R">For the parser</a> I used the same method as for <a href="2020-12-02.html">day 2</a> (i. e. <code class="inline">parse.one</code>) and then, lazily, use an operator that is normally a no-go in R: <code class="inline">repeat</code>. I am sure there would have been more elegant ways to do the job, but at least it worked and was fairly fast.</p>
+				<p>Technically it was reminiscent from <a href="http://adventofcode.com/2019/day/14">day 14 of last year</a> but simpler: the input consisted of sentences like "light red bags contain 1 bright white bag, 2 muted yellow bags." and "faded blue bags contain no other bags." and one needed to figure out how many bags a "shiny gold" bag contained, which necessited to go through the whole "reaction" path (i. e. <code class="inline">a=2b+4c; c=3d+4b; etc.</code>). <a href="https://github.com/plannapus/Advent_of_Code/blob/master/2020/aoc07.R">For the parser</a> I used the same method as for <a href="2020-12-02.html">day 2</a> (i. e. <code class="inline">parse.one</code>) and then, lazily, use an operator that is normally a no-go in R: <code class="inline">repeat</code>. I am sure there would have been more elegant ways to do the job, but at least it worked and was fairly fast.</p>
 				<pre><code class="r">input &amp;lt;- readLines("input07.txt")
 res &amp;lt;- lapply(input,parse_reac) #parse_reac is the parser I made, check out in the github repo to read it. It's fairly tedious though.
 # res is the parsed input, each element contains:
@@ -1715,18 +1608,11 @@ repeat{ # The dreaded repeat
 }
 sum(step$n)</code></pre>
 			
-			<p>I probably could have used <code class="inline">while</code> instead or even made a function that calls itself recursively, like we do usually for Fibonacci, but it was easier to wrap my brain around <code class="inline">repeat</code>.</p>
-			<hr/><div class="footer">
-				<a href="2020-12-04.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-12-12.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>AoC2020 Days 3-4 and Quinces</title><link>http://plannapus.github.io/blog/2020-12-04.html</link><pubDate>2020-12-04</pubDate><description><div class="main">
-			<p class="blog-title">AoC2020 Days 3-4 and Quinces</p>
-			<p class="blog-date">2020-12-04</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>AoC2020 Days 3-4 and Quinces</title><link>http://plannapus.github.io/blog/2020-12-04.html</link><pubDate>2020-12-04</pubDate><description><div class="blog-content">
 				Days 3 and 4 of the Advent of Code were still relatively trivial to solve. Day 3 was just playing with coordinates on a 2D discrete map while day 4 entailed more adventures in input parsing :)
 
-				</p><p>This time the input was fairly randomly organised. Each set of data was on a random number of lines but separated from the next one by an empty line, and each set was composed of values in the form <code class="inline">key:value</code> and separated from the others by a space. I'm pretty sure it could have been entirely sparsed by regex but I was <span class="tooltip">feeling lazy<span class="tooltiptext">having woken up way earlier than usual</span></span>, so I used instead the standard tools (<code class="inline">scan, readLines, strsplit</code>) to create a list of named vectors. Named vectors are frankly rarely used nowadays in R but, maybe it is because I have been programming a lot in python in the last few years, I like to use them as they are R equivalent to python's dictionaries.</p>
+				<p>This time the input was fairly randomly organised. Each set of data was on a random number of lines but separated from the next one by an empty line, and each set was composed of values in the form <code class="inline">key:value</code> and separated from the others by a space. I'm pretty sure it could have been entirely sparsed by regex but I was <span class="tooltip">feeling lazy<span class="tooltiptext">having woken up way earlier than usual</span></span>, so I used instead the standard tools (<code class="inline">scan, readLines, strsplit</code>) to create a list of named vectors. Named vectors are frankly rarely used nowadays in R but, maybe it is because I have been programming a lot in python in the last few years, I like to use them as they are R equivalent to python's dictionaries.</p>
 
 <pre><code class="r">input &amp;lt;- readLines("input04.txt")
 input[input==""]&amp;lt;-"\n" #First, replace the blank lines separating entries with a newline symbol
@@ -1747,18 +1633,11 @@ sum(sapply(pass,function(x)all(c("byr","iyr","eyr","hgt","hcl","ecl","pid")%in%n
 				<p>For the crunchy base: broken down biscuits, with butter and a bit of sugar (the biscuits are usually too sweet to begin with), as usual. Then a layer of quince compote (i. e. quinces cooked in a water and a tiny bit of sugar until they are mashed), and then the 'cheese' matrix: 4 eggs, a pot of crême fraîche, some mascarpone and some Rahmjoghurt (in France I would have used Faisselles and/or Petits-Suisses), with sugar (including vanillin sugar). Cooked 45min at around 180°.</p>
 
 				<img class="current" src="img/quince_cheesecake.png" width="800"/><p class="caption">What remained after my working group ate the cake. It's a great frustration of mine to have a lab big enough to make cooking a cake worthwhile but so small that I still have tons of leftovers :)</p>
-			
-			<hr/><div class="footer">
-				<a href="2020-12-02.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-12-07.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category><category>Cooking</category></item>
-<item><title>AoC2020 Days 1-2 and Buckwheat Pancakes</title><link>http://plannapus.github.io/blog/2020-12-02.html</link><pubDate>2020-12-02</pubDate><description><div class="main">
-			<p class="blog-title">AoC2020 Days 1-2 and Buckwheat Pancakes</p>
-			<p class="blog-date">2020-12-02</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category><category>Cooking</category></item>
+<item><title>AoC2020 Days 1-2 and Buckwheat Pancakes</title><link>http://plannapus.github.io/blog/2020-12-02.html</link><pubDate>2020-12-02</pubDate><description><div class="blog-content">
 			As mentioned in the <a href="2020-11-30.html">previous post</a>, the Advent of Code 2020 started yesterday. As expected the first two days were quite simple (the challenges tend to ramp up pretty quickly though). <a href="https://adventofcode.com/2020/day/1">Day 1</a> consisted on a bit of integer manipulation, while <a href="https://adventofcode.com/2020/day/2">day 2</a> was about string manipulation. You can find my solutions in R in <a href="http://github.com/plannapus/Advent_of_Code/tree/master/2020">my code repository</a>.
 
-			</p><p>One interesting bit is that, as often, most of the code on those simple challenges is spent on input parsing. In this case, in day 2 challenge, the input had a form as follows: </p>
+			<p>One interesting bit is that, as often, most of the code on those simple challenges is spent on input parsing. In this case, in day 2 challenge, the input had a form as follows: </p>
 
 				<pre><code>1-2 a: ahgtnkjz
 3-12 j: asjdladajsdsjdaslj</code></pre>
@@ -1783,35 +1662,21 @@ tab &amp;lt;- as.data.frame(tab)</code></pre>
 			<img class="current" src="img/buckwheat_pancake.png" width="400"/><p class="caption">From my experience in the last 3 days, it tastes brilliant, either alone, or with some spicy sauce (sriracha) if in a savoury mood, or some Pflaumenmuss (if in a sweet mood).</p>
 
 			<p>In other news, I've been cooking buckwheat pancakes for breakfast/lunch recently, and I am quite happy with the result. To 100g of buckwheat flour, I added an egg, 20cL of milk, 10cL of water, salt, pepper and a bit of dill. Once whipped up to a flowing but thick mixture, a small laddleful of it is placed at the center of a very hot pan. When bubbles appeared on the surface, flip and let cook another 30s/1min. </p>
-			
-			<hr/><div class="footer">
-				<a href="2020-11-30.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-12-04.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category><category>Cooking</category></item>
-<item><title>Advent of Code 2020</title><link>http://plannapus.github.io/blog/2020-11-30.html</link><pubDate>2020-11-30</pubDate><description><div class="main">
-			<p class="blog-title">Advent of Code 2020</p>
-			<p class="blog-date">2020-11-30</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category><category>Cooking</category></item>
+<item><title>Advent of Code 2020</title><link>http://plannapus.github.io/blog/2020-11-30.html</link><pubDate>2020-11-30</pubDate><description><div class="blog-content">
 				Tomorrow starts the best advent event of the year: the <a href="https://adventofcode.com/2020">Advent of Code</a>!
-				</p><p>For those not familiar with the event, it is a programming contest, put together by Eric Wastl, where everyday a new, or in fact two new (solving the first one unlocks the second one), programming puzzles are proposed (at midnight UTC-5). They are language-agnostic, in fact they could in theory be solved manually (though in a very large amount of time). According to the leaderboard, at least 110&amp;amp;nbsp000 programmers around the world managed to solve the first puzzle last year. I participated <a href="https://github.com/plannapus/Advent_of_Code/tree/master/2019">last year</a> and really thought it was a great and fun way to train my problem-solving skills.</p>
+				<p>For those not familiar with the event, it is a programming contest, put together by Eric Wastl, where everyday a new, or in fact two new (solving the first one unlocks the second one), programming puzzles are proposed (at midnight UTC-5). They are language-agnostic, in fact they could in theory be solved manually (though in a very large amount of time). According to the leaderboard, at least 110&amp;amp;nbsp000 programmers around the world managed to solve the first puzzle last year. I participated <a href="https://github.com/plannapus/Advent_of_Code/tree/master/2019">last year</a> and really thought it was a great and fun way to train my problem-solving skills.</p>
 
 				<img class="current" src="https://github.com/plannapus/Advent_of_Code/raw/master/2019/screenshot.png" width="800"/><p class="caption">Screenshot of my personal stats from last year's contest.</p>
 
 				<p>All puzzles take an input file that is unique to the player so no possibilities to cheat! Naturally I am solving everything in R, though I'm thinking of using python eventually. As you can see on the screenshot they are <span class="tooltip">only 5 of the 49 puzzles<span class="tooltiptext">The 50th "star" is unlocked if the 49 preceeding puzzles are solved</span></span> I didn't manage to solve so I'm pretty happy about that. Also my ranking (given I play in general 3 hours after the contest is posted because of timezone differences) is not too bad either, I think.</p>
 				<p>Last year contest revolved heavily around an <a href="https://github.com/plannapus/Advent_of_Code/blob/master/2019/intcode_fast_but_dirty.R">interpreter</a> for a made-up, self-modifying programming language and a lot of path-finding problems. The latter actually gave me some great insight of an issue I had in my professional life.</p>
 				<p>I'm quite looking forward to this year's puzzles! I might even document here some of them, otherwise the code and all material necessary to make it reproducible will be on <a href="https://github.com/plannapus/Advent_of_Code/tree/master/2020">my github repo</a> as usual.</p>
-			
-			<hr/><div class="footer">
-				<a href="2020-11-22.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-12-02.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category></item>
-<item><title>Some fried rice recipe I started making during the first lockdown</title><link>http://plannapus.github.io/blog/2020-11-22.html</link><pubDate>2020-11-22</pubDate><description><div class="main">
-			<p class="blog-title">Some fried rice recipe I started making during the first lockdown</p>
-			<p class="blog-date">2020-11-22</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category></item>
+<item><title>Some fried rice recipe I started making during the first lockdown</title><link>http://plannapus.github.io/blog/2020-11-22.html</link><pubDate>2020-11-22</pubDate><description><div class="blog-content">
 				As most people who ended home and aimless during the first lockdown, I cooked a bit more than usual and attempted new recipes. Now that we are in a second lockdown (albeit a so-called 'lite lockdown'), after almost a year of not leaving Berlin and not seeing my family I tend to crave for more rustic french cuisine, but I do occasionally cook those recipes I came up with during the first lockdown. Three of them were good enough for me to write them down: one is a fried rice recipe, while the two others are spring recipes so not necessarily interesting for the time being (a recipe of pasta with squids and another of an eggplant-based sauce for pasta as well).
 
-				<img class="current" src="img/cookbook2.jpg" width="400"/></p><p class="caption">Ye olde <em>encyclopedia culinaria</em> page with the three recipes. If you have good eyes and understand french you can see the <span class="tooltip">two other recipes<span class="tooltiptext">or go to the last paragraph of this post</span></span>.</p>
+				<img class="current" src="img/cookbook2.jpg" width="400"/><p class="caption">Ye olde <em>encyclopedia culinaria</em> page with the three recipes. If you have good eyes and understand french you can see the <span class="tooltip">two other recipes<span class="tooltiptext">or go to the last paragraph of this post</span></span>.</p>
 
 				<p>The fried rice recipe is more a template of a recipe really, as I don't think I ever used twice the same set of ingredients despite having made myself this dish ten to fifteen times since last March. </p>
 
@@ -1828,18 +1693,11 @@ tab &amp;lt;- as.data.frame(tab)</code></pre>
 
 				<p>And finally the eggplant sauce: cut an eggplant in half, grate it until you reach the <span class="tooltip">rind<span class="tooltiptext">is it how it's called?</span></span>. Sauté an onion, some garlic, the eggplant 'flesh', some bellpeppers in stripes and half a zucchini cut thinly with a mandolin. Season with salt, pepper and chili. When the vegetables soften, add a tomato or two (skinned and/or crushed). Let cook for 5 to 10 minutes, and add a good dose of freshly grated parmesan. Halfway through the cooking process, add another clove of garlic, grated as well.</p>
 
-			
-			<hr/><div class="footer">
-				<a href="2020-11-20.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-11-30.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Cooking</category></item>
-<item><title>A look at the code behing the blog</title><link>http://plannapus.github.io/blog/2020-11-20.html</link><pubDate>2020-11-20</pubDate><description><div class="main">
-			<p class="blog-title">A look at the code behing the blog</p>
-			<p class="blog-date">2020-11-20</p>
-			<p class="blog-content">
+			</div></description><category>Cooking</category></item>
+<item><title>A look at the code behing the blog</title><link>http://plannapus.github.io/blog/2020-11-20.html</link><pubDate>2020-11-20</pubDate><description><div class="blog-content">
 				This is going to be very meta, I'm afraid. In the <a href="2020-09-27.html">first post of this blog</a> I said that I wasn't sure why I was doing this. Two months later, I am still not entirely sure of my motivation (though being fairly obsessive it allows me to put all my thoughts somewhere instead of rehashing them constantly in my mind, so it does help with that) but I know that one of the small reason was to see if I was able to write down a very simple code to write a functional blog.
 
-				</p><p>As you may have noticed reading this, this website is fairly minimalistic. The first reason is of course that I am not a designer, but the second and main reason is that my biggest issue with Web 2.0 is that it is bloated. If you are looking at the source code of most pages, it is way bigger than it should be, between all the unnecessary javascript calls, the opaque automatically built CSS (typical of blogging environment such as wordpress) , the google analytics and whatnots... It does annoy me primarily because all that extraneous content has a carbon footprint, but also because it obfuscates the web. So I have been doing simple, easily maintainable, functional pages using pure HTML and CSS (and a very tiny bit of javascript, when MathJax or a syntax highlighter is needed). But blogs are a tad more complex to maintain (because of the index, the categories etc.).</p>
+				<p>As you may have noticed reading this, this website is fairly minimalistic. The first reason is of course that I am not a designer, but the second and main reason is that my biggest issue with Web 2.0 is that it is bloated. If you are looking at the source code of most pages, it is way bigger than it should be, between all the unnecessary javascript calls, the opaque automatically built CSS (typical of blogging environment such as wordpress) , the google analytics and whatnots... It does annoy me primarily because all that extraneous content has a carbon footprint, but also because it obfuscates the web. So I have been doing simple, easily maintainable, functional pages using pure HTML and CSS (and a very tiny bit of javascript, when MathJax or a syntax highlighter is needed). But blogs are a tad more complex to maintain (because of the index, the categories etc.).</p>
 
 				<p>So here is what I came up with.</p>
 
@@ -1939,18 +1797,11 @@ cat(last,sep="\n",file=last_html) #Prints it back</code></pre>
 
 				<p>And this is literaly all there is to it. I might add some new parts to it as I am figuring things out (such as the categories pages that I really just added in the last week) but I think the core will stay the same. I don't think I need anything fancier.</p>
 
-			
-			<hr/><div class="footer">
-				<a href="2020-11-13.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-11-22.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>TMS General Meeting 2020 Online</title><link>http://plannapus.github.io/blog/2020-11-13.html</link><pubDate>2020-11-13</pubDate><description><div class="main">
-			<p class="blog-title">TMS General Meeting 2020 Online</p>
-			<p class="blog-date">2020-11-13</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>TMS General Meeting 2020 Online</title><link>http://plannapus.github.io/blog/2020-11-13.html</link><pubDate>2020-11-13</pubDate><description><div class="blog-content">
 				This week was the annual meeting of <a href="http://tmsoc.org/">The Micropalaeontological Society</a>, in fact it doubled as its 50th anniversary. Of course given the current <s>nightmare</s> circumstances, it happened online and I must say that of all the many, many, MANY meetings and conferences I attended online this year, this might have been one of the most well done, together with the <a href="https://www.egu2020.eu/">EGU online meeting</a> which was really cool and original as it was really free-form, whereas TMS did manage to stick successfully to the classic talks + posters setting. 
 
-				</p><p>Our students had <a href="https://www.tmsoc.org/conf2020/postergallery.php">two posters</a> there <a href="http://ehrenberglab.github.io/pages/mopga.html">on our current project</a> and got interesting comments/questions (in part as comments on the poster page which was a simple but nifty solution).</p>
+				<p>Our students had <a href="https://www.tmsoc.org/conf2020/postergallery.php">two posters</a> there <a href="http://ehrenberglab.github.io/pages/mopga.html">on our current project</a> and got interesting comments/questions (in part as comments on the poster page which was a simple but nifty solution).</p>
 
 				<p>The <a href="https://www.tmsoc.org/conf2020/programme.php">talks</a>, and in particular the keynote talks, were (more than usual) brilliant I must say. It's nice to see micropaleontology finally starting to live up to its potential. Some random thoughts/comments on the talks:
 				</p><ul><li>Mixotrophs are in, this year! Two of the keynote talks revolved more or less around mixotrophy (one by Samantha Gibbs on <a href="https://advances.sciencemag.org/content/6/44/eabc9123">K/Pg nannofossils</a>, one by Celli Hull on a more general point of consideration vis-à-vis questions around planktonic protists and carbon pump). More generally people really moved from considering microfossils as piece of rocks useful to date things to actually considering them for the complex eukaryots they were/are. It helps that molecular biologists started working hand in hand with micropaleontologists in the last decade.</li>
@@ -1959,20 +1810,13 @@ cat(last,sep="\n",file=last_html) #Prints it back</code></pre>
 				</ul><img class="current" src="img/tms_screenshot.png" width="400"/><p class="caption">Screenshot of the <a href="https://www.tmsoc.org/conf2020">meeting website</a>.</p>
 
 				<p>Together with our colleagues at the GFZ in Potsdam, we are thinking about putting on a bid to host next year's meeting in Berlin (<span class="tooltip">or, you know, online, if needed<span class="tooltiptext">Hat tip to all the people out there acting as if this was over and thanks to whom this nightmare is gonna last for the next 2 to 5 years! If it's OK with you I would like to be able to go see my family again.</span></span>). We'll see how it goes!</p>
-			
-			<hr/><div class="footer">
-				<a href="2020-11-09.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-11-20.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Science</category></item>
-<item><title>Calculating paleocoordinates with gplates and R</title><link>http://plannapus.github.io/blog/2020-11-09.html</link><pubDate>2020-11-09</pubDate><description><div class="main">
-			<p class="blog-title">Calculating paleocoordinates with gplates and R</p>
-			<p class="blog-date">2020-11-09</p>
-			<p class="blog-content">
+			</div></description><category>Science</category></item>
+<item><title>Calculating paleocoordinates with gplates and R</title><link>http://plannapus.github.io/blog/2020-11-09.html</link><pubDate>2020-11-09</pubDate><description><div class="blog-content">
 As promised in the <a href="2020-10-15.html">first post of this series</a>, I am going to show here how to use gplates to calculate the paleocoordinates of specific sites given a specific rotation model, using GPlates. To make it worth it, I'll use here the <a href="https://doi.org/10.1016/j.gloplacha.2016.10.002">Matthews et al. 2016</a> rotation model as it is an update on the one we are using in the Neptune database. Also, and just for fun, we are going to compute the paleocoordinates of the two sites we drilled during <a href="https://iodp.tamu.edu/scienceops/expeditions/amundsen_sea_ice_sheet_history.html">Expedition 379</a> to the Amundsen Sea, an expedition I was part of. We only drilled until the latest Miocene but here I am going to compute the coordinates in the Turonian (as a tribute to the <a href="https://www.nature.com/articles/s41586-020-2148-5">Klages et al. 2020 paper</a>).
 
 The first step, as usual, is to get the sites current coordinates from Neptune (using my <a href="https://github.com/plannapus/NSBcompanion">NSBcompanion</a> package). I know that I mentioned in <a href="2020-11-03.html">the previous post</a> that <code class="inline">rgdal/sp</code> packages were obsolete and needed to be replaced with package <code class="inline">sf</code>, but I am not yet familiar enough with <code class="inline">sf</code> so here it is with <code class="inline">rgdal/sp</code>:
 
-				</p><pre><code class="r">library(rgdal)
+				<pre><code class="r">library(rgdal)
 setwd("~/Desktop") #For code simplicity I am explicitely setting a working directory in which every file will be.
 nsb &amp;lt;- NSBcompanion::nsbConnect("guest","arm_aber_sexy")
 exp379 &amp;lt;- dbGetQuery(nsb,"SELECT hole_id, longitude, latitude FROM neptune_hole_summary WHERE leg=379 and hole='A';")
@@ -2033,18 +1877,11 @@ dev.off()</code></pre>
 
 <img class="current" src="img/turonian.png" width="400"/><p class="caption">I know, it's a bit underwhelming since the Antarctic plate didn't move that much in the last 100Myr, but you get the gesture :)</p>
 
-			
-			<hr/><div class="footer">
-				<a href="2020-11-03.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-11-13.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>Addendum to the previous post on paleogeographic maps</title><link>http://plannapus.github.io/blog/2020-11-03.html</link><pubDate>2020-11-03</pubDate><description><div class="main">
-			<p class="blog-title">Addendum to the previous post on paleogeographic maps</p>
-			<p class="blog-date">2020-11-03</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>Addendum to the previous post on paleogeographic maps</title><link>http://plannapus.github.io/blog/2020-11-03.html</link><pubDate>2020-11-03</pubDate><description><div class="blog-content">
 				As it turned out, I realized the way I have been making maps in R since 10 years is more or less deprecated! Package <code class="inline">sp</code> was superseded by package <code class="inline">sf</code>, and indeed the coordinate system transformation works so much better and do not need as much <a href="https://github.com/plannapus/Unsorted-functions/blob/master/myTransform.R">weird hacking</a> to work on complex projections.
 				The code from <a href="2020-10-15.html">last time</a> thus become as follows:
-				</p><pre><code class="r">library(sf)
+				<pre><code class="r">library(sf)
 system("gplates reconstruct -l /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Coastlines/Shapefile/Seton_etal_ESR2012_Coastlines_2012.1_Polygon.shp \\
 -r /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Rotations/Seton_etal_ESR2012_2012.1.rot \\
 -e shapefile -t 33.5 -o ~/Desktop/reconstructed")
@@ -2102,19 +1939,12 @@ As one can see South America and Africa suffer from the projection:
 
 Hopefully I ll find a solution for that, at some point.
 
-			
-			<hr/><div class="footer">
-				<a href="2020-10-28.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-11-09.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>A few thoughts on stratigraphy</title><link>http://plannapus.github.io/blog/2020-10-28.html</link><pubDate>2020-10-28</pubDate><description><div class="main">
-			<p class="blog-title">A few thoughts on stratigraphy</p>
-			<p class="blog-date">2020-10-28</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>A few thoughts on stratigraphy</title><link>http://plannapus.github.io/blog/2020-10-28.html</link><pubDate>2020-10-28</pubDate><description><div class="blog-content">
 				This summer Dave and I wrote a <a href="https://nfdi4earth.de/images/nfdi4earth/documents/pilots/proposals/132-CHRONOSTRATIGRAPHIC_API_RDC_SERVICES.pdf">pre-proposal</a> for a pilote project (whose goal was to create a data standard for stratigraphy) in the context of the <a href="https://www.nfdi4earth.de/">NFDI4Earth</a>, a german-wide initiative to create a common infrastructure for geosciences-related research data. 
 				My preproposal was not selected, which, given its <span class="tooltip">niche<span class="tooltiptext">broader than it seems but maybe it wasn't made clear in my proposal</span></span> subject, was more or less expected.
 
-				</p><p>It was nonetheless a very good occasion to put in writings some thoughts I had about stratigraphy as a science, and I kept pondering about it since then. I do think there are a significant number of issues in stratigraphy that prevent it from going forward.</p>
+				<p>It was nonetheless a very good occasion to put in writings some thoughts I had about stratigraphy as a science, and I kept pondering about it since then. I do think there are a significant number of issues in stratigraphy that prevent it from going forward.</p>
 
 				<p>The first issue, that I wanted to address with that proposal, is the issue of reproducibility. Instead of re-explaining it, here's the main point I made in a preliminary version of the proposal:</p>
 
@@ -2127,17 +1957,10 @@ Hopefully I ll find a solution for that, at some point.
 				<p>Unfortunately, apart from the first issue mentioned, for which I had a solution (creating a metadata standard), the other issues are more open-ended, and I, unfortunately, do not have a solution so far. But I am working on it!</p>
 
 				<img class="current" width="800" src="img/crappy_am.png"/><p class="caption">Quite a textbook scenario for everything I mentioned here!</p>
-			
-			<hr/><div class="footer">
-				<a href="2020-10-22.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-11-03.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Science</category></item>
-<item><title>Sarah's paper in Nature Communications</title><link>http://plannapus.github.io/blog/2020-10-22.html</link><pubDate>2020-10-22</pubDate><description><div class="main">
-			<p class="blog-title">Sarah's paper in <i>Nature Communications</i></p>
-			<p class="blog-date">2020-10-22</p>
-			<p class="blog-content">
+			</div></description><category>Science</category></item>
+<item><title>Sarah's paper in Nature Communications</title><link>http://plannapus.github.io/blog/2020-10-22.html</link><pubDate>2020-10-22</pubDate><description><div class="blog-content">
 			At last, our paper, lead by <a href="https://www.researchgate.net/profile/Sarah_Trubovitz">Sarah Trubovitz</a>, came out today in <a href="http://doi.org/10.1038/s41467-020-18879-7"><i>Nature Communications</i></a> ! Sarah came to visit us in Berlin twice in 2017 to learn/figure out with us the taxonomy of Neogene radiolarians from the equatorial Pacific. We had an inkling that the actual amount of species in that region/timeframe would be way higher that what was published but I must admit we did't expect that much: she found 990 species just in the last 10 million years of a single site!
-			</p><p>Later, Dave, Paula and her got the idea to compare the species richness and the species content of her work with the Southern Ocean dataset that <a href="http://dx.doi.org/10.1666/12016">I counted during my thesis</a>, eons ago, and figure out if the extinction event I saw was global, regional or in fact just a migration out of the Antarctic circle, i. e. range shrinking due to the global cooling of the late Miocene (find out more about it by reading the <a href="https://www.museumfuernaturkunde.berlin/en/press/press-releases/largest-biome-earth-peril">press release</a>... or naturally the paper itself). I didn't have that much time to spent contributing to the writing itself but as the concept was to directly compare the species ranges in both our datasets, I was naturally involved, in particular to match her species concepts with mine. It was quite the nice surprise to see some of the species I described in the Southern Ocean based on a few specimens popping up in the equatorial Pacific!</p>
+			<p>Later, Dave, Paula and her got the idea to compare the species richness and the species content of her work with the Southern Ocean dataset that <a href="http://dx.doi.org/10.1666/12016">I counted during my thesis</a>, eons ago, and figure out if the extinction event I saw was global, regional or in fact just a migration out of the Antarctic circle, i. e. range shrinking due to the global cooling of the late Miocene (find out more about it by reading the <a href="https://www.museumfuernaturkunde.berlin/en/press/press-releases/largest-biome-earth-peril">press release</a>... or naturally the paper itself). I didn't have that much time to spent contributing to the writing itself but as the concept was to directly compare the species ranges in both our datasets, I was naturally involved, in particular to match her species concepts with mine. It was quite the nice surprise to see some of the species I described in the Southern Ocean based on a few specimens popping up in the equatorial Pacific!</p>
 
 			<table class="img_current"><tr><td><img class="current" src="img/kozoi.png" title="Lithomelissa kozoi" width="240"/></td>
 				<td><img class="current" src="img/sugiyamai.png" title="Clathrocorys sugyiamai" width="315"/></td>
@@ -2148,33 +1971,19 @@ Hopefully I ll find a solution for that, at some point.
 			<p>Sarah also wrote a <a href="https://natureecoevocommunity.nature.com/posts/marine-plankton-show-threshold-extinction-response-to-neogene-climate-change">"Behind The Paper"</a> story that you will find on the <a href="https://natureecoevocommunity.nature.com/">Nature Ecology &amp;amp; Evolution Community blog</a>.</p>
 			<h4>Reference:</h4>
 			<p class="publications">Trubovitz S., Lazarus D., Renaudie J., Noble P.J., 2020. <a href="http://doi.org/10.1038/s41467-020-18879-7">Marine plankton show threshold extinction response to Neogene climate change</a>. <i>Nature Communications</i>, 11:5069.</p>
-			
-			<hr/><div class="footer">
-				<a href="2020-10-21.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-10-28.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Science</category><category>MS-related</category></item>
-<item><title>Miassou</title><link>http://plannapus.github.io/blog/2020-10-21.html</link><pubDate>2020-10-21</pubDate><description><div class="main">
-			<p class="blog-title">Miassou</p>
-			<p class="blog-date">2020-10-21</p>
-			<p class="blog-content">
+			</div></description><category>Science</category><category>MS-related</category></item>
+<item><title>Miassou</title><link>http://plannapus.github.io/blog/2020-10-21.html</link><pubDate>2020-10-21</pubDate><description><div class="blog-content">
 				<a href="https://en.wikipedia.org/wiki/P%C3%A9rigord_noir">The region I come from</a> is known for its duck/goose-based cooking, not so much for its desserts. And indeed we do not have that much of a sweet tooth in Perigord Noir. But we do have a few desserts. My favourite and maybe the least known of them is the miassou, and I happen to make quite a good one, if i may say so. The name unfortunately refers to a dozen different dishes, ranging from potato pancakes to any cornmeal-based cake, so what follows is a recipe of miassou, <i>as done in my family</i>.
 
-				</p><p>The basis is quite unconventional for a french cake but very seasonal (and as a consequence I tend to cook one every year in Fall): pumpkin, cornmeal and apples.</p>
+				<p>The basis is quite unconventional for a french cake but very seasonal (and as a consequence I tend to cook one every year in Fall): pumpkin, cornmeal and apples.</p>
 
 				<p>The idea is to boil the chopped-up pumpkin, mash it and mix in some cornmeal. Separately split 2 to 4 eggs, whiten the yolks with a bit of sugar (brown sugar if possible), and beat the egg whites until ferm. Incorporate both preparations to the pumpkin/cornmeal mix until it is homogenous. Then place the mixture in a buttered dish, and cover with slices of apples. Add a dash of sugar on top of the apples and cook in the oven at 220°C for nearly 45 min.</p>
 
 				<img class="current" src="img/miassou.jpg" width="400"/><p class="caption">The result, from above. When cut into slices, it should stand on its own in one piece. If not, then put more cornmeal the next time around :)</p>
-			
-			<hr/><div class="footer">
-				<a href="2020-10-15.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-10-22.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Cooking</category></item>
-<item><title>First step in mixing gplates and R to make paleogeographic maps</title><link>http://plannapus.github.io/blog/2020-10-15.html</link><pubDate>2020-10-15</pubDate><description><div class="main">
-			<p class="blog-title">First step in mixing gplates and R to make paleogeographic maps</p>
-			<p class="blog-date">2020-10-15</p>
-			<p class="blog-content">I make <a href="http://www.biogeosciences.net/13/6003/2016/">a lot of paleogeographic maps</a>, and I always do so in R. Whichever programming language you use, <a href="https://www.gplates.org/">Gplates</a> is an invaluable tool to achieve this. What follows is a <span class="tooltip">short example<span class="tooltiptext">as mentioned in the previous post I am still processing some bad news so it's all I am capable of conjuring right now</span></span> of how to insert it in your workflow to map your paleodata.
+			</div></description><category>Cooking</category></item>
+<item><title>First step in mixing gplates and R to make paleogeographic maps</title><link>http://plannapus.github.io/blog/2020-10-15.html</link><pubDate>2020-10-15</pubDate><description><div class="blog-content">I make <a href="http://www.biogeosciences.net/13/6003/2016/">a lot of paleogeographic maps</a>, and I always do so in R. Whichever programming language you use, <a href="https://www.gplates.org/">Gplates</a> is an invaluable tool to achieve this. What follows is a <span class="tooltip">short example<span class="tooltiptext">as mentioned in the previous post I am still processing some bad news so it's all I am capable of conjuring right now</span></span> of how to insert it in your workflow to map your paleodata.
 		
-			</p><p>OK as the idea here is really just to give a first glance of the tools I will start straight ahead with converting a standard coastline map to a late Eocene base map using <a href="https://linkinghub.elsevier.com/retrieve/pii/S0012825212000311">Seton et al. 2012 rotation model</a>. Why? Because then all you need is given with Gplates, and this is the one we have been using in <a href="http://nsb-mfn-berlin.de">Neptune</a>.</p>
+			<p>OK as the idea here is really just to give a first glance of the tools I will start straight ahead with converting a standard coastline map to a late Eocene base map using <a href="https://linkinghub.elsevier.com/retrieve/pii/S0012825212000311">Seton et al. 2012 rotation model</a>. Why? Because then all you need is given with Gplates, and this is the one we have been using in <a href="http://nsb-mfn-berlin.de">Neptune</a>.</p>
 
 <pre><code class="R">library(rgdal)
 system("gplates reconstruct -l /Applications/GPlates-1.5.0/SampleData/FeatureCollections/Coastlines/Shapefile/Seton_etal_ESR2012_Coastlines_2012.1_Polygon.shp \\
@@ -2227,32 +2036,19 @@ box(lwd=3)
 dev.off()</code></pre>
 
 			<p>The resulting picture: a map of the Southern Ocean at the Eocene-Oligocene boundary, highlighting the varous sites from ODP expedition 113 to the Weddell Sea.</p>
-			<img class="current" src="img/eocene.png" width="400"/><hr/><div class="footer">
-				<a href="2020-10-10.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-10-21.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>Guinea Fowl in Cider</title><link>http://plannapus.github.io/blog/2020-10-10.html</link><pubDate>2020-10-10</pubDate><description><div class="main">
-			<p class="blog-title">Guinea Fowl in Cider</p>
-			<p class="blog-date">2020-10-10</p>
-			<p class="blog-content">
+			<img class="current" src="img/eocene.png" width="400"/></div></description><category>Programming</category><category>R</category></item>
+<item><title>Guinea Fowl in Cider</title><link>http://plannapus.github.io/blog/2020-10-10.html</link><pubDate>2020-10-10</pubDate><description><div class="blog-content">
 				As every time I receive bad news, I cope by cooking. This weekend, I wanted to try something new so I did the lazy variation of inventing a new dish: combining two dishes.
 				In that case I mixed a recipe I had for a guinea fowl cooked in white wine, and a recipe of rabbit in cider I made two winters ago, and thus cooked a guinea fowl in cider, and it was delicious.<br/><br/><a href="img/livre_recette.jpg"><img class="current" src="img/livre_recette.jpg" title="Behold the Foodonomicon" width="300"/></a>
-				</p><p class="caption">The page in my very own <i>encyclopedia culinaria</i> for the original guinea fowl recipe I modified here.</p>
+				<p class="caption">The page in my very own <i>encyclopedia culinaria</i> for the original guinea fowl recipe I modified here.</p>
 
 				<p>The idea is fairly simple. First cut the guinea fowl in pieces and sauté them in a pot in olive oil, with salt and pepper. When golden, one can take them out of the pot and add oignons, carrots and garlic, with a bit of thyme. After a couple minutes (when the oignons start softening), add back the meat, and cover the whole thing with cider. Because I am in Berlin, I went with one of the OK ciders sold in supermarkets here, but naturally in France I would have gone for a cider from Brittany (a bit drier and less sweet than the ones here) but they are quite difficult to find here for a reasonnable price. Then add a laurel leave or two and cover, reduce the heat and let cook a good 45 minutes. When cooked, take the meat out of the pot, mix the rest together (or press everything with a potato masher as I did here). Thicken the sauce with a bit of cornstarch, put back the meat in and that's basically it. We ate it with some leftover boiled potatoes and some long beans, but rice, pasta or polenta are also possibilities.</p>
 				<img class="current" src="img/guineafowl_2.jpg" title="The dish after 45 minutes of cooking" width="400"/><img class="current" src="img/guineafowl_3.jpg" title="The dish once served" width="400"/><p class="caption">Dish at the end of the simmering process and once served. Turned out great!</p>
-			
-			<hr/><div class="footer">
-				<a href="2020-10-05.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-10-15.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Cooking</category></item>
-<item><title>A walk through my beamer theme</title><link>http://plannapus.github.io/blog/2020-10-05.html</link><pubDate>2020-10-05</pubDate><description><div class="main">
-			<p class="blog-title">A walk through my beamer theme</p>
-			<p class="blog-date">2020-10-05</p>
-			<p class="blog-content">A few years ago I started converting to LaTeX: first for proposals, manuscripts and then eventually for presentations. I am not going to lie: the first one took me way longer than usual but since then, now that I have a basic template, it became really worth it. I didn't go for a flashy, fancy theme but made a very simple one based on <a href="https://www.museumfuernaturkunde.berlin/">my institution</a> official template. And since it is simple, it makes for a nice introduction to people willing to learn how to make their own beamer template.<br/>
+			</div></description><category>Cooking</category></item>
+<item><title>A walk through my beamer theme</title><link>http://plannapus.github.io/blog/2020-10-05.html</link><pubDate>2020-10-05</pubDate><description><div class="blog-content">A few years ago I started converting to LaTeX: first for proposals, manuscripts and then eventually for presentations. I am not going to lie: the first one took me way longer than usual but since then, now that I have a basic template, it became really worth it. I didn't go for a flashy, fancy theme but made a very simple one based on <a href="https://www.museumfuernaturkunde.berlin/">my institution</a> official template. And since it is simple, it makes for a nice introduction to people willing to learn how to make their own beamer template.<br/>
 			First: your theme will reside in a separate file, called by your main presentation file in a way similar to a package. A weird quirk of beamer is that your filename has to be of the form "<b>beamertheme</b><i>themename</i>.sty", i.e. <code class="inline">beamerthemeexample.sty</code> for a theme called "example". In my case the file is called <code class="inline">beamerthememfn_green.sty</code>, and reside in the same folder as the presentation file, it is thus imported in it as follows:
 
-				</p><pre><code class="Latex">\usetheme{mfn_green}</code></pre>
+				<pre><code class="Latex">\usetheme{mfn_green}</code></pre>
 
 			The theme file (downloadable <a href="../data/beamer_template.zip">here</a>) itself starts like this:
 
@@ -2316,17 +2112,10 @@ dev.off()</code></pre>
 
 			And it's basically it! In the real file I also upload a couple of logos to add to the first and last slide footers but it could be as well done in the presentation file itself with the usual <code class="inline">\includegraphics</code> bit.<br/>
 			Here is an example of what the output looks like (in this case a seminar talk I gave in Potsdam last year when visiting my colleagues at the GFZ):<br/><object class="blog" data="../data/20190723Potsdam.pdf" width="500" height="425" type="application/pdf"><p><a href="../data/20190723Potsdam.pdf">Download.</a></p></object>
-			
-			<hr/><div class="footer">
-				<a href="2020-10-02.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-10-10.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>LaTeX</category></item>
-<item><title>A backbone for radiolarian phylogeny</title><link>http://plannapus.github.io/blog/2020-10-02.html</link><pubDate>2020-10-02</pubDate><description><div class="main">
-			<p class="blog-title">A backbone for radiolarian phylogeny</p>
-			<p class="blog-date">2020-10-02</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>LaTeX</category></item>
+<item><title>A backbone for radiolarian phylogeny</title><link>http://plannapus.github.io/blog/2020-10-02.html</link><pubDate>2020-10-02</pubDate><description><div class="blog-content">
 			It's been a couple of good years for radiolarian research! After almost 200 years of studying them, and failing to understand their classification fully (in part thanks to Haeckel honestly), three papers came out in the last 2 years that present molecular data to establish a proper backbone to living radiolarian phylogeny.
-			The first one from last year by <a href="&amp;#10;&amp;#9;&amp;#9;&amp;#9;https://doi.org/10.1016/j.protis.2019.02.002">Sandin et al.</a> presented a morpho-molecular classification of Nassellarians, then this year a paper by <a href="&amp;#10;&amp;#9;&amp;#9;&amp;#9;https://doi.org/10.1016/j.protis.2019.125712">Nakemura et al.</a> sorted out the various groups considered by some to be modern Entactinarians (Entactinaria being an order of polycystines radiolarians known in the Paleozoic and the Mesozoic, primarily), and a preprint by <a href="https://doi.org/10.1101/2020.06.29.176917">Sandin et al.</a>, again, offered a morpho-molecular classification of Spumellarians. Patching them together and adding to that the work from a few years ago by <a href="https://doi.org/10.1016/j.revmic.2004.06.002">Osamu Takahashi et al. in 2004</a> which showed that the haeckelian order of Collodaria was in fact highly derived Nassellarians and the work by <a href="http://dx.doi.org/10.1016/j.protis.2015.05.002">Biard et al. 2015</a> which sorted them out, and you get that combined tree (as long as i didn t make any mistakes): <br/></p><pre><code>((Eucyrtidoidea, ((Acropyramioidea,((Carpocaniidae, Artostrobioidea),(Acanthodesmoidea,(Orosphaeridae,(Sphaerozoidae,(Collophidiidae,Collosphaeridae))Collodaria)))), (((Archipiloidea,Theopilidae),Plagiacanthoidea), (Cycladophoridae, (Lychnocanoidea,Pterocorythoidea)))))Nassellaria, ((Hexastyloidea, (Spongosphaeroidea,(Lithocyclioidea, Spongodiscoidea))), (Liosphaeroidea,((Rhizosphaeroidea,(Centrocubidae,Excentroconchidae)Centrocuboidea), ((Stylodictyoidea,(Actinommoidea,Spongopyloidea)), (Tholoniidae,Pyloniidae)Pylonioidea))))Spumellaria);
+			The first one from last year by <a href="&amp;#10;&amp;#9;&amp;#9;&amp;#9;https://doi.org/10.1016/j.protis.2019.02.002">Sandin et al.</a> presented a morpho-molecular classification of Nassellarians, then this year a paper by <a href="&amp;#10;&amp;#9;&amp;#9;&amp;#9;https://doi.org/10.1016/j.protis.2019.125712">Nakemura et al.</a> sorted out the various groups considered by some to be modern Entactinarians (Entactinaria being an order of polycystines radiolarians known in the Paleozoic and the Mesozoic, primarily), and a preprint by <a href="https://doi.org/10.1101/2020.06.29.176917">Sandin et al.</a>, again, offered a morpho-molecular classification of Spumellarians. Patching them together and adding to that the work from a few years ago by <a href="https://doi.org/10.1016/j.revmic.2004.06.002">Osamu Takahashi et al. in 2004</a> which showed that the haeckelian order of Collodaria was in fact highly derived Nassellarians and the work by <a href="http://dx.doi.org/10.1016/j.protis.2015.05.002">Biard et al. 2015</a> which sorted them out, and you get that combined tree (as long as i didn t make any mistakes): <br/><pre><code>((Eucyrtidoidea, ((Acropyramioidea,((Carpocaniidae, Artostrobioidea),(Acanthodesmoidea,(Orosphaeridae,(Sphaerozoidae,(Collophidiidae,Collosphaeridae))Collodaria)))), (((Archipiloidea,Theopilidae),Plagiacanthoidea), (Cycladophoridae, (Lychnocanoidea,Pterocorythoidea)))))Nassellaria, ((Hexastyloidea, (Spongosphaeroidea,(Lithocyclioidea, Spongodiscoidea))), (Liosphaeroidea,((Rhizosphaeroidea,(Centrocubidae,Excentroconchidae)Centrocuboidea), ((Stylodictyoidea,(Actinommoidea,Spongopyloidea)), (Tholoniidae,Pyloniidae)Pylonioidea))))Spumellaria);
 			</code></pre>
 
 			<img class="current" src="img/radtree.png" title="Tree of polycystine radiolarians" width="600"/><p class="caption">Tree of living polycystine radiolarians; after Takahashi et al. 2004, Biard et al. 2015, Sandin et al. 2019, 2020, Nakemura et al. 2020.</p>
@@ -2344,18 +2133,11 @@ dev.off()</code></pre>
 			<p class="publications">Sandin, M. M., Pillet, L., Biard, T., Poirier, C., Bigeard, E., Romac, S., Suzuki, N., and Not, F. (2019). <a href="&amp;#10;&amp;#9;&amp;#9;&amp;#9;https://doi.org/10.1016/j.protis.2019.02.002">Time calibrated morpho-molecular classification of Nassellaria (Radiolaria)</a>. Protist, 170(2):187–208.</p>
 			<p class="publications">Sandin, M. M., Biard, T., Romac, S., O’Dogherty, L., Suzuki, N., and Not, F. (2020). <a href="https://doi.org/10.1101/2020.06.29.176917">Morpho-molecular diversity and evolutionary analyses suggest hidden life styles in Spumellaria (Radiolaria)</a>. bioRxiv.</p>
 			<p class="publications">Takahashi, O., Yuasa, T., Honda, D., and Mayama, S. (2004). <a href="https://doi.org/10.1016/j.revmic.2004.06.002">Molecular phylogeny of solitary shell-bearing Polycystinea (Radiolaria)</a>. Revue de Micropaléontologie, 47(3):111-118.</p>
-			
-			<hr/><div class="footer">
-				<a href="2020-09-28.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-10-05.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Science</category></item>
-<item><title>Scraping rendered HTML</title><link>http://plannapus.github.io/blog/2020-09-28.html</link><pubDate>2020-09-28</pubDate><description><div class="main">
-			<p class="blog-title">Scraping rendered HTML</p>
-			<p class="blog-date">2020-09-28</p>
-			<p class="blog-content">
+			</div></description><category>Science</category></item>
+<item><title>Scraping rendered HTML</title><link>http://plannapus.github.io/blog/2020-09-28.html</link><pubDate>2020-09-28</pubDate><description><div class="blog-content">
 				Once in a while (or, you know, every day), when you're doing 'big' data analysis you need to do some web scraping – grab directly data from public websites – particularly if they do not have an API to deliver the data you are interested in. Most of the time, all it takes is to read in the HTML page in R (thanks to <a href="https://cran.r-project.org/web/packages/XML/index.html">package XML</a>), and pick up the data, which in the best case scenario already lies there as a table. 
 
-				</p><p>But thanks to web 2.0, most of the time nowadays it does not work. Why? Because the data is actually not contained in the HTML itself but put there by a script (usually Javascript) that is run by your browser when you go on the page itself. Meaning that if you try to get it from R, which is not a browser, you'll see squat. Luckily, enter headless browsers. What they are, are command-line tools that mimic browsers by executing this kind of scripts. Personally I use <a href="https://phantomjs.org/">phantomJS</a> because it is the easiest for me to use given i don't really know Javascript that much. So, once you installed phantomJS, all you need to do is write a little script that just reads in the page, processes it and outputs the result as a pure HTML page. Here, as an example, a script I wrote a year or two ago, for a colleague, that grabs data from the website of the IUCN red list:</p>
+				<p>But thanks to web 2.0, most of the time nowadays it does not work. Why? Because the data is actually not contained in the HTML itself but put there by a script (usually Javascript) that is run by your browser when you go on the page itself. Meaning that if you try to get it from R, which is not a browser, you'll see squat. Luckily, enter headless browsers. What they are, are command-line tools that mimic browsers by executing this kind of scripts. Personally I use <a href="https://phantomjs.org/">phantomJS</a> because it is the easiest for me to use given i don't really know Javascript that much. So, once you installed phantomJS, all you need to do is write a little script that just reads in the page, processes it and outputs the result as a pure HTML page. Here, as an example, a script I wrote a year or two ago, for a colleague, that grabs data from the website of the IUCN red list:</p>
 
 				<pre><code class="R"># The page you want to process
 url &amp;lt;- "https://www.iucnredlist.org/species/1301/511335"
@@ -2384,21 +2166,10 @@ system("phantomjs scrape.js")
 h &amp;lt;- htmlParse("species.html")
 # and pick whatever info you wanted in the first place (here using xpath)
 xpathSApply(h, "//div[@id='threats-details']//div[@class='text-body']", xmlValue)</code></pre>
-			
-			<hr/><div class="footer">
-				<a href="2020-09-27.html">&amp;lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-10-02.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description><category>Programming</category><category>R</category></item>
-<item><title>A little bit of everything</title><link>http://plannapus.github.io/blog/2020-09-27.html</link><pubDate>2020-09-27</pubDate><description><div class="main">
-			<p class="blog-title">A little bit of everything</p>
-			<p class="blog-date">2020-09-27</p>
-			<p class="blog-content">
+			</div></description><category>Programming</category><category>R</category></item>
+<item><title>A little bit of everything</title><link>http://plannapus.github.io/blog/2020-09-27.html</link><pubDate>2020-09-27</pubDate><description><div class="blog-content">
 			Since a few months, I felt the need to create a blog. I have literally no idea why. Nor have I any idea of what I will put in it, though if I had to guess I would say a little bit of science — most probably the day-to-day somewhat boring details of it —, a little bit of programming — I have been contributing to <a href="https://stackoverflow.com/users/1451109">StackOverflow</a> for years, and I have been <a href="https://github.com/plannapus/MfN-Code-Clinic">helping my colleagues</a> a lot with their programming, but this way I might actually talk about the issues I want to talk about and not the ones I am asked about —, a little bit of cooking — as it is a significant part of my life and the one that is the easiest to talk about and the most likely to actually interest someone else than myself :) — and maybe a little bit about other subjects that interest me – literature, board games, mythology, ...<br/>
-			So stay tuned for a little bit of everything I guess.<br/><br/><img class="current" src="img/eqpac.png" title="Assemblage of radiolarians" width="400"/><img class="current" src="img/bento.jpg" title="Not the most appetizing picture but still" width="400"/><img class="current" src="img/some_code.png" title="Example of code" width="400"/></p><p class="caption">A little bit of everything: actinommid radiolarians from site 846B; my first attempt at making Onigirazu from before the pandemic; some of my code (here Python).</p>
-			
-			<hr/><div class="footer">
-				<a href="index.html">Back to Index</a> | <a href="2020-09-28.html">Next entry &amp;gt;</a>
-			</div>
-		</div></description></item>
+			So stay tuned for a little bit of everything I guess.<br/><br/><img class="current" src="img/eqpac.png" title="Assemblage of radiolarians" width="400"/><img class="current" src="img/bento.jpg" title="Not the most appetizing picture but still" width="400"/><img class="current" src="img/some_code.png" title="Example of code" width="400"/><p class="caption">A little bit of everything: actinommid radiolarians from site 846B; my first attempt at making Onigirazu from before the pandemic; some of my code (here Python).</p>
+			</div></description></item>
 </channel>
 </rss>

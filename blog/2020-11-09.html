@@ -45,7 +45,7 @@
 		<div class="main">
 			<p class="blog-title">Calculating paleocoordinates with gplates and R</p>
 			<p class="blog-date">2020-11-09</p>
-			<p class="blog-content">
+			<div class="blog-content">
 As promised in the <a href="2020-10-15.html">first post of this series</a>, I am going to show here how to use gplates to calculate the paleocoordinates of specific sites given a specific rotation model, using GPlates. To make it worth it, I'll use here the <a href="https://doi.org/10.1016/j.gloplacha.2016.10.002">Matthews et al. 2016</a> rotation model as it is an update on the one we are using in the Neptune database. Also, and just for fun, we are going to compute the paleocoordinates of the two sites we drilled during <a href="https://iodp.tamu.edu/scienceops/expeditions/amundsen_sea_ice_sheet_history.html">Expedition 379</a> to the Amundsen Sea, an expedition I was part of. We only drilled until the latest Miocene but here I am going to compute the coordinates in the Turonian (as a tribute to the <a href="https://www.nature.com/articles/s41586-020-2148-5">Klages et al. 2020 paper</a>).
 
 The first step, as usual, is to get the sites current coordinates from Neptune (using my <a href="https://github.com/plannapus/NSBcompanion">NSBcompanion</a> package). I know that I mentioned in <a href="2020-11-03.html">the previous post</a> that <code class="inline">rgdal/sp</code> packages were obsolete and needed to be replaced with package <code class="inline">sf</code>, but I am not yet familiar enough with <code class="inline">sf</code> so here it is with <code class="inline">rgdal/sp</code>:
@@ -112,7 +112,7 @@ dev.off()</code></pre>
 <img class="current" src="img/turonian.png" width="400">
 <p class="caption">I know, it's a bit underwhelming since the Antarctic plate didn't move that much in the last 100Myr, but you get the gesture :)</p>
 
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2020-11-03.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-11-13.html">Next entry &gt;</a>

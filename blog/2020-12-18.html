@@ -45,7 +45,7 @@
 		<div class="main">
 			<p class="blog-title">AoC2020 Days 17 and 18</p>
 			<p class="blog-date">2020-12-18</p>
-			<p class="blog-content">
+			<div class="blog-content">
 				OK this time, the difficulity level went up a notch! To summarize briefly, day <a href="http://adventofcode.com/2020/day/17">17</a> was a 3 and 4D extension on <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a> while day <a href="http://adventofcode.com/2020/day/18">18</a> consisted in performing basic arithmetic... but with different precedence order: in part 1 there was no precedence order, i. e. 1+2*3 resolves to 3*3=9; and in part 2 addition took precedence over multiplication so 3*2+1 would also resolve to 9; but in both cases parentheses still enforce precedence, meaning 2 + (3 * 4 +5) * 6 would resolve to 2 + (3 * 9) *6 =  2 + 27 * 6 = 29 * 6 = 174. The way I proceeded for day 18 was to use regex to identify sections of the input equations that needed to be solved first and then evaluate them separately and replacing the original bit by its local solution.
 
 				<p>The workhouses of that solution are two functions, one to evaluate and the second to replace the original bits:</p>
@@ -139,7 +139,7 @@ for(i in 1:6){
 }</code></pre>
 
 <p>As usual you can check the full code <a href="http://github.com/plannapus/Advent_of_Code/2020">in my repository</a>.</p>
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2020-12-16.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-12-24.html">Next entry &gt;</a>

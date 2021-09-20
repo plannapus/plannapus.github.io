@@ -45,7 +45,7 @@
 		<div class="main">
 			<p class="blog-title">A look at the code behing the blog</p>
 			<p class="blog-date">2020-11-20</p>
-			<p class="blog-content">
+			<div class="blog-content">
 				This is going to be very meta, I'm afraid. In the <a href="2020-09-27.html">first post of this blog</a> I said that I wasn't sure why I was doing this. Two months later, I am still not entirely sure of my motivation (though being fairly obsessive it allows me to put all my thoughts somewhere instead of rehashing them constantly in my mind, so it does help with that) but I know that one of the small reason was to see if I was able to write down a very simple code to write a functional blog.
 
 				<p>As you may have noticed reading this, this website is fairly minimalistic. The first reason is of course that I am not a designer, but the second and main reason is that my biggest issue with Web 2.0 is that it is bloated. If you are looking at the source code of most pages, it is way bigger than it should be, between all the unnecessary javascript calls, the opaque automatically built CSS (typical of blogging environment such as wordpress) , the google analytics and whatnots... It does annoy me primarily because all that extraneous content has a carbon footprint, but also because it obfuscates the web. So I have been doing simple, easily maintainable, functional pages using pure HTML and CSS (and a very tiny bit of javascript, when MathJax or a syntax highlighter is needed). But blogs are a tad more complex to maintain (because of the index, the categories etc.).</p>
@@ -148,7 +148,7 @@ cat(last,sep="\n",file=last_html) #Prints it back</pre></code>
 
 				<p>And this is literaly all there is to it. I might add some new parts to it as I am figuring things out (such as the categories pages that I really just added in the last week) but I think the core will stay the same. I don't think I need anything fancier.</p>
 
-			</p>
+			</div>
 			<hr/>
 			<div class="footer">
 				<a href="2020-11-13.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> | <a href="2020-11-22.html">Next entry &gt;</a>
