@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="Stats in Strat: a first attempt" />
+		<meta property="og:image" content="" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Science">
+		<meta name="category" content="R">
+		<meta name="category" content="Programming">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../current.html">Current<br/>projects</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Stats in Strat: a first attempt</p>
+			<p class="blog-date">2021-10-08</p>
+			<div class="blog-content">A year ago, on this <a href="2020-10-28.html">very blog</a>, I brought up to a crowd of absolutely no one the subject of error quantification in marine sediment stratigraphy. I would like today to address the same crowd to bring up a first attempt at characterizing the error in age models such as the ones we use in <span class="tooltip">the<span class="tooltiptext">MY</span></span> <a href="http://nsb-mfn-berlin.de">Neptune database</a>.
+
+			<p>In Neptune, we use a qualitative statement, ranging from "VP" (=very poor) to "E" (=excellent), to give our opinion on the reliability of the age model on a given site. But of course, I am often asked what this correspond to, in term of quantitative age to which I do not usually have an answer, except that I expect that age error to be at most ca. 0.5Ma on most age models – i. e. from age quality "M" (medium) to "VG" (very good) – and up to 1Ma on the worst ones ("VP" and "P"). This number is really just from the top of my head, but somewhat based on experience bootstrapping our data: using age bins lower than 0.5 create hard-to-reproduce results, when filtering the worst age models for instance, but 0.5Ma seem to be fairly robust.</p>
+
+			<p>One way I thought we could measure this is by measuring the scatter of the stratigraphic data used to create the age model around that line-of-correlation and derive a mean discrepancy and a mean standard error on that discrepancy (which would thus be our mean stratigraphic error). Given we keep track of all the needed information in Neptune (unfortunately only since 2014 but, with the help of some student helpers, we have been trying to find back and document how older age models and data were collected), it is not too complicated to do. The result is surprisingly close to what I thought, as "M"-marked age models have a mean stratigraphic error of 0.493Myr (!). Good, Very Good and Excellent age models have thankfully lower error estimated, while the poor age models have an higher one (0.686Myr currently). This way of measuring stratigraphic error however is not well adapted to "very poor" age models which usually are considered as such because they are very poorly constrained, i. e. have a very small number of underlying stratigraphic data, so naturally the discrepancy between those data and the line of correlation is smaller than it probably really is, as they have a disproportionate influence on where that line is drawn.</p>
+
+			<p>An additional issue I have with our quality assessments is that they are made at the site level but an age model could be good in a given section and bad later on. In fact this is fairly common: Neogene sections are usually more tightly calibrated than early Paleogene ones. Also the particularities of Cretaceous magnetostratigraphy (namely the length of chron C34n) make tightly constrained age models very rare in that particular time interval. Hence the idea that maybe we should look at it in a more granular way. Here because of the way we do age models (a series of line segments <span class="tooltip">assuming<span class="tooltiptext">I made clear my opinion about this assumption in a <a href="2020-10-28.html">previous post</a> but for now we will have to work with that</span></span> constant sedimentation rates between each tiepoints), the minimum measuring range is the line segments the line of correlation is made of. Hence the code I wrote to compute age errors on a specific site, for a specific range of depths:</p>
+
+				<pre><code class="R">AgeErrorBySect &lt;- function(conn, hole){
+  require(NSBcompanion)
+  rev &lt;- dbGetQuery(conn, sprintf("SELECT revision_no FROM neptune_age_model_history WHERE site_hole='%s' AND current_flag='Y';",hole))
+  if(length(rev$revision_no)){
+    am &lt;- dbGetQuery(conn, sprintf("SELECT age_ma, depth_mbsf FROM neptune_age_model WHERE site_hole='%s' AND revision_no=%i;", hole,rev$revision_no))
+    am &lt;- am[order(am$depth_mbsf,am$age_ma),]
+    hid &lt;- dbGetQuery(conn, sprintf("SELECT hole_id FROM neptune_hole_summary WHERE site_hole='%s';", hole))
+    hid &lt;- hid[1,1]
+    ev &lt;- dbGetQuery(conn, sprintf("SELECT a.event_id, top_depth_mbsf, bottom_depth_mbsf, 
+                                  calibration_scale, young_age_ma, old_age_ma 
+                                  FROM neptune_event a, neptune_event_calibration as b 
+                                  WHERE a.top_hole_id='%s' AND a.event_id=b.event_id;",
+                                   hid))
+    evmag &lt;- dbGetQuery(conn, sprintf("SELECT a.event_id, top_depth_mbsf, bottom_depth_mbsf, 
+                                  scale as calibration_scale, age_ma as young_age_ma, NULL as old_age_ma 
+                                  FROM neptune_event a, neptune_gpts as b 
+                                  WHERE a.top_hole_id='%s' AND a.event_id=b.event_id AND b.scale='Grad12';",
+                                   hid))
+    ev &lt;- rbind(ev,evmag)
+    bycal &lt;- split(ev,ev$calibration_scale)
+    if(!length(bycal)){
+      return(NULL)
+    }
+    for(i in seq_along(bycal)){
+      scale &lt;- names(bycal)[i]
+      bycal[[i]]$young_age_ma &lt;- changeAgeScale(nsb,bycal[[i]]$young_age_ma,scale,'Grad12')
+      bycal[[i]]$old_age_ma &lt;- changeAgeScale(nsb,bycal[[i]]$old_age_ma,scale,'Grad12')
+#The following two are the age of the datum projected on the LOC
+      bycal[[i]]$calc_young_age_ma &lt;- approx(am$depth_mbsf,am$age_ma,bycal[[i]]$top_depth_mbsf,ties="ordered")$y
+      bycal[[i]]$calc_old_age_ma &lt;- approx(am$depth_mbsf,am$age_ma,bycal[[i]]$bottom_depth_mbsf,ties="ordered")$y
+    }
+    new &lt;- do.call(rbind,bycal)
+    res &lt;- rep(NA,nrow(new))
+    new$calc_old_age_ma[is.na(new$calc_old_age_ma)] &lt;- new$calc_young_age_ma[is.na(new$calc_old_age_ma)]
+    new$calc_young_age_ma[is.na(new$calc_young_age_ma)] &lt;- new$calc_old_age_ma[is.na(new$calc_young_age_ma)]
+    new$young_age_ma[is.na(new$young_age_ma)] &lt;- new$old_age_ma[is.na(new$young_age_ma)]
+    new$old_age_ma[is.na(new$old_age_ma)] &lt;- new$young_age_ma[is.na(new$old_age_ma)]
+    for(i in seq_along(res)){
+      a &lt;- c() 
+#This is a bit clunky, but I wanted to take into account the fact that strat data are not really a set of (depth,age) tuples 
+# but have a depth range (the sampling resolution) and an age range (due to the calibration error).
+#Here i therefore measure the smallest possible discrepancy between that data and the LOC.
+      a[1] &lt;- new$old_age_ma[i]-new$calc_old_age_ma[i]
+      a[2] &lt;- new$old_age_ma[i]-new$calc_young_age_ma[i]
+      a[3] &lt;- new$young_age_ma[i]-new$calc_young_age_ma[i]
+      a[4] &lt;- new$young_age_ma[i]-new$calc_old_age_ma[i]
+      if(all(!is.na(a))){
+        if(all(a&gt;0)){
+          res[i] &lt;- min(a)
+        }else if(all(a&lt;0)){
+          res[i] &lt;- max(a)
+        }else{
+          res[i] &lt;- 0
+        }
+      }else{res[i] &lt;- NA}
+    }
+    am_sections &lt;- embed(am$depth_mbsf,2)
+    am_sections &lt;- am_sections[am_sections[,1]!=am_sections[,2],,drop=FALSE]
+    which_section &lt;- sapply(new$top_depth_mbsf,function(x)which(am_sections[,1]&gt;=x&am_sections[,2]&lt;=x))
+    which_section &lt;- factor(which_section,levels=seq_len(nrow(am_sections)))
+    am_sections &lt;- as.data.frame(am_sections)
+    colnames(am_sections) &lt;- c("to","from")
+    am_sections$mean &lt;- sapply(split(res,which_section),mean,na.rm=T)
+    am_sections$std &lt;- sapply(split(res,which_section),sd,na.rm=T)
+    am_sections$ste &lt;- sapply(split(res,which_section),function(x)sd(x,na.rm=T)/sqrt(length(x)))
+  }else{
+    am_sections &lt;- NULL
+  }
+  am_sections
+}
+</code></pre>
+
+<p>Naturally here it's NSB-based but one could very easily adapt this to any other age models, granted the underlying data is known. Does it solve all our issues? Absolutely not. But it's a start I guess.</p>
+
+			</div>
+			<hr/>
+			<div class="footer">
+				<a href="2021-09-01.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
