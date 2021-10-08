@@ -1,6 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Stats in Strat: a first attempt</title><link>http://plannapus.github.io/blog/2021-10-08.html</link><pubDate>2021-10-08</pubDate><description><div class="blog-content">A year ago, on this <a href="2020-10-28.html">very blog</a>, I brought up to a crowd of absolutely no one the subject of error quantification in marine sediment stratigraphy. I would like today to address the same crowd to bring up a first attempt at characterizing the error in age models such as the ones we use in <span class="tooltip">the<span class="tooltiptext">MY</span></span> <a href="http://nsb-mfn-berlin.de">Neptune database</a>.
+
+			<p>In Neptune, we use a qualitative statement, ranging from "VP" (=very poor) to "E" (=excellent), to give our opinion on the reliability of the age model on a given site. But of course, I am often asked what this correspond to, in term of quantitative age to which I do not usually have an answer, except that I expect that age error to be at most ca. 0.5Ma on most age models – i. e. from age quality "M" (medium) to "VG" (very good) – and up to 1Ma on the worst ones ("VP" and "P"). This number is really just from the top of my head, but somewhat based on experience bootstrapping our data: using age bins lower than 0.5 create hard-to-reproduce results, when filtering the worst age models for instance, but 0.5Ma seem to be fairly robust.</p>
+
+			<p>One way I thought we could measure this is by measuring the scatter of the stratigraphic data used to create the age model around that line-of-correlation and derive a mean discrepancy and a mean standard error on that discrepancy (which would thus be our mean stratigraphic error). Given we keep track of all the needed information in Neptune (unfortunately only since 2014 but, with the help of some student helpers, we have been trying to find back and document how older age models and data were collected), it is not too complicated to do. The result is surprisingly close to what I thought, as "M"-marked age models have a mean stratigraphic error of 0.493Myr (!). Good, Very Good and Excellent age models have thankfully lower error estimated, while the poor age models have an higher one (0.686Myr currently). This way of measuring stratigraphic error however is not well adapted to "very poor" age models which usually are considered as such because they are very poorly constrained, i. e. have a very small number of underlying stratigraphic data, so naturally the discrepancy between those data and the line of correlation is smaller than it probably really is, as they have a disproportionate influence on where that line is drawn.</p>
+
+			<p>An additional issue I have with our quality assessments is that they are made at the site level but an age model could be good in a given section and bad later on. In fact this is fairly common: Neogene sections are usually more tightly calibrated than early Paleogene ones. Also the particularities of Cretaceous magnetostratigraphy (namely the length of chron C34n) make tightly constrained age models very rare in that particular time interval. Hence the idea that maybe we should look at it in a more granular way. Here because of the way we do age models (a series of line segments <span class="tooltip">assuming<span class="tooltiptext">I made clear my opinion about this assumption in a <a href="2020-10-28.html">previous post</a> but for now we will have to work with that</span></span> constant sedimentation rates between each tiepoints), the minimum measuring range is the line segments the line of correlation is made of. Hence the code I wrote to compute age errors on a specific site, for a specific range of depths:</p>
+
+				<pre><code class="R">AgeErrorBySect &amp;lt;- function(conn, hole){
+  require(NSBcompanion)
+  rev &amp;lt;- dbGetQuery(conn, sprintf("SELECT revision_no FROM neptune_age_model_history WHERE site_hole='%s' AND current_flag='Y';",hole))
+  if(length(rev$revision_no)){
+    am &amp;lt;- dbGetQuery(conn, sprintf("SELECT age_ma, depth_mbsf FROM neptune_age_model WHERE site_hole='%s' AND revision_no=%i;", hole,rev$revision_no))
+    am &amp;lt;- am[order(am$depth_mbsf,am$age_ma),]
+    hid &amp;lt;- dbGetQuery(conn, sprintf("SELECT hole_id FROM neptune_hole_summary WHERE site_hole='%s';", hole))
+    hid &amp;lt;- hid[1,1]
+    ev &amp;lt;- dbGetQuery(conn, sprintf("SELECT a.event_id, top_depth_mbsf, bottom_depth_mbsf, 
+                                  calibration_scale, young_age_ma, old_age_ma 
+                                  FROM neptune_event a, neptune_event_calibration as b 
+                                  WHERE a.top_hole_id='%s' AND a.event_id=b.event_id;",
+                                   hid))
+    evmag &amp;lt;- dbGetQuery(conn, sprintf("SELECT a.event_id, top_depth_mbsf, bottom_depth_mbsf, 
+                                  scale as calibration_scale, age_ma as young_age_ma, NULL as old_age_ma 
+                                  FROM neptune_event a, neptune_gpts as b 
+                                  WHERE a.top_hole_id='%s' AND a.event_id=b.event_id AND b.scale='Grad12';",
+                                   hid))
+    ev &amp;lt;- rbind(ev,evmag)
+    bycal &amp;lt;- split(ev,ev$calibration_scale)
+    if(!length(bycal)){
+      return(NULL)
+    }
+    for(i in seq_along(bycal)){
+      scale &amp;lt;- names(bycal)[i]
+      bycal[[i]]$young_age_ma &amp;lt;- changeAgeScale(nsb,bycal[[i]]$young_age_ma,scale,'Grad12')
+      bycal[[i]]$old_age_ma &amp;lt;- changeAgeScale(nsb,bycal[[i]]$old_age_ma,scale,'Grad12')
+#The following two are the age of the datum projected on the LOC
+      bycal[[i]]$calc_young_age_ma &amp;lt;- approx(am$depth_mbsf,am$age_ma,bycal[[i]]$top_depth_mbsf,ties="ordered")$y
+      bycal[[i]]$calc_old_age_ma &amp;lt;- approx(am$depth_mbsf,am$age_ma,bycal[[i]]$bottom_depth_mbsf,ties="ordered")$y
+    }
+    new &amp;lt;- do.call(rbind,bycal)
+    res &amp;lt;- rep(NA,nrow(new))
+    new$calc_old_age_ma[is.na(new$calc_old_age_ma)] &amp;lt;- new$calc_young_age_ma[is.na(new$calc_old_age_ma)]
+    new$calc_young_age_ma[is.na(new$calc_young_age_ma)] &amp;lt;- new$calc_old_age_ma[is.na(new$calc_young_age_ma)]
+    new$young_age_ma[is.na(new$young_age_ma)] &amp;lt;- new$old_age_ma[is.na(new$young_age_ma)]
+    new$old_age_ma[is.na(new$old_age_ma)] &amp;lt;- new$young_age_ma[is.na(new$old_age_ma)]
+    for(i in seq_along(res)){
+      a &amp;lt;- c() 
+#This is a bit clunky, but I wanted to take into account the fact that strat data are not really a set of (depth,age) tuples 
+# but have a depth range (the sampling resolution) and an age range (due to the calibration error).
+#Here i therefore measure the smallest possible discrepancy between that data and the LOC.
+      a[1] &amp;lt;- new$old_age_ma[i]-new$calc_old_age_ma[i]
+      a[2] &amp;lt;- new$old_age_ma[i]-new$calc_young_age_ma[i]
+      a[3] &amp;lt;- new$young_age_ma[i]-new$calc_young_age_ma[i]
+      a[4] &amp;lt;- new$young_age_ma[i]-new$calc_old_age_ma[i]
+      if(all(!is.na(a))){
+        if(all(a&amp;gt;0)){
+          res[i] &amp;lt;- min(a)
+        }else if(all(a&amp;lt;0)){
+          res[i] &amp;lt;- max(a)
+        }else{
+          res[i] &amp;lt;- 0
+        }
+      }else{res[i] &amp;lt;- NA}
+    }
+    am_sections &amp;lt;- embed(am$depth_mbsf,2)
+    am_sections &amp;lt;- am_sections[am_sections[,1]!=am_sections[,2],,drop=FALSE]
+    which_section &amp;lt;- sapply(new$top_depth_mbsf,function(x)which(am_sections[,1]&amp;gt;=x&amp;amp;am_sections[,2]&amp;lt;=x))
+    which_section &amp;lt;- factor(which_section,levels=seq_len(nrow(am_sections)))
+    am_sections &amp;lt;- as.data.frame(am_sections)
+    colnames(am_sections) &amp;lt;- c("to","from")
+    am_sections$mean &amp;lt;- sapply(split(res,which_section),mean,na.rm=T)
+    am_sections$std &amp;lt;- sapply(split(res,which_section),sd,na.rm=T)
+    am_sections$ste &amp;lt;- sapply(split(res,which_section),function(x)sd(x,na.rm=T)/sqrt(length(x)))
+  }else{
+    am_sections &amp;lt;- NULL
+  }
+  am_sections
+}
+</code></pre>
+
+<p>Naturally here it's NSB-based but one could very easily adapt this to any other age models, granted the underlying data is known. Does it solve all our issues? Absolutely not. But it's a start I guess.</p>
+
+			</div></description><category>Science</category><category>R</category><category>Programming</category></item>
 <item><title>raupShiny</title><link>http://plannapus.github.io/blog/2021-09-01.html</link><pubDate>2021-09-01</pubDate><description><div class="blog-content">
 				As a follow-up on the <a href="2021-08-11.html">previous post</a>, I finally got the time to write a <a href="https://github.com/plannapus/raupShiny/blob/master/raupShiny.R">simplified version</a> of the shiny app we made for the <a href="https://www.naturkundemuseum-magdeburg.de/ausstellungen/sonderausstellungen/biominerale/">exhibition on biomineralization at the Museum für Naturkunde in Magdeburg</a>, so that people can built upon it and make a better, more complex version, and so I am going to briefly explain it here.
 <pre><code class="R">library(shiny)
