@@ -67,7 +67,7 @@ pfz.sp &lt;- SpatialPolygonsDataFrame(
     proj4string=CRS("+proj=longlat")),
   data=data.frame(n=1))</code></pre>
 
-<p>Here we take the oceanic fronts as defined by Park et al. 2019, specifically the Subantarctic front and the Polar fronts. In addition I make a Polygon out of both of them to define the polar frontal zone.</p>
+<p>Here we take the oceanic fronts as defined by <a href="https://doi.org/10.17882/59800">Park and Durant 2019</a>, specifically the Subantarctic front and the Polar fronts. In addition I make a Polygon out of both of them to define the polar frontal zone.</p>
 
 <pre><code class="R">#Shapefile of Antarctica (with 50m accuracy)
 antarctica &lt;- countries50[countries50@data$NAME%in%"Antarctica",]
