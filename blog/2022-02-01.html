@@ -72,8 +72,8 @@ pfz.sp &lt;- SpatialPolygonsDataFrame(
 <pre><code class="R">#Shapefile of Antarctica (with 50m accuracy)
 antarctica &lt;- countries50[countries50@data$NAME%in%"Antarctica",]
 
-#Polygon of Southern Ocean defined as anything below Subantarctic Front
-SAF &lt;- rbind(c(-180,-90),saf,c(180,-90))
+#Polygon of Southern Ocean defined as anything below Subantarctic Front (SAF)
+SAF &lt;- rbind(c(-180,-90),saf,c(180,-90)) #Basically a rectangle where the upper side is replaced by the SAF
 saf.sp &lt;- SpatialPolygonsDataFrame(
   SpatialPolygons(
     list(Polygons(
@@ -85,7 +85,7 @@ SO_0 &lt;- gDifference(saf.sp,antarctica)
 #as the name implies gDifference make a polygon that is computed 
 #as the set difference between the two polygons given as arguments.
 
-#Polygon of Southern Ocean defined as anything below Polar Front
+#Polygon of Southern Ocean defined as anything below Polar Front (PF)
 PF &lt;- rbind(c(-180,-90),pf,c(180,-90))
 pf.sp &lt;- SpatialPolygonsDataFrame(
   SpatialPolygons(
@@ -97,8 +97,10 @@ pf.sp &lt;- SpatialPolygonsDataFrame(
 SO_1 &lt;- gDifference(pf.sp,antarctica)
 
 #Polygon of Southern Ocean defined as anything below 60°S
-s60 &lt;- cbind(seq(-180,180,1),-60)
-SO_etopo1 &lt;- rbind(c(-180,-90),s60,c(180,-90))
+SO_etopo1 &lt;- rbind(c(-180,-90),
+                   c(-180,-60),
+                   c(180,-60),
+                   c(180,-90))
 SO_etopo1 &lt;- SpatialPolygonsDataFrame(
   SpatialPolygons(
     list(Polygons(
