@@ -52,7 +52,7 @@ library(rgeos)
 library(maptools)
 library(rnaturalearthdata) #ropenscilabs/rnaturalearthdata</code></pre>
 
-<p>That's quite a few packages. <code class="inline">orsifronts</code> and <code class="inline">rnaturalearthdata</code> are two convenient packages that holds data from oceanic fronts and continent shapefiles respecitively.</p>
+<p>That's quite a few packages. <code class="inline">orsifronts</code> and <code class="inline">rnaturalearthdata</code> are two convenient packages that holds data from oceanic fronts and continent shapefiles respectively. <code class="inline">rgdal</code> and <code class="inline">maptools</code> are basic packages to deal with geographical shapefiles, while <code class="inline">geosphere</code> is the package that contain the function with which we will actually compute the areas.</p>
 
 				<pre><code class="R">saf &lt;- el(coordinates(parkfronts)[[2]])
 pf &lt;- el(coordinates(parkfronts)[[3]])
