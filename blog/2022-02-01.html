@@ -59,7 +59,7 @@ pf &lt;- el(coordinates(parkfronts)[[3]])
 
 #Shapefile of the Polar Frontal Zone according to Park et al. 2019
 pfz &lt;- rbind(saf,pf[nrow(pf):1,])
-pfz.sp &lt;- SpatialPolygonsDataFrame(
+pfz.sp &lt;- SpatialPolygonsDataFrame( #Yes creating a SpatialPolygonsDataFrame from scratch is that cumbersome
   SpatialPolygons(
     list(Polygons(
       list(Polygon(pfz)),
