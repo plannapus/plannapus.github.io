@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Coding the Column: Using Databases to Synthesize Stratigraphy &amp; Geologic Age</title><link>http://plannapus.github.io/blog/2022-02-11.html</link><pubDate>2022-02-11</pubDate><description><div class="blog-content">
+			<p>Yesterday was the <a href="https://twitter.com/macromicropaleo/status/1485722962548252673">"Coding the Column: Using Databases to Synthesize Stratigraphy &amp;amp; Geologic Age" Symposium</a>, organized by Andy Fraass and Leah LeVay of project <a href="https://eodp.github.io/">eODP</a>. Here are the slides of the talk I gave on <a href="http://nsb.mfn-berlin.de">Neptune</a>:</p>
+<object class="blog" data="../data/20220210CodingTheColumn.pdf" width="600" height="425" type="application/pdf"><p><a href="../data/20220210CodingTheColumn.pdf">Download.</a></p></object>
+			<p>Looking forward for the follow-up workshop in April!</p>
+			</div></description><category>Science</category></item>
 <item><title>Measuring areas in the Southern Ocean with R</title><link>http://plannapus.github.io/blog/2022-02-01.html</link><pubDate>2022-02-01</pubDate><description><div class="blog-content">Recently, for reasons I might explain in a later post, I needed to compute specific areas in the Southern Ocean. I thought I would write down here how to do so.
 				<pre><code class="R">library(orsifronts)
 library(rgdal)
@@ -9,14 +14,14 @@ library(rgeos)
 library(maptools)
 library(rnaturalearthdata) #ropenscilabs/rnaturalearthdata</code></pre>
 
-<p>That's quite a few packages. <code class="inline">orsifronts</code> and <code class="inline">rnaturalearthdata</code> are two convenient packages that holds data from oceanic fronts and continent shapefiles respecitively.</p>
+<p>That's quite a few packages. <code class="inline">orsifronts</code> and <code class="inline">rnaturalearthdata</code> are two convenient packages that holds data from oceanic fronts and continent shapefiles respectively. <code class="inline">rgdal</code> and <code class="inline">maptools</code> are basic packages to deal with geographical shapefiles, while <code class="inline">geosphere</code> is the package that contain the function with which we will actually compute the areas.</p>
 
 				<pre><code class="R">saf &amp;lt;- el(coordinates(parkfronts)[[2]])
 pf &amp;lt;- el(coordinates(parkfronts)[[3]])
 
 #Shapefile of the Polar Frontal Zone according to Park et al. 2019
 pfz &amp;lt;- rbind(saf,pf[nrow(pf):1,])
-pfz.sp &amp;lt;- SpatialPolygonsDataFrame(
+pfz.sp &amp;lt;- SpatialPolygonsDataFrame( #Yes creating a SpatialPolygonsDataFrame from scratch is that cumbersome
   SpatialPolygons(
     list(Polygons(
       list(Polygon(pfz)),
@@ -24,13 +29,13 @@ pfz.sp &amp;lt;- SpatialPolygonsDataFrame(
     proj4string=CRS("+proj=longlat")),
   data=data.frame(n=1))</code></pre>
 
-<p>Here we take the oceanic fronts as defined by Park et al. 2019, specifically the Subantarctic front and the Polar fronts. In addition I make a Polygon out of both of them to define the polar frontal zone.</p>
+<p>Here we take the oceanic fronts as defined by <a href="https://doi.org/10.17882/59800">Park and Durant 2019</a>, specifically the Subantarctic front and the Polar fronts. In addition I make a Polygon out of both of them to define the polar frontal zone.</p>
 
 <pre><code class="R">#Shapefile of Antarctica (with 50m accuracy)
 antarctica &amp;lt;- countries50[countries50@data$NAME%in%"Antarctica",]
 
-#Polygon of Southern Ocean defined as anything below Subantarctic Front
-SAF &amp;lt;- rbind(c(-180,-90),saf,c(180,-90))
+#Polygon of Southern Ocean defined as anything below Subantarctic Front (SAF)
+SAF &amp;lt;- rbind(c(-180,-90),saf,c(180,-90)) #Basically a rectangle where the upper side is replaced by the SAF
 saf.sp &amp;lt;- SpatialPolygonsDataFrame(
   SpatialPolygons(
     list(Polygons(
@@ -42,7 +47,7 @@ SO_0 &amp;lt;- gDifference(saf.sp,antarctica)
 #as the name implies gDifference make a polygon that is computed 
 #as the set difference between the two polygons given as arguments.
 
-#Polygon of Southern Ocean defined as anything below Polar Front
+#Polygon of Southern Ocean defined as anything below Polar Front (PF)
 PF &amp;lt;- rbind(c(-180,-90),pf,c(180,-90))
 pf.sp &amp;lt;- SpatialPolygonsDataFrame(
   SpatialPolygons(
@@ -54,8 +59,10 @@ pf.sp &amp;lt;- SpatialPolygonsDataFrame(
 SO_1 &amp;lt;- gDifference(pf.sp,antarctica)
 
 #Polygon of Southern Ocean defined as anything below 60°S
-s60 &amp;lt;- cbind(seq(-180,180,1),-60)
-SO_etopo1 &amp;lt;- rbind(c(-180,-90),s60,c(180,-90))
+SO_etopo1 &amp;lt;- rbind(c(-180,-90),
+                   c(-180,-60),
+                   c(180,-60),
+                   c(180,-90))
 SO_etopo1 &amp;lt;- SpatialPolygonsDataFrame(
   SpatialPolygons(
     list(Polygons(
@@ -81,7 +88,7 @@ pfz.satl &amp;lt;- gIntersection(pfz.sp,ATL)</code></pre>
 
 <p>Here just for fun, and to go a bit further, I am making a polygon corresponding to the Atlantic sector of the Polar Frontal Zone by computing the intersection between the Atlantic ocean (crudly defined here) and the PFZ computed above.</p>
 
-<pre><code class="R">&amp;gt; areaPolygon(SO_0)/1000000
+<pre><code class="R">areaPolygon(SO_0)/1000000
 #[1] 46173015
 areaPolygon(SO_1)/1000000
 #[1] 35882983
@@ -92,7 +99,7 @@ areaPolygon(pfz.sp)/1000000
 areaPolygon(pfz.satl)/1000000
 #[1] 2704735</code></pre>
 
-<p>Computing the areas themselves is fairly easy using <code class="inline">geosphere</code>'s <code class="inline">areaPolygon</code>. The result of <code class="inline">areaPolygon</code> is given in meter squares, so we need to divise by 10^6 to get kilometer squares.</p>
+<p>Computing the areas themselves is fairly easy using <code class="inline">geosphere</code>'s <code class="inline">areaPolygon</code>. The result of <code class="inline">areaPolygon</code> is given in meter squares, so we need to divide by 10^6 to get kilometer squares.</p>
 
 <img class="current" src="img/mapArea.png" width="800"/><p class="caption">Map of various polygons computed here. In red, the 60°S parallel; in blue the Polar Frontal Zone (in dark blue, its Atlantic sector).</p>
 
@@ -666,8 +673,8 @@ serv_calc[[1]] &amp;lt;- function(input,session){
 # [...]</code></pre>
 			</div></description><category>Programming</category><category>R</category></item>
 <item><title>Micha and Momo's paper in Frontiers in Ecology &amp; Evolution</title><link>http://plannapus.github.io/blog/2021-05-07.html</link><pubDate>2021-05-07</pubDate><description><div class="blog-content">
-Our paper, lead by Michael Buchwitz and Maren Jansen, came out today in <i><a href="http://doi.org/10.3389/fevo.2021.674779">Frontiers in Ecology &amp;amp; Evolution</a></i>, in the context of a special issue on the <a href="https://www.frontiersin.org/research-topics/14947/origin-and-early-evolution-of-amniotes#articles">Origin and Early Evolution of Amniotes</a>. This is a study I have been contributing to since 2018 (if I remember correctly), so I am glad to see it finally published. The idea of the paper was to use a fairly impressive database of measurements on early tetrapod trackways, and current hypotheses on track-trackmaker relationships, to test some of those hypotheses and characterize the mode of locomotion of the last common ancestors of amniotes. As it is quite outside of my usual expertise I am not here going to delve into the details of the study, given I was, after all, involved only as the number guy.
-<p>I don't have a lot of opportunities to work with phylogenies in my own line of work, though my training in Paris was very heavily phologenetically-oriented, so it was fun to finaly make use of it.</p>
+Our paper, lead by Michael Buchwitz and Maren Jansen, came out today in <i><a href="http://doi.org/10.3389/fevo.2021.674779">Frontiers in Ecology &amp;amp; Evolution</a></i>, in the context of a special issue on the <a href="https://www.frontiersin.org/research-topics/14947/origin-and-early-evolution-of-amniotes#articles">Origin and Early Evolution of Amniotes</a>. This is a study I have been contributing to since 2018 (if I remember correctly), so I am glad to see it finally published. The idea of the paper was to use a fairly impressive database of measurements on early tetrapod trackways, and current hypotheses on track-trackmaker relationships, to test some of those hypotheses and characterize the mode of locomotion of the last common ancestors of amniotes. As it is quite outside of my usual expertise I am not here going to delve into the details of the study, given I was, after all, involved only as the number cruncher.
+<p>I don't have a lot of opportunities to work with phylogenies in my own line of work, though my training in Paris was very heavily phylogenetically-oriented, so it was fun to finaly make use of it.</p>
 <p>One particular thing I did for this paper was to try taking into account track polymorphism into the ancestral state reconstruction, given the data we used had, for some species, a large amount of specimens measured, and the distribution of the measurements showed quite a spread (ranging from juveniles to adult forms) and the occasional bimodal set-up. The idea I had to account for this was simply to bootstrap these data, meaning that instead of simply using the mean measurement, or median measurement, for each ichnospecies, I picked a single species randomly representing each species, and reiterated the operation a large amount of time. Here the code in R (full code for the entire study is available <a href="https://github.com/plannapus/tracks_asr/">here</a>):</p>
 <pre><code class="r">#Bootstrap based on polymorphism
 n_trials &amp;lt;- 1e4
