@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Coding the Column: Using Databases to Synthesize Stratigraphy &amp; Geologic Age - Part 2</title><link>http://plannapus.github.io/blog/2022-04-21.html</link><pubDate>2022-04-21</pubDate><description><div class="blog-content">
+			<p>Today was the second part of <a href="https://twitter.com/macromicropaleo/status/1485722962548252673">"Coding the Column: Using Databases to Synthesize Stratigraphy &amp;amp; Geologic Age" Symposium</a>, organized by Andy Fraass and Leah LeVay of project <a href="https://eodp.github.io/">eODP</a>. Here are the slides of the talk I gave on <a href="http://nsb.mfn-berlin.de">age modelling in Neptune</a>:</p>
+<object class="blog" data="../data/20220421CodingTheColumn.pdf" width="600" height="425" type="application/pdf"><p><a href="../data/20220421CodingTheColumn.pdf">Download.</a></p></object>
+			</div></description><category>Science</category></item>
 <item><title>Coding the Column: Using Databases to Synthesize Stratigraphy &amp; Geologic Age</title><link>http://plannapus.github.io/blog/2022-02-11.html</link><pubDate>2022-02-11</pubDate><description><div class="blog-content">
 			<p>Yesterday was the <a href="https://twitter.com/macromicropaleo/status/1485722962548252673">"Coding the Column: Using Databases to Synthesize Stratigraphy &amp;amp; Geologic Age" Symposium</a>, organized by Andy Fraass and Leah LeVay of project <a href="https://eodp.github.io/">eODP</a>. Here are the slides of the talk I gave on <a href="http://nsb.mfn-berlin.de">Neptune</a>:</p>
 <object class="blog" data="../data/20220210CodingTheColumn.pdf" width="600" height="425" type="application/pdf"><p><a href="../data/20220210CodingTheColumn.pdf">Download.</a></p></object>
