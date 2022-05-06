@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Busy month</title><link>http://plannapus.github.io/blog/2022-05-06.html</link><pubDate>2022-05-06</pubDate><description><div class="blog-content">
+				Last month ended up being an incredibly busy month for me, but for all the best reasons. The main one was the return of the work trips after two years of sedentarity. Although i stayed in Germany, it was still greatly appreciated.
+				<p>First, I attended the <a href="https://www.paleosynthesis.nat.fau.de/index.php/biodeeptime/">BioDEEPtime workshop</a> in Erlangen, in the context of the <a href="https://www.paleosynthesis.nat.fau.de/">PaleoSynthesis center</a> series of workshops. The goal of that project: integrate ecological timeseries data from various organisms and a wide range of timespans (ranging from annual ecological studies to multi-million year paleontological timeseries) to identify the timescale of community turnover.</p>
+				<img class="current" src="img/biodeeptime.jpeg" title="Attending members of BioDEEPtime" width="800"/><p class="caption">from the left to right: Huang Huai Hsuan, Erin Saupe, Amelia Penny, Lee Hsiang Liow, me, Adam Kocsis, Pincelli Hull, Manuel Steinbauer, Marina Costa Rillo, Jansen Smith, Mauro Sugawara, Adam Tomasovych. (Photo: Barbara Seuss)</p>
+				<p>Second, as mentioned in <a href="2022-04-21.html">the previous posts</a>, I participated in the "Coding the Column" workshop on stratigraphic databases.</p>
+				<p>And finally, I joined the <a href="https://iodp.tamu.edu/scienceops/expeditions/norwegian_continental_margin_magmatism.html">IODP Expedition 396</a> Sampling Party at the MARUM in Bremen, where I was invited as shorebased collaborator, to sample a bunch of Paleocene and Eocene samples to allow me to work on the local radiolarian biostrat!</p>
+				<img class="current" src="img/exp396patch.png" title="expedition 396 patch" width="400"/><p class="caption">Patch of IODP Expedition 396.</p>
+				<p>More infos on each of those projects will come soon!</p>
+				<!--<pre><code class="R">
+				</code></pre>-->
+			</div></description><category>Science</category></item>
 <item><title>Coding the Column: Using Databases to Synthesize Stratigraphy &amp; Geologic Age - Part 2</title><link>http://plannapus.github.io/blog/2022-04-21.html</link><pubDate>2022-04-21</pubDate><description><div class="blog-content">
 			<p>Today was the second part of <a href="https://twitter.com/macromicropaleo/status/1485722962548252673">"Coding the Column: Using Databases to Synthesize Stratigraphy &amp;amp; Geologic Age" Symposium</a>, organized by Andy Fraass and Leah LeVay of project <a href="https://eodp.github.io/">eODP</a>. Here are the slides of the talk I gave on <a href="http://nsb.mfn-berlin.de">age modelling in Neptune</a>:</p>
 <object class="blog" data="../data/20220421CodingTheColumn.pdf" width="600" height="425" type="application/pdf"><p><a href="../data/20220421CodingTheColumn.pdf">Download.</a></p></object>
