@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Sarah's monograph in Zootaxa</title><link>http://plannapus.github.io/blog/2022-07-04.html</link><pubDate>2022-07-04</pubDate><description><div class="blog-content">
+				Sarah's monograph on Late Neogene lophophaenids from her thesis is finally <a href="https://mapress.com/zt/article/view/zootaxa.5160.1.1">out</a>! A massive piece of work clocking at 158 pages (including no less than 42 plates).
+				<p>In it, <span class="tooltip">we<span class="tooltiptext">but mostly she</span></span> not only described 58 new forms, named 23 of them and revised/commented on 32 previously-described species of those little buggers, we also named and described a new genus, <i>Pelagomanes</i> (the "ghost from the sea", to keep with Sarah's ghost-themed naming scheme for this paper).</p>
+				<table class="img_current"><tr><td><img class="current bd" src="img/pelagomanes.png" width="200"/></td>
+					<td><img class="current bd" src="img/kozoi.png" width="200"/></td>
+					<td><img class="current bd" src="img/stigi.png" width="200"/></td>
+					</tr></table><p class="caption">From left to right, <em>Pelagomanes cantharoides</em> (Sugiyama 1992), <em>P. kozoi</em> (Renaudie &amp;amp; Lazarus 2013) and <em>P. stigi</em> (Bjørklund 1976); three previously-described species for which we established this new genus.</p>
+				<p>It will never cease to amaze me that this poorly-documented group is not only so diverse in most of the Neogene but also so abundant!</p>
+				<h4>Reference:</h4>
+				<p class="publications">Trubovitz S., Renaudie J., Lazarus D.B., Noble P. (2022) <a href="https://mapress.com/zt/article/view/zootaxa.5160.1.1">Late Neogene Lophophaenidae (Nassellaria, Radiolaria) from the Eastern Equatorial Pacific</a>. Zootaxa 5160(1), 1-158.</p>
+			</div></description><category>Science</category><category>MS-related</category></item>
 <item><title>Busy month</title><link>http://plannapus.github.io/blog/2022-05-06.html</link><pubDate>2022-05-06</pubDate><description><div class="blog-content">
 				Last month ended up being an incredibly busy month for me, but for all the best reasons. The main one was the return of the work trips after two years of sedentarity. Although i stayed in Germany, it was still greatly appreciated.
 				<p>First, I attended the <a href="https://www.paleosynthesis.nat.fau.de/index.php/biodeeptime/">BioDEEPtime workshop</a> in Erlangen, in the context of the <a href="https://www.paleosynthesis.nat.fau.de/">PaleoSynthesis center</a> series of workshops. The goal of that project: integrate ecological timeseries data from various organisms and a wide range of timespans (ranging from annual ecological studies to multi-million year paleontological timeseries) to identify the timescale of community turnover.</p>
