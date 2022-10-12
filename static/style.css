@@ -165,6 +165,14 @@ blockquote{
 	background-color:#e5e5e5;
 	padding: .5em 2em .5em 2em;
 }
+
+div.twitter-tweet{
+	display:auto;
+	margin-right:auto;
+	margin-left:auto;
+	max-width:100%;
+}
+
 video{
 	max-width: 100%;
 	height: auto;
