@@ -4,7 +4,7 @@
 <item><title>Measuring areas in R again</title><link>http://plannapus.github.io/blog/2023-03-23.html</link><pubDate>2023-03-23</pubDate><description><div class="blog-content">
                 This is to some extent a follow-up to a previous post on <a href="2022-02-01.html">measuring oceanic areas in R</a>. I once again in the past months had to measure oceanic areas but this time in the past, based on paleogeographic (or in this case paleotopographic) maps. I found myself using a widely different method from the one detailed in the previous post, so I thought it would be worth showing it here.
 
-                <p>For the purpose of this exercise, we will use the paleotopographic maps known as <a href="https://www.earthbyte.org/paleodem-resource-scotese-and-wright-2018/">PaleoDEM</a> of Scotese &amp;amp; Wright (2018), as implemented in Adam Kocsis and Nussaibah Raja's nifty package <code class="inline">chronosphere</code> to make data acquisition simpler.</p>
+                <p>For the purpose of this exercise, we will use the paleotopographic maps known as <a href="https://www.earthbyte.org/paleodem-resource-scotese-and-wright-2018/">PaleoDEM</a> of Scotese &amp;amp; Wright (2018), as implemented in Adam Kocsis and Nussaibah Raja's nifty package <a href="https://cran.r-project.org/web/packages/chronosphere/index.html"><code class="inline">chronosphere</code></a> to make data acquisition simpler.</p>
 
 				<pre><code class="R">library(raster)
 library(chronosphere)
@@ -34,7 +34,7 @@ sum(area_so[bath_so &amp;lt;=0 &amp;amp; bath_so&amp;gt;=ccd])
                 <img class="current" src="img/eocene_topo.png" max-width="800"/><pre><code class="R">eocene_contour &amp;lt;- rasterToContour(eocene_topo, levels=c(0,ccd))
 plot(eocene_topo)
 plot(eocene_contour,add=TRUE)</code></pre>
-			</div></description><category>R</category><category>Programming</category><category>Science</category></item>
+			</div></description><category>R</category><category>Programming</category></item>
 <item><title>2022 in review</title><link>http://plannapus.github.io/blog/2023-01-16.html</link><pubDate>2023-01-16</pubDate><description><div class="blog-content">
 				<p>Just as I did <a href="2022-01-10.html">last year</a>, I thought I would try to summarize my work year. This year was the last year of our MOPGA-funded project and I currently find myself once again "in-between contracts" for a undeterminate amount of time.</p>
 
