@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Measuring areas in R again</title><link>http://plannapus.github.io/blog/2023-03-23.html</link><pubDate>2023-03-23</pubDate><description><div class="blog-content">
+                This is to some extent a follow-up to a previous post on <a href="2022-02-01.html">measuring oceanic areas in R</a>. I once again in the past months had to measure oceanic areas but this time in the past, based on paleogeographic (or in this case paleotopographic) maps. I found myself using a widely different method from the one detailed in the previous post, so I thought it would be worth showing it here.
+
+                <p>For the purpose of this exercise, we will use the paleotopographic maps known as <a href="https://www.earthbyte.org/paleodem-resource-scotese-and-wright-2018/">PaleoDEM</a> of Scotese &amp;amp; Wright (2018), as implemented in Adam Kocsis and Nussaibah Raja's nifty package <code class="inline">chronosphere</code> to make data acquisition simpler.</p>
+
+				<pre><code class="R">library(raster)
+library(chronosphere)
+paleodems &amp;lt;- fetch(dat="paleomap", var="dem", res=1, ver="20190719")</code></pre>
+
+                <p>Yes that's all there is to it: we just extracted a stack of rasters showing paleotopology for each geological stage from 540Ma onwards! Since we are working with rasters here, we will have to use tools adapted to them rather than tools adapted to shapefiles as in last year's post. Shapefiles describe points, lines or polygons while a raster is basically a grid of cells having a value each.</p>
+
+                <p>Let's say we want to compute the area of seafloor above the Carbonate Compensation Depth in the late Eocene for reasons (which should hopefully become obvious in a few months).</p>
+
+                <pre><code class="R">ccd &amp;lt;- -3900 #Here for the example we use the one computed in Pälike et al. 2012 for the Equatorial Pacific.
+w &amp;lt;- which(names(paleodems)==35) #Which raster corresponds to 35Ma?
+eocene_topo &amp;lt;- paleodems[[w]]
+bathymetry &amp;lt;- getValues(eocene_topo)
+area_cells &amp;lt;- getValues(area(eocene_topo))
+sum(area_cells[bathymetry&amp;lt;=0 &amp;amp; bathymetry&amp;gt;=ccd]) #Sum the area of cells below 0m and above the CCD
+#136842002 km2, i. e. ~136.8 millions km2</code></pre>
+
+                <p>Now let's say we want to only look at the Southern Ocean (which here doesn't makes a lot of sense given we are using the equatorial depth of the CCD but just for the exercise:</p>
+
+                <pre><code class="R">SO &amp;lt;- extent(-180,180,-90,-60) #Oversimplified as being anything below 60°S
+eocene_so  &amp;lt;- crop(eocene_topo, SO)
+bath_so  &amp;lt;- getValues(eocene_so)
+area_so  &amp;lt;- getValues(area(eocene_so))
+sum(area_so[bath_so &amp;lt;=0 &amp;amp; bath_so&amp;gt;=ccd])
+#18642768, i. e. ~18.6 millions km2</code></pre>
+
+                <img class="current" src="img/eocene_topo.png" max-width="800"/><pre><code class="R">eocene_contour &amp;lt;- rasterToContour(eocene_topo, levels=c(0,ccd))
+plot(eocene_topo)
+plot(eocene_contour,add=TRUE)</code></pre>
+			</div></description><category>R</category><category>Programming</category><category>Science</category></item>
 <item><title>2022 in review</title><link>http://plannapus.github.io/blog/2023-01-16.html</link><pubDate>2023-01-16</pubDate><description><div class="blog-content">
 				<p>Just as I did <a href="2022-01-10.html">last year</a>, I thought I would try to summarize my work year. This year was the last year of our MOPGA-funded project and I currently find myself once again "in-between contracts" for a undeterminate amount of time.</p>
 

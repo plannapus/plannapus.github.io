@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="" />
+		<meta property="og:image" content="" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="R">
+        <meta name="category" content="Programming">
+        <meta name="category" content="Science">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Measuring areas in R again</p>
+			<p class="blog-date">2023-03-23</p>
+			<div class="blog-content">
+                This is to some extent a follow-up to a previous post on <a href="2022-02-01.html">measuring oceanic areas in R</a>. I once again in the past months had to measure oceanic areas but this time in the past, based on paleogeographic (or in this case paleotopographic) maps. I found myself using a widely different method from the one detailed in the previous post, so I thought it would be worth showing it here.
+
+                <p>For the purpose of this exercise, we will use the paleotopographic maps known as <a href="https://www.earthbyte.org/paleodem-resource-scotese-and-wright-2018/">PaleoDEM</a> of Scotese & Wright (2018), as implemented in Adam Kocsis and Nussaibah Raja's nifty package <code class="inline">chronosphere</code> to make data acquisition simpler.</p>
+
+				<pre><code class="R">library(raster)
+library(chronosphere)
+paleodems &lt;- fetch(dat="paleomap", var="dem", res=1, ver="20190719")</code></pre>
+
+                <p>Yes that's all there is to it: we just extracted a stack of rasters showing paleotopology for each geological stage from 540Ma onwards! Since we are working with rasters here, we will have to use tools adapted to them rather than tools adapted to shapefiles as in last year's post. Shapefiles describe points, lines or polygons while a raster is basically a grid of cells having a value each.</p>
+
+                <p>Let's say we want to compute the area of seafloor above the Carbonate Compensation Depth in the late Eocene for reasons (which should hopefully become obvious in a few months).</p>
+
+                <pre><code class="R">ccd &lt;- -3900 #Here for the example we use the one computed in Pälike et al. 2012 for the Equatorial Pacific.
+w &lt;- which(names(paleodems)==35) #Which raster corresponds to 35Ma?
+eocene_topo &lt;- paleodems[[w]]
+bathymetry &lt;- getValues(eocene_topo)
+area_cells &lt;- getValues(area(eocene_topo))
+sum(area_cells[bathymetry&lt;=0 & bathymetry&gt;=ccd]) #Sum the area of cells below 0m and above the CCD
+#136842002 km2, i. e. ~136.8 millions km2</code></pre>
+
+                <p>Now let's say we want to only look at the Southern Ocean (which here doesn't makes a lot of sense given we are using the equatorial depth of the CCD but just for the exercise:</p>
+
+                <pre><code class="R">SO &lt;- extent(-180,180,-90,-60) #Oversimplified as being anything below 60&deg;S
+eocene_so  &lt;- crop(eocene_topo, SO)
+bath_so  &lt;- getValues(eocene_so)
+area_so  &lt;- getValues(area(eocene_so))
+sum(area_so[bath_so &lt;=0 & bath_so&gt;=ccd])
+#18642768, i. e. ~18.6 millions km2</code></pre>
+
+                <img class="current" src="img/eocene_topo.png" max-width="800">
+
+                <pre><code class="R">eocene_contour &lt;- rasterToContour(eocene_topo, levels=c(0,ccd))
+plot(eocene_topo)
+plot(eocene_contour,add=TRUE)</code></pre>
+			</div>
+			<hr/>
+			<div class="footer">
+				<a href="2023-01-16.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
