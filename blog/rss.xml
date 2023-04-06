@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Say my name</title><link>http://plannapus.github.io/blog/2023-04-06.html</link><pubDate>2023-04-06</pubDate><description><div class="blog-content">
+				This morning I was listening to a great recorded talk by Daniel Conley on the <a href="https://www.youtube.com/watch?v=nJz8A-kljXo">Emergence of Diatoms</a>, courtesy of the <a href="https://diatoms.org/news/diatom-web-academy-23">'Diatom Web Academy'</a>. At some point of the talk, he happened to mention my name – I know: humble brag much :) – and, as every single person I ever met in my life, he mispronounced my name (no judgement here, as I said, it happens to literally everyone). 
+				
+				<p>As it is the third time someone does this, this week alone, I thought I'll help people with the correct pronunciation. This is how one should pronounce my name: <a href="https://en.wikipedia.org/wiki/International_Phonetic_Alphabet"><code class="inline">/ʒoan ʁə.no.di/</code></a></p>
+				<p style="text-align: center;">
+					<audio controls=""><source src="audio/johan.mp3" type="audio/mpeg"/><a href="audio/johan.mp3">Click here to hear it</a></audio></p>
+			</div></description><category>Life</category></item>
 <item><title>Measuring areas in R again</title><link>http://plannapus.github.io/blog/2023-03-23.html</link><pubDate>2023-03-23</pubDate><description><div class="blog-content">
                 This is to some extent a follow-up to a previous post on <a href="2022-02-01.html">measuring oceanic areas in R</a>. I once again in the past months had to measure oceanic areas but this time in the past, based on paleogeographic (or in this case paleotopographic) maps. I found myself using a widely different method from the one detailed in the previous post, so I thought it would be worth showing it here.
 
