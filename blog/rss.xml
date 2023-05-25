@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>IRAL Database in Paleontology Speaker Series</title><link>http://plannapus.github.io/blog/2023-05-25.html</link><pubDate>2023-05-25</pubDate><description><div class="blog-content">
+				Last week, I was invited to give a talk in a virtual speaker series on <a href="https://www.youtube.com/watch?v=bqZfu8dL8gU&amp;amp;list=PL4stj-fPmXQgjAWNstwN48uv2Y8P0tXCg">'Database in Paleontology'</a> organised by FAU Erlangen in the context of their workshop IRAL (<a href="https://integrated-record.github.io/">Integrated Record of Ancient Life</a>), itself a project of the Paleosynthesis Center. You can find the slides from the talk below, and the talk itself on <a href="https://www.youtube.com/watch?v=g8-W1U6LhVw">Youtube</a>.
+				
+				<object class="blog" data="../data/20230517IRAL.pdf" width="600" height="425" type="application/pdf"><p><a href="../data/20230517IRAL.pdf">Download.</a></p></object>
+			</div></description><category>Science</category></item>
 <item><title>Spring is Rhubarb</title><link>http://plannapus.github.io/blog/2023-04-22.html</link><pubDate>2023-04-22</pubDate><description><div class="blog-content">
 			<p>My year is conveniently split into four seasons: Rhubarb - Raspberry - Fig - Quince. As today was the first proper day of spring in Berlin, let me share my most recent variation on a classic rhubarb pie. I have been fiddling with the recipe for decades and I am fairly happy with that particular variation. In reality, I cooked it a few weeks ago as I couldn't wait for the weather to match the calendar.</p>
 
