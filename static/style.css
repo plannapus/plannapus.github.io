@@ -71,13 +71,6 @@ div.flex{
 div.index_text{
 	padding-right: 2em;
 }
-div.twitter-feed{
-	margin-top: 2em;
-	right: 0;
-	max-width: 100%;
-	width: 500px;
-	display:block;
-}
 b.unbold{
 	font-weight:normal;
 }
@@ -166,13 +159,6 @@ blockquote{
 	padding: .5em 2em .5em 2em;
 }
 
-div.twitter-tweet{
-	display:auto;
-	margin-right:auto;
-	margin-left:auto;
-	max-width:100%;
-}
-
 video{
 	max-width: 100%;
 	height: auto;
@@ -248,10 +234,6 @@ img.gallery{
 	div.index_text{
 		width: 100%;
 		padding-right: 2em;
-	}
-	div.twitter-feed{
-		margin-top: 2em;
-		width: 300px;
 	}
 	div.page_foot a img{
 		width: 50px;
