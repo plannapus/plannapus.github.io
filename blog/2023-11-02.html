@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="Experience porting a database from PostgreSQL to SQLite" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="PostgreSQL">
+		<meta name="category" content="R">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Experience porting a database from PostgreSQL to SQLite</p>
+			<p class="blog-date">2023-11-02</p>
+			<div class="blog-content">
+				<p>This month I finally <a href="https://zenodo.org/doi/10.5281/zenodo.8238613">uploaded on Zenodo</a> a stack of backups I had from the Neptune database: the aim, in addition to make the database available at all time, even when our servers are down (<a href="https://www.museumfuernaturkunde.berlin/en/press/press-releases/museum-fur-naturkunde-berlin-affected-cyber-attack">like it is now</a>), is to make it compatible with <a href="https://cran.r-project.org/web/packages/chronosphere/index.html"><code class="inline">chronosphere</code></a> which will, among other nice things, allow people to work with past versions of the database in order to reproduce the results of old papers.</p>
+
+				<p>One of the constraint for this move was to provide a SQLite version of the database, which makes it considerably easier to be manipulated with R. Neptune however is a PostgreSQL database, so a little bit of gymnastic was needed.</p>
+
+				<p>The backups I had were saved as standalone files, using the defaults of <code class="inline">pg_dump</code> and <code class="inline">pg_dumpall</code>, which was unfortunate as those are definitely not compatible with SQLite.</p>
+
+				<pre><code class="R">#First step is to load locally the globals (i. e. the user accounts) 
+#as in postgreSQL tables are saved with their owner
+system("psql -h localhost -U postgres -w &lt; globals.sql")
+system("psql -h localhost -U postgres -w -c 'DROP DATABASE nsb;'")
+system("psql -h localhost -U postgres -w -c 'CREATE DATABASE nsb;'")
+#Reads in the original backup
+system('psql -h localhost -U postgres -w -d "nsb" &lt; nsb.sql')
+#Resaves it in a way that is compatible with SQLite, i. e. with inserts and without the table owner business
+#Also we do not want to save Django's tables
+system('/usr/local/bin/pg_dump -COx --inserts -h localhost -U postgres -w nsb \
+-T public.triton -T public.auth* -T public.django* \
+-f "nsb_simplified.sql"', intern=TRUE)
+#Then we read it in R, and split by statements
+sql &lt;- readLines("nsb_simplified.sql")
+sql &lt;- sql[!grepl("^--",sql)]
+sql &lt;- sql[sql!=""]
+statements &lt;- el(strsplit(paste(sql,collapse="\n"),";\n"))
+#Then we need to clean-up postgreSQL idiosyncracies. The first one is the use of schemas.
+#In Neptune we only uses the default "public" shema
+statements &lt;- gsub("public\\.","",statements)
+#Also, for what will follow, it is easier if we get rid of leading newlines
+statements &lt;- gsub("^\n+","",statements)</code></pre>
+
+				<p>The next step is very dependent of the database design and thus need to be tailored.</p>
+
+				<pre><code class="R"># One issue is casting, which needs to be getting rid of, like this:
+statements &lt;- gsub("::character varying","",statements)
+#Then the DEFAULTs values in CREATE TABLEs are rarely portable:
+statements &lt;- gsub("DEFAULT nextval\\(.+::regclass\\) NOT NULL,","NOT NULL,",statements)
+#Similarly complex CONSTRAINTs do not (afaik) exist in SQLite
+statements &lt;- gsub(",\n    CONSTRAINT .+\\)$",")",statements)
+#And that one was tough to figure out: the word "index" is a reserved keyword in SQLite so it needs to be escaped:
+statements &lt;- gsub(" index "," `index` ",statements)</code></pre>
+
+				<p>Finally, once sanitized, we only need to grab the CREATE TABLE and INSERT INTO statements and copy them to a file, that we will rid into sqlite. Anything else (like TRIGGERs, FUNCTIONs, VIEWs) do not exist in SQLite so we can't port them.</p>
+
+				<pre><code class="R">tab &lt;- grepl("^CREATE TABLE",statements)
+ins &lt;- grepl("^INSERT INTO",statements)
+#The following contains the foreign keys based on multiple columns which can't be used
+#but we might have a look at them to recreate them afterwards one way or another
+alt &lt;- grepl("^ALTER TABLE",statements)
+#Finally we save to a file, surrounded by BEGIN and END statements.
+cat("BEGIN;",statements[tab],statements[ins],"END;", sep=";\n",file="temp.sql")
+system("sqlite3 nsb.sqlite &lt; temp.sql")</code></pre>
+
+				<p></p>
+			</div>
+			<hr/>
+			<div class="footer">
+				<a href="2023-07-25.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
