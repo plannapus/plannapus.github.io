@@ -48,7 +48,7 @@
 
 				<p>So, as those of you who uses <code class="inline">git</code> already knows, a repository contains a hidden folder called <code class="inline">.git</code>. In this folder there is a subfolder called <code class="inline">hooks</code>, which is already prepopulated with example scripts with extensions <code class="inline">.sample</code>.</p>
 
-				<p>In our case, we need a script that is run when commiting (I think?). For this the script needs to be called <code class="inline">pre-commit</code>, like the example file <code class="inline">pre-commit.sample</code> but without the extension. So in ur case, as the script I want to run is a R script called <a href="https://github.com/plannapus/plannapus.github.io/blob/master/blog/process_blog.R"><code class="inline">process_blog.R</code></a>, the file should simply contains:</p>
+				<p>In our case, we need a script that is run when commiting (I think?). For this the script needs to be called <code class="inline">pre-commit</code>, like the example file <code class="inline">pre-commit.sample</code> but without the extension. So in our case, as the script I want to run is a R script called <a href="https://github.com/plannapus/plannapus.github.io/blob/master/blog/process_blog.R"><code class="inline">process_blog.R</code></a>, the file should simply contains:</p>
 
 				<pre><code class="bash">#!/bin/sh
 Rscript blog/process_blog.R</code></pre>
