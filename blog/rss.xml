@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Adding a script to run when commiting changes on Git</title><link>http://plannapus.github.io/blog/2024-02-02.html</link><pubDate>2024-02-02</pubDate><description><div class="blog-content">
+				A <a href="https://plannapus.github.io/blog/2020-11-20.html">while ago</a>, I showed the script used to create this blog from templates. I just figured out this week how to automatically run it when commiting a new blog post, and this post is basically a test of this method.
+
+				<p>So, as those of you who uses <code class="inline">git</code> already knows, a repository contains a hidden folder called <code class="inline">.git</code>. In this folder there is a subfolder called <code class="inline">hooks</code>, which is already prepopulated with example scripts with extensions <code class="inline">.sample</code>.</p>
+
+				<p>In our case, we need a script that is run when commiting (I think?). For this the script needs to be called <code class="inline">pre-commit</code>, like the example file <code class="inline">pre-commit.sample</code> but without the extension. So in ur case, as the script I want to run is a R script called <a href="https://github.com/plannapus/plannapus.github.io/blob/master/blog/process_blog.R"><code class="inline">process_blog.R</code></a>, the file should simply contains:</p>
+
+				<pre><code class="bash">#!/bin/sh
+Rscript blog/process_blog.R</code></pre>
+
+				<p>I will need to be then given permission to execute:</p>
+
+				<pre><code class="bash">chmod +x .git/hooks/pre-commit</code></pre>
+
+				<p>And voilà!</p>
+			</div></description><category>Programming</category></item>
 <item><title>Experience porting a database from PostgreSQL to SQLite</title><link>http://plannapus.github.io/blog/2023-11-02.html</link><pubDate>2023-11-02</pubDate><description><div class="blog-content">
 				<p>This month I finally <a href="https://zenodo.org/doi/10.5281/zenodo.8238613">uploaded on Zenodo</a> a stack of backups I had from the Neptune database: the aim, in addition to make the database available at all time, even when our servers are down (<a href="https://www.museumfuernaturkunde.berlin/en/press/press-releases/museum-fur-naturkunde-berlin-affected-cyber-attack">like it is now</a>), is to make it compatible with <a href="https://cran.r-project.org/web/packages/chronosphere/index.html"><code class="inline">chronosphere</code></a> which will, among other nice things, allow people to work with past versions of the database in order to reproduce the results of old papers.</p>
 
