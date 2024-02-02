@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="Adding a script to run when commiting changes on Git" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+		            <li class="navbar"><a href="../index.html">Home</a></li>
+		            <li class="navbar"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar"><a href="index.html">Blog</a></li>
+					<li class="navbar"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Adding a script to run when commiting changes on Git</p>
+			<p class="blog-date">2024-02-02</p>
+			<div class="blog-content">
+				A <a href="https://plannapus.github.io/blog/2020-11-20.html">while ago</a>, I showed the script used to create this blog from templates. I just figured out this week how to automatically run it when commiting a new blog post, and this post is basically a test of this method.
+
+				<p>So, as those of you who uses <code class="inline">git</code> already knows, a repository contains a hidden folder called <code class="inline">.git</code>. In this folder there is a subfolder called <code class="inline">hooks</code>, which is already prepopulated with example scripts with extensions <code class="inline">.sample</code>.</p>
+
+				<p>In our case, we need a script that is run when commiting (I think?). For this the script needs to be called <code class="inline">pre-commit</code>, like the example file <code class="inline">pre-commit.sample</code> but without the extension. So in ur case, as the script I want to run is a R script called <a href="https://github.com/plannapus/plannapus.github.io/blob/master/blog/process_blog.R"><code class="inline">process_blog.R</code></a>, the file should simply contains:</p>
+
+				<pre><code class="bash">#!/bin/sh
+Rscript blog/process_blog.R</code></pre>
+
+				<p>I will need to be then given permission to execute:</p>
+
+				<pre><code class="bash">chmod +x .git/hooks/pre-commit</code></pre>
+
+				<p>And voilà!</p>
+			</div>
+			<hr/>
+			<div class="footer">
+				<a href="2023-11-02.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
