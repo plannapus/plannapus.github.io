@@ -194,10 +194,13 @@ img.gallery{
   height: auto;
   object-fit: cover;
 }
+.burger{
+	display:none;
+}
 
 @media screen and (max-width: 500px) {
 	div.navbar{
-		height: 175px;
+		height: 120px;
 		width: 100%;
 		position: fixed;
 		z-index: 1;
@@ -216,7 +219,16 @@ img.gallery{
 		font-size: 18px;
 	}
 	div.navbar ul{
-		width: 100%
+		width: 100%;
+	}
+	.burger{
+		display: inline-block;
+	}
+	div.navbar ul li.links{
+		display: none;
+	}
+	div.navbar ul:hover li{
+		display: inline-block;
 	}
 	div.navbar li{
 		font-size: 16px;
@@ -224,9 +236,14 @@ img.gallery{
 		float:left;
 		text-align:center;
 		height: 45px;
+		background-color:white;
+		border: 1px
 	}
 	div.navbar div.page_foot{
 		font-size: 60%;
+		position:absolute;
+		right:50px;
+		top:10px;
 	}
 	h1,h2{
 		font-size: 25px;
