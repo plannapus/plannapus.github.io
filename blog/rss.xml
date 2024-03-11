@@ -2405,7 +2405,7 @@ tab &amp;lt;- as.data.frame(tab)</code></pre>
 &amp;lt;p class="blog-title"&amp;gt;&amp;lt;/p&amp;gt;
 &amp;lt;p class="blog-date"&amp;gt;&amp;lt;/p&amp;gt;
 &amp;lt;p class="blog-content"&amp;gt;
-  &amp;lt;!-- &amp;lt;pre&amp;amp;glt;&amp;lt;code class="r"&amp;gt;
+  &amp;lt;!-- &amp;lt;pre&amp;gt;&amp;lt;code class="r"&amp;gt;
   &amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt; --&amp;gt;
 &amp;lt;/p&amp;gt;
 &amp;lt;hr/&amp;gt;
