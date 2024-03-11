@@ -261,6 +261,9 @@ img.gallery{
 	div.navbar li{
 		font-size: 12px;
 	}
+	div.page_foot{
+		display:none;
+	}
 }
 
 @media print {
