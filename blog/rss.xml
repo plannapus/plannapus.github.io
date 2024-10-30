@@ -37,7 +37,7 @@
 And the html code:
 
 <pre><code class="html">&amp;lt;button class="webr" onClick="globalThis.randomize();"&amp;gt;Randomize!&amp;lt;/button&amp;gt; 
-	&amp;lt;div id="rspace"&amp;gt;webR is starting, please wait...&amp;lt;/div&amp;gt;</code></pre>
+&amp;lt;div id="rspace"&amp;gt;webR is starting, please wait...&amp;lt;/div&amp;gt;</code></pre>
 
 			</div></description><category>Programming</category><category>R</category></item>
 <item><title>Adding a script to run when commiting changes on Git</title><link>http://plannapus.github.io/blog/2024-02-02.html</link><pubDate>2024-02-02</pubDate><description><div class="blog-content">
