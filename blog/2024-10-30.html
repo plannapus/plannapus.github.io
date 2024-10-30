@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<script src="scripts/webr_test.js"></script>
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="Testing webR" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+					<li class="navbar burger"><img src="../static/menu.svg"/></li>
+		            <li class="navbar links"><a href="../index.html">Home</a></li>
+		            <li class="navbar links"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar links"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar links"><a href="index.html">Blog</a></li>
+					<li class="navbar links"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">Testing webR</p>
+			<p class="blog-date">2024-10-30</p>
+			<div class="blog-content">
+				This is just a small post to test the possibility to use <code class="inline">webR</code> as an alternative or an addition to <code class="inline">shiny</code> to serve R code on a webpage, without having to have R installed server-side.
+
+				<p>Here I am just running the following ultra simple function and bind it to a button so that it can be re-run by the user:</p>
+
+				<pre><code class="R">f = function() paste(sample(1:100,10),collapse=", ")</code></pre>
+
+				<button class="webr" onClick="globalThis.randomize();">Randomize!</button> 
+				<br/>
+				<br/>
+				<div id="rspace">webR is starting, please wait...</div>
+				<br/>
+				<br/>
+				Here is the code I used:
+
+				<pre><code class="javascript">import('https://webr.r-wasm.org/latest/webr.mjs').then(async ({WebR}) =&gt; {
+	let grid = document.getElementById("rspace");
+	const webr = new WebR();
+	await webr.init();
+	//here is the R code, naturally it can also be read from a file
+	let func = "f=function() paste(sample(1:100,10),collapse=', ')"; 
+	await webr.evalR(func);
+	let str = await webr.evalR('f()')
+	grid.innerHTML = (await str.toJs()).values;
+				
+	async function randomize() {
+		await webr.objs.globalEnv.bind('str', grid.innerHTML)
+		let str = await webr.evalR('f()')
+		grid.innerHTML = (await str.toJs()).values;
+	}
+				
+	globalThis.randomize = () =&gt; {
+		randomize()
+	}
+});</code></pre>
+
+			</div>
+			<hr/>
+			<div class="footer">
+				<a href="2024-02-02.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>

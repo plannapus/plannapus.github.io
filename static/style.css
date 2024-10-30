@@ -198,6 +198,11 @@ img.gallery{
 	display:none;
 }
 
+#rspace{
+	background-color: lightgrey;
+	font-family:'monospace';
+}
+
 @media screen and (max-width: 500px) {
 	div.navbar{
 		height: 120px;

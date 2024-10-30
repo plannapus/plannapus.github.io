@@ -1,0 +1,1 @@
+f=function() paste(sample(1:100,10),sep="\t")
