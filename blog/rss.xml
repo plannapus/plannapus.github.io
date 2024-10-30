@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Testing webR</title><link>http://plannapus.github.io/blog/2024-10-30.html</link><pubDate>2024-10-30</pubDate><description><div class="blog-content">
+				This is just a small post to test the possibility to use <code class="inline">webR</code> as an alternative or an addition to <code class="inline">shiny</code> to serve R code on a webpage, without having to have R installed server-side.
+
+				<p>Here I am just running the following ultra simple function and bind it to a button so that it can be re-run by the user:</p>
+
+				<pre><code class="R">f = function() paste(sample(1:100,10),collapse=", ")</code></pre>
+
+				<button class="webr" onclick="globalThis.randomize();">Randomize!</button> 
+				<br/><br/><div id="rspace">webR is starting, please wait...</div>
+				<br/><br/>
+				Here is the code I used:
+
+				<pre><code class="javascript">import('https://webr.r-wasm.org/latest/webr.mjs').then(async ({WebR}) =&amp;gt; {
+	let grid = document.getElementById("rspace");
+	const webr = new WebR();
+	await webr.init();
+	//here is the R code, naturally it can also be read from a file
+	let func = "f=function() paste(sample(1:100,10),collapse=', ')"; 
+	await webr.evalR(func);
+	let str = await webr.evalR('f()')
+	grid.innerHTML = (await str.toJs()).values;
+				
+	async function randomize() {
+		await webr.objs.globalEnv.bind('str', grid.innerHTML)
+		let str = await webr.evalR('f()')
+		grid.innerHTML = (await str.toJs()).values;
+	}
+				
+	globalThis.randomize = () =&amp;gt; {
+		randomize()
+	}
+});</code></pre>
+
+			</div></description><category>Programming</category><category>R</category></item>
 <item><title>Adding a script to run when commiting changes on Git</title><link>http://plannapus.github.io/blog/2024-02-02.html</link><pubDate>2024-02-02</pubDate><description><div class="blog-content">
 				A <a href="https://plannapus.github.io/blog/2020-11-20.html">while ago</a>, I showed the script used to create this blog from templates. I just figured out this week how to automatically run it when commiting a new blog post, and this post is basically a test of this method.
 
