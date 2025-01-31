@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="A belated update on the Neptune database" />
+		<meta property="og:image" content="" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Science">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+					<li class="navbar burger"><img src="../static/menu.svg"/></li>
+		            <li class="navbar links"><a href="../index.html">Home</a></li>
+		            <li class="navbar links"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar links"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar links"><a href="index.html">Blog</a></li>
+					<li class="navbar links"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">A belated update on the Neptune database</p>
+			<p class="blog-date">2025-01-31</p>
+			<div class="blog-content">
+				<p>As I received a few emails in the last months asking about it, I thought I would write a short update here in the hope people will somehow find it and not email me about it :)</p>
+				<p>So, first thing first: in October 2023, <a href="https://web.archive.org/web/20231020170748/https://www.museumfuernaturkunde.berlin/en/press/press-releases/museum-fur-naturkunde-berlin-affected-cyber-attack">the Museum für Naturkunde was victim of a cyberattack</a>. As a result, and to prevent further spreading of said attack, all servers, including the one hosting our database as well as the website where users would go to get data from it, were pulled offline. Access to museum computers and the main server resumed in February/March 2024, but smaller servers like ours, being lower priority, were not. One complication arised though: the database, since 2013, is taken care of by me and David Lazarus, alone. We got some help in 2020 to move server from the Museum IT team, but apart from that we've been more or less on our own. Dave retired in 2022, and myself, am unemployed since early 2023. So there is technically nobody anymore at the Museum linked to Neptune. As a result, late last year, we handed over the database to the Marum in Bremen, who, hopefully, will put it back online in the coming months.</p>
+				<p>So, what do you do in the meantime if you need Neptune's data? Well I'm glad you asked because I went through the trouble in November 2023 to put every single backup files I had of the database on <a href="https://zenodo.org/records/10063218">Zenodo</a>. You can thus access not only a dump of the database but also simple csv files containing the bulk of what you could have downloaded on the website (i. e. microfossil occurrences and age models).</p>
+				<p>Also, I worked with Ádám Kocsis from FAU Erlangen to integrate this backup into his very useful R package <code class="inline">chronosphere</code>. Here is how to access Neptune using it, in combination with my package <code class="inline">NSBcompanion</code> (which you can find on <a href="https://github.com/plannapus/NSBcompanion">GitHub</a>), and replicate your experience of using the website and more:</p>
+				<pre><code class="R">library(chronosphere)
+library(NSBcompanion)
+nsb &lt;- chronosphere::fetch("neptune") #For the latest version, but you can also time-travel and use past versions of the database
+#For instance, get Neogene rads and diatoms from the Indian Sector of the Southern Ocean:
+getNeptuneData(nsb, fossil_group=c("R","D"),age_range=c(0,23), lon_range=c(20,120), lat_range=c(-90,-40))
+#Or find the ages of various samples on a specific site:
+ages &lt;- findAge(nsb, "74_525A",seq(0,700,100))
+#And their corresponding paleocoordinates
+findPaleocoordinates(nsb,"74_525A",ages$age_ma)
+				</code></pre>
+			</div>
+			<hr/>
+			<div class="footer">
+				<a href="2024-10-30.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
