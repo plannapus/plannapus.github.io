@@ -87,7 +87,7 @@ statements &lt;- gsub(",\n    CONSTRAINT .+\\)$",")",statements)
 #And that one was tough to figure out: the word "index" is a reserved keyword in SQLite so it needs to be escaped:
 statements &lt;- gsub(" index "," `index` ",statements)</code></pre>
 
-				<p>Finally, once sanitized, we only need to grab the CREATE TABLE and INSERT INTO statements and copy them to a file, that we will rid into sqlite. Anything else (like TRIGGERs, FUNCTIONs, VIEWs) do not exist in SQLite so we can't port them.</p>
+				<p>Finally, once sanitized, we only need to grab the CREATE TABLE and INSERT INTO statements and copy them to a file, that we will read into sqlite. Anything else (like TRIGGERs, FUNCTIONs, VIEWs) do not exist in SQLite so we can't port them.</p>
 
 				<pre><code class="R">tab &lt;- grepl("^CREATE TABLE",statements)
 ins &lt;- grepl("^INSERT INTO",statements)
