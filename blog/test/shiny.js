@@ -122,7 +122,7 @@ import('https://webr.r-wasm.org/v0.2.2/webr.mjs').then(async ({ WebR }) => {
   await fetchToWebR('app/server.R', '/home/web_user/app/server.R');
 
   // Install and run shiny
-  await webR.evalRVoid(`webr::mount("/shiny", "${window.location.href}/image/library.data")`);
+  await webR.evalRVoid(`webr::mount("/shiny", "${window.location.href}/../image/library.data")`);
   webR.writeConsole(`
     .libPaths(c("/shiny", .libPaths()))
     library(shiny)
