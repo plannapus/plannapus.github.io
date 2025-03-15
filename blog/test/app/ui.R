@@ -1,5 +1,6 @@
 library(shiny)
 library(shinyWidgets)
+library(rgl)
 # Javascript functions for the logarithmic scale
 JS.logify <-"function logifySlider (sliderId) {
     // regular number style
