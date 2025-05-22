@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<link rel="stylesheet" type="text/css" href="../static/font.css">
+		<link rel="shortcut icon" type="image/x-icon" href="../static/Carpocanium_pulchrum.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Personal webpage of Johan Renaudie, micropaleontologist at the Museum für Naturkunde, Berlin.">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="../static/obsidian.css">
+		<script src="../static/highlight.pack.js"></script>
+		<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			document.querySelectorAll('pre code').forEach((block) => {
+				hljs.highlightBlock(block);
+			});
+		});
+		</script>
+		<meta property="og:title" content="NSBcompanion 3.1" />
+		<meta property="og:image" content="img/some_code.png" />
+		<meta property="og:type" content="website" />
+		<meta name="category" content="Programming">
+		<meta name="category" content="R">
+		<title>Johan Renaudie - Blog</title>
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="list">
+			<h2>Johan Renaudie</h2>
+				<ul class="navbar">
+					<li class="navbar burger"><img src="../static/menu.svg"/></li>
+		            <li class="navbar links"><a href="../index.html">Home</a></li>
+		            <li class="navbar links"><a href="../CV.html">CV &<br/>Publications</a></li>
+		            <li class="navbar links"><a href="../data.html">Code &<br/>Data</a></li>
+					<li class="navbar links"><a href="index.html">Blog</a></li>
+					<li class="navbar links"><a href="../links.html">Links</a></li>
+		        </ul>
+			</div>
+			<div class="page_foot">
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a><br/>
+				<script type="text/javascript">document.write(new Date().getFullYear());</script> Johan Renaudie.<br/>
+				Last Update: <script type="text/javascript" charset="utf-8">var x = new Date(document.lastModified).toUTCString();document.write(x)</script>.
+			</div>
+		</div>
+		<div class="main">
+			<p class="blog-title">NSBcompanion 3.1</p>
+			<p class="blog-date">2025-05-22</p>
+			<div class="blog-content">
+				<p>As mentioned in the <a href="2025-01-31.html">previous post</a>, I no longer take care of the Neptune database, nor is it currently available, except as an archive on Zenodo, that is also available through the <code class="inline">chronosphere</code> package for R.</p>
+				<p>So as a last hurrah, I decided to update my <code class="inline">NSBcompanion</code> package, which I have been providing since 2013 (i. e. since as long as the website interface),... not that anybody ever used it but still.</p>
+				<p>Not only did I modify it so that it can still be used despite the server and the website being gone, but I added a bunch of new functions to replicate as best as I could the functionality that used to be offered by the website. Of course, unfortunately, it will only be useful to R users.</p>
+				<p>First and foremost, here is how to install the package:</p>
+				<pre><code class="R">library(devtools)
+install_github("plannapus/NSBcompanion")</code></pre>
+				<p>Then, how to connect, and perform various queries:</p>
+				<pre><code class="R">library(NSBcompanion)
+nsb &lt;- nsbConnect() # It does not require any password anymore as it connects using chronosphere to the Zenodo archive
+                    # download the database as a SQLite db and opens it.
+# Query micropaleontological data, here Antartic Neogene radiolarians, with synonymy resolved
+getNeptuneData(nsb, fossil_group="R", age_range=c(0,23), lat_range=c(-90,-40), resolve_syn=TRUE)
+# Query the age model we currently used for Leg 120 Site 751A
+getAgeModel(nsb, "120_751A")
+# Query all the age models we have for that site
+getAgeModel(nsb, "120_751A", current=FALSE)
+#Query the underlying stratigraphic data:
+getStratData(nsb,"120_751A")</code></pre>
+				<p>You can also just use the database to perform routine task useful in any paleoceanographic studies such as computing the depth, the age, the sedimentation rate or the paleocoordinates of a set of specific samples:</p>
+				<pre><code class="R">samples &lt;- c("751A-1-1,10", "751A-5-3,20","751A-10-CC")
+d &lt;- findSampleDepth(nsb, samples) #Find the depth based on their names
+# 1 site done
+#   leg site hole core sect top  mbsf
+# 1      751    A    1    1  10  0.10
+# 2      751    A    5    3  20 30.40
+# 3      751    A   10   CC  NA 90.53
+# Warning message:
+# In findSampleDepth(nsb, samples) : NAs introduced by coercion
+a &lt;- findAge(nsb,"120_751A",d$mbsf) #Find their age
+#    hole_id depth_mbsf      age_ma
+# 1 120_751A       0.10  0.03177339
+# 2 120_751A      30.40  4.55394677
+# 3 120_751A      90.53 11.65761692
+coord &lt;- findPaleocoordinates(nsb, "120_751A", a$age_ma) #Find the paleocoordinates (according to Seton et al. 2012 rotation model)
+#   hole_id      age_ma paleo_latitude paleo_longitude
+# 1 120_751A  0.03177339      -57.69746        79.79809
+# 2 120_751A  4.55394677      -57.34568        79.55676
+# 3 120_751A 11.65761692      -56.86685        79.16370
+findLSR(nsb, "120_751A")
+#        hole    from      to       lsr
+# 1  120_751A   0.083   1.750 0.2699101
+# 3  120_751A   1.750   7.417 1.8570038
+# 5  120_751A   7.417  35.667 2.0455939
+# 7  120_751A  35.667  41.833 1.3994172
+# 9  120_751A  41.833  44.917 1.5868850
+# 11 120_751A  44.917  70.273 3.8777164
+# 13 120_751A  70.273 103.364 1.8922475
+# 15 120_751A 103.364 109.833 0.8525281
+# 17 120_751A 109.833 131.333 2.1893648
+# 19 120_751A 131.333 147.841 1.2428898
+# 21 120_751A 147.841 159.848 1.5807919</code></pre>
+			<p>And last but not least, let's say you have data calibrated on a different GPTS, or that you want to translate the one from Neptune (given on Gradstein et al. 2012 GPTS) to a different one in order to compare:</p>
+			<pre><code class="R">changeAgeScale(nsb,c(30,31.2,33.9),from="Grad12",to="GTS2020") #From Gradstein et al. 2012 to the 2020 Geological Time Scale
+# [1] 30.00000 31.15191 33.93336</code></pre>
+			<p>One thing that this package can do that the website could not is time-travel, in order to replicate an old study that used Neptune:</p>
+			<pre><code class="R">nsb2016 &lt;- nsbConnect(ver="2016-02-29")
+getAgeModel(nsb2016,"120_751A")
+# site_hole    age_ma depth_mbsf age_comment
+# 5       744A  0.918134      2.636       False
+# 6       744A  2.573495     15.182       False
+# 7       744A  3.605161     19.046       False
+# 8       744A  4.307629     20.068       False
+# 9       744A  5.308647     23.068       False
+# 26      744A  9.767322     23.068       False
+# 10      744A  9.990740     41.727       False
+# 11      744A 11.062029     41.727       False
+# 12      744A 14.792489     59.909       False
+# 13      744A 16.040071     65.545       False
+# 14      744A 16.727717     65.545       False
+# 15      744A 17.558208     75.182       False
+# 16      744A 18.709492     83.121       False
+# 17      744A 19.790421     92.818       False
+# 18      744A 20.265372     96.455       False
+# 25      744A 21.579258     96.455       False
+# 19      744A 21.711284    104.333       False
+# 1       744A 23.414777    104.333       False
+# 20      744A 23.958621    107.606       False
+# 21      744A 26.451593    115.455       False
+# 3       744A 26.914188    118.182       False
+# 2       744A 30.381881    118.182       False
+# 22      744A 32.105518    130.758       False
+# 4       744A 33.171855    138.788       False
+# 23      744A 35.708441    162.273       False
+# 24      744A 36.514006    171.212       False
+getAgeModel(nsb,"120_751A")
+# site_hole    age_ma depth_mbsf age_comment
+# 1       744A  0.918134      2.636        &lt;NA&gt;
+# 2       744A  2.573495     15.182        &lt;NA&gt;
+# 3       744A  3.605161     19.046        &lt;NA&gt;
+# 4       744A  4.307629     20.068        &lt;NA&gt;
+# 5       744A  5.308647     23.068        &lt;NA&gt;
+# 6       744A 10.008745     40.186        &lt;NA&gt;
+# 7       744A 11.062029     41.727        &lt;NA&gt;
+# 8       744A 12.572802     49.982        &lt;NA&gt;
+# 9       744A 14.792489     59.909        &lt;NA&gt;
+# 10      744A 15.980724     64.769        &lt;NA&gt;
+# 11      744A 16.694766     66.248        &lt;NA&gt;
+# 12      744A 17.558208     75.182        &lt;NA&gt;
+# 13      744A 18.709492     83.121        &lt;NA&gt;
+# 14      744A 20.297427     95.638        &lt;NA&gt;
+# 15      744A 22.147442     95.638        &lt;NA&gt;
+# 16      744A 24.257109    105.249        &lt;NA&gt;
+# 17      744A 26.154198    105.249        &lt;NA&gt;
+# 18      744A 27.420117    112.175        &lt;NA&gt;
+# 19      744A 28.167467    118.317        &lt;NA&gt;
+# 20      744A 30.394265    118.317        &lt;NA&gt;
+# 21      744A 31.105411    124.842        &lt;NA&gt;
+# 22      744A 32.144016    130.757        &lt;NA&gt;
+# 23      744A 33.182621    139.445        &lt;NA&gt;
+# 24      744A 33.799293    147.023        &lt;NA&gt;
+# 25      744A 35.227375    156.819        &lt;NA&gt;
+# 26      744A 35.941416    163.843        &lt;NA&gt;
+# 27      744A 36.915108    174.379        &lt;NA&gt;
+			</code></pre>
+			</div>
+			<hr/>
+			<div class="footer">
+				<a href="2025-01-31.html">&lt; Previous entry</a> | <a href="index.html">Back to Index</a> <!--| <a href="">Next entry &gt;</a>-->
+			</div>
+		</div>
+	</body>
+</html>
