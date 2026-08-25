@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
 <channel><title>Johan Renaudie - Blog</title><link>https://plannapus.github.io/blog/index.html</link><description>A little bit of science, a little bit of programming, a little bit of cooking...</description>
+<item><title>Publications recap 2023-2026</title><link>http://plannapus.github.io/blog/2026-08-25.html</link><pubDate>2026-08-25</pubDate><description><div class="blog-content">
+				<p>Re-reading this <span class="tooltip">blog<span class="tooltiptext">I know: vanity!</span></span>, I realized that there was a time where I used to write a post for each papers we published. Since 2023 however I stopped doing so, despite, or maybe because of, pubishing quite a larger amount of papers than before. So I thought it might be a good idea to do a 'MS recap' of the last few years.</p>
+				<p>Here it goes:
+					</p><ul><li>
+							<a href="https://onlinelibrary.wiley.com/doi/10.1111/geb.13735">Smith et al. 2023</a> and <a href="https://www.science.org/doi/10.1126/science.adr6700">Fastovich et al. 2025</a>: as I <a href="2023-01-16.html">mentioned in 2023</a>, I had the opportunity to contribute, as the maintainer of Neptune, to the BioDEEPtime project. The idea was to build a (meta-)database of biological and paleontological time-series to study the tempo and time frequency of ecological (or evolutionary) disturbance and compare that to the rythm of climatic change through time. The first MS describe the database itself while the second showcase the first of such analysis (here on the pollen record and thus terrestrial vegetation).
+						</li>
+						<li>
+							<a href="https://www.nature.com/articles/s42003-023-04871-6">Trubovitz et al. 2023</a> and <a href="https://doi.org/10.22498/pages.32.2.112">2024</a>: the first is the last paper of Sarah's thesis. Building on her <a href="http://doi.org/10.1038/s41467-020-18879-7">2020</a> paper (and my <a href="http://dx.doi.org/10.1666/12016">2013</a> thesis paper), Sarah showed that a taxon abundance is a poor predictor of its longevity. The second paper is a 'public outreach'-type paper, directed primarily to master students, summarizing the work we've been doing (between Sarah's thesis and mine) in radiolarian conservation paleobiology and why it matters to climate science. I am particularly proud of the graphics in the latter paper I must say :)
+							<img class="current" src="img/graph_trubo2024.png" width="400"/><p class="caption">Go on and tell me on don't do nice graphs, I dare you! From <a href="https://doi.org/10.22498/pages.32.2.112">Trubovitz et al. 2024</a>.</p>
+						</li>
+						<li>
+							<a href="https://doi.org/10.5194/cp-20-1327-2024">Rodrigues de Faria et al. 2024</a>, <a href="https://cp.copernicus.org/articles/21/2283/2025/">Özen et al. 2025</a> and <a hef="https://doi.org/10.5194/jm-45-177-2026">2026</a>: those are the main results, from our students, of the MOPGA project that employed us from 2018 to 2022! There are still at least 3 papers to come but those ones were, I think, the most important ones dealing with Southern Ocean paleoproductivity at the Eocene-Oligocene boundary, and the role of diatoms in it, and how it affected the end Eocene climatic events. Super proud of Gabrielle and Volkan for those papers!
+						</li>
+						<li>
+							<a href="https://doi.org/10.5194/cp-20-2629-2024">Figus et al. 2024</a>, <a href="https://doi.org/10.5194/bg-22-3029-2025">2025a</a> and <a href="https://cp.copernicus.org/articles/21/1431/2025/">2025b</a>: this is a big block of papers from Cecile Figus' thesis. Cécile and Jakub (her thesis advisor) had been in contact with me since quite a while now about this work, and I hosted Cécile at the MfN in 2024 to work on this. It all stemmed from my 2016 paper and trying first to look at diatom deposition in land sections, and then more broadly to what happened in the open ocean with a more thorough compilation of diatom-bearing sites (my 2016 compilation was limited to sites for which quantitative estimates were available). The last of the three is a paper bringing new biogenic silica data for the Paleocene, a period that was completely ignored in my old compilation.
+							<img class="current" src="img/map_figus2024.png" width="600"/><p class="caption">Here is one of the many cool paleogeographic maps I made for those projects! (this one for <a href="https://doi.org/10.5194/cp-20-2629-2024">Figus et al. 2024</a>)</p>
+						</li>
+						<li>
+							<a href="http://doi.org/10.1016/j.cub.2025.04.032">Sandin et al. 2025a</a> and <a href="https://doi.org/10.32942/X2V359">2025b</a>: a long time coming and a huge source of pride for me! Miguel contacted me a few years back to help him recalibrate his phylogenetic tree of radiolarians (together with Nori Suzuki) and to calculate the ages of some of the main nodes using a different method (rootBBB), using different data (fossil occurrences instead of genomic sequences), as a second line of evidence to confirm or disprove the ages found using the standard method. 
+						</li>
+						<li>
+							<a href="https://bg.copernicus.org/articles/22/1929/2025/">Renaudie &amp;amp; Lazarus 2025</a>: this is a big one with a long story behind it. What started as a comment on <span class="tooltip">someone else's paper<span class="tooltiptext">With apologies to Sophie! Love your model, but I still think some of the data it was instantiated with weere biased :)</span></span> ended up as a behemoth of a study trying to provide a first order, unbiased, estimate of Cenozoic sediment flux using our huge collection of age models from the Neptune database. I put a lot of my science programming know-how in this one, despite being almost certain it will be most likely not cited a lot (very niche and frankly very complex). But well, I still like it and stand by it. Somebody had to do it.
+							<img class="current" src="img/mass_renaudie2025.png" width="400"/><p class="caption">A lot of work went into making this graph that maybe a couple of people will ever use :)</p>
+						</li>
+						<li>
+							<a href="https://doi.org/10.1038/s41559-026-02985-8">Dowding et al. 2026</a>: I actually didn't mention it yet on this blog but I did contribute to another of the PaleoSynthesis Center's workshops in 2024. The IRAL project is a think-tank (if I may call it like that) of people involved in making, maintaining and using paleontological databases, and this paper detailed our thoughts on the current issues we're facing and our recommandations for the future of the field. I must admit that when we started writing this paper I did not think our database, Neptune, would be such a selling point of the paper's message but well here we are :)
+						</li>
+						<li>
+							<a href="https://www.pnas.org/doi/10.1073/pnas.2508341122">Horikawa et al. 2025</a>: this paper presents the main results of Expedition 379 of which I hinted in <a href="2021-02-25.html">a previous post</a> a long time ago.
+						</li>
+						<li>
+							<a href="https://doi.org/10.22498/pages.34.1.8">Figus et al. 2026</a> and <a href="https://doi.org/10.22498/pages.34.1.30">McCoy et al. 2026</a>: two additional 'Public Outreach'-type papers destined to Master students in the context of the TIMES project. The first one on the use of siliceous microfossils in climate science and the second a review of stratigraphic databases.
+							<img class="current" src="img/Figus2026.png" width="400"/><p class="caption">With another banger of a graph from yours truly. From <a href="https://doi.org/10.22498/pages.34.1.8">Figus et al. 2026</a>.</p>
+						</li>
+						<li>
+							<a href="https://doi.org/10.1029/2023PA004766">Foster et al. 2023</a>: finally, after nearly 20 years of working on Cenozoic radiolarians, I was able to put my taxonomic skills to use on Mesozoic/Paleozoic radiolarians. Very satisfying!
+						</li>
+						<li>
+							<a href="http://doi.org/10.5194/bg-20-1145-2023">Coiffard et al. 2023</a> and <a href="https://doi.org/10.1002/ece3.70557">Ponstein et al. 2024</a>: when a buddy asks me to help on their project with my computing skills, even if it's outside of my field of expertise, I do not know how to say no apparently :)
+						</li>
+					</ul><!--<pre><code class="R">
+				</code></pre>--></div></description><category>MS-related</category><category>Science</category></item>
 <item><title>#ZombieLab</title><link>http://plannapus.github.io/blog/2026-02-19.html</link><pubDate>2026-02-19</pubDate><description><div class="blog-content">
 				<p>I am not sure if it is a common phenomenon but my intuition is that it is.</p>
 
