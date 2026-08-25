@@ -139,6 +139,9 @@ span.tooltip .tooltiptext{
 span.tooltip:hover .tooltiptext{
 	visibility: visible;
 }
+span.tooltip .tooltiptext.wide{
+	width: 240px;
+}
 p.blog-title{
 	font-weight: bold;
 	font-size: 150%;
